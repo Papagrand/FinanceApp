@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">HomeWork1</string>
+    <string name="search_placeholder">Найти статью</string>
+    <string name="expenses">Расходы</string>
+    <string name="income">Доходы</string>
+    <string name="account">Счет</string>
+    <string name="selection">Статьи</string>
+    <string name="settings">Настройки</string>
+
+    <!--    temp-->
+    <string name="rent_an_apartment">Аренда квартиры</string>
+    <string name="clothes">Одежда</string>
+    <string name="on_dog">На собачку</string>
+    <string name="apartment_service">Ремонт квартиры</string>
+    <string name="products">Продукты</string>
+    <string name="jym">Спортзал</string>
+    <string name="Meds">Медицина</string>
+    <string name="expenses_today">Расходы сегодня</string>
+    <string name="income_today">Доходы сегодня</string>
+    <string name="my_account">Мой счет</string>
+    <string name="my_categories">Мои статьи</string>
+    <string name="currency">Валюта</string>
+    <string name="balance">Баланс</string>
+    <string name="total">Всего</string>
+</resources>
