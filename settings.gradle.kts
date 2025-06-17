@@ -19,6 +19,13 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HomeWork1"
+rootProject.name = "FinanceApp"
 include(":app")
- 
+include(":core")
+include(":network")
+include(":feature")
+include(":feature:expenses")
+include(":feature:account")
+include(":feature:income")
+include(":feature:categories")
+include(":feature:settings")

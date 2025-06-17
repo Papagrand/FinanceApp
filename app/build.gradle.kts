@@ -2,10 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("kapt")
 }
 
 android {
-    namespace = "ru.point.homework1"
+    namespace = "ru.point.financeapp"
     compileSdk = 35
 
     defaultConfig {
@@ -40,6 +41,13 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":core"))
+    implementation(project(":feature:account"))
+    implementation(project(":feature:expenses"))
+    implementation(project(":feature:income"))
+    implementation(project(":feature:categories"))
+    implementation(project(":feature:settings"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
