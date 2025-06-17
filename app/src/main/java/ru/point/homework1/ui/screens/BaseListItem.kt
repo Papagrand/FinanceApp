@@ -17,8 +17,8 @@ fun BaseListItem(
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     rowHeight: Dp = 70.dp,
-    lead: @Composable RowScope.() -> Unit,
-    content: @Composable ColumnScope.() -> Unit,
+    lead: @Composable RowScope.() -> Unit = {},
+    content: @Composable ColumnScope.() -> Unit = {},
     trail: @Composable RowScope.() -> Unit = {}
 ) {
     Row(

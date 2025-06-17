@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,8 +31,7 @@ import ru.point.homework1.ui.navigation.NavGraph
 
 data class BottomNavigationItem(
     val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
+    val icon: ImageVector,
     val route: String
 )
 
@@ -60,32 +59,27 @@ class MainActivity : ComponentActivity() {
                 val items = listOf(
                     BottomNavigationItem(
                         title = stringResource(R.string.expenses),
-                        selectedIcon = ImageVector.vectorResource(R.drawable.expenses_icon),
-                        unselectedIcon = ImageVector.vectorResource(R.drawable.expenses_icon),
+                        icon = ImageVector.vectorResource(R.drawable.expenses_icon),
                         route = "expenses"
                     ),
                     BottomNavigationItem(
                         title = stringResource(R.string.income),
-                        selectedIcon = ImageVector.vectorResource(R.drawable.income_icon),
-                        unselectedIcon = ImageVector.vectorResource(R.drawable.income_icon),
+                        icon = ImageVector.vectorResource(R.drawable.income_icon),
                         route = "income"
                     ),
                     BottomNavigationItem(
                         title = stringResource(R.string.account),
-                        selectedIcon = ImageVector.vectorResource(R.drawable.account_icon),
-                        unselectedIcon = ImageVector.vectorResource(R.drawable.account_icon),
+                        icon = ImageVector.vectorResource(R.drawable.account_icon),
                         route = "account"
                     ),
                     BottomNavigationItem(
                         title = stringResource(R.string.selection),
-                        selectedIcon = ImageVector.vectorResource(R.drawable.selection_icon),
-                        unselectedIcon = ImageVector.vectorResource(R.drawable.selection_icon),
+                        icon = ImageVector.vectorResource(R.drawable.selection_icon),
                         route = "selection"
                     ),
                     BottomNavigationItem(
                         title = stringResource(R.string.settings),
-                        selectedIcon = ImageVector.vectorResource(R.drawable.settings_icon),
-                        unselectedIcon = ImageVector.vectorResource(R.drawable.settings_icon),
+                        icon = ImageVector.vectorResource(R.drawable.settings_icon),
                         route = "settings"
                     )
                 )
@@ -97,9 +91,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         bottomBar = {
-                            NavigationBar (
+                            NavigationBar(
                                 modifier = Modifier
-                                    .navigationBarsPadding()
                             ) {
 
                                 items.forEach { item ->
@@ -117,11 +110,18 @@ class MainActivity : ComponentActivity() {
                                                 }
                                             }
                                         },
-                                        label = { Text(item.title) },
+                                        label = {
+                                            Text(
+                                                item.title,
+                                                fontWeight = if (selected)
+                                                    FontWeight.W600
+                                                else
+                                                    FontWeight.W500
+                                            )
+                                        },
                                         icon = {
                                             Icon(
-                                                imageVector = if (selected)
-                                                    item.selectedIcon else item.unselectedIcon,
+                                                imageVector = item.icon,
                                                 contentDescription = item.title
                                             )
                                         },

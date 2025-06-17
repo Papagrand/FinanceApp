@@ -87,7 +87,6 @@ fun SettingsRow(
                 else Modifier
             )
             .padding(horizontal = 16.dp),
-        lead = {},
 
         content = {
             Text(
@@ -107,7 +106,7 @@ fun SettingsRow(
                         checkedThumbColor = MaterialTheme.colorScheme.primary,
                         uncheckedThumbColor = MaterialTheme.colorScheme.inverseSurface,
                         checkedTrackColor = MaterialTheme.colorScheme.inverseOnSurface,
-                        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        uncheckedTrackColor = MaterialTheme.colorScheme.inverseOnSurface,
                         uncheckedBorderColor = MaterialTheme.colorScheme.inverseSurface,
                         checkedBorderColor = MaterialTheme.colorScheme.primary
                     )

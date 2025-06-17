@@ -175,9 +175,6 @@ fun SelectionRow(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
-    },
-
-    trail = {
     }
 )
 

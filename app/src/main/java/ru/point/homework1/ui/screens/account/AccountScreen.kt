@@ -164,7 +164,6 @@ fun Currency(
                 .clickable(onClick = { })
                 .padding(horizontal = 16.dp),
             rowHeight = 56.dp,
-            lead = {  },
             content = {
                 Text(
                     text  = stringResource(R.string.currency),

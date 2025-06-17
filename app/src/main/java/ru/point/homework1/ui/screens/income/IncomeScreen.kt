@@ -111,7 +111,6 @@ fun TotalIncomesToday(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             rowHeight = 56.dp,
-            lead = {  },
             content = {
                 Text(
                     text  = stringResource(R.string.total),
@@ -142,8 +141,6 @@ fun IncomeRow(
         .fillMaxWidth()
         .clickable(onClick = { })
         .padding(horizontal = 16.dp),
-    lead = {
-    },
     content = {
         Text(
             text = income.title,
