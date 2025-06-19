@@ -17,6 +17,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -43,6 +44,7 @@ android {
 dependencies {
 
     implementation(project(":core"))
+    implementation(project(":network"))
     implementation(project(":feature:account"))
     implementation(project(":feature:expenses"))
     implementation(project(":feature:income"))

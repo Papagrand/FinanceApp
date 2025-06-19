@@ -14,7 +14,7 @@ fun BottomBar(
     currentDestination: NavDestination?,
     onItemClick: (String) -> Unit
 ) {
-    NavigationBar(Modifier.navigationBarsPadding()) {
+    NavigationBar(Modifier) {
         items.forEach { item ->
             val selected = currentDestination
                 ?.hierarchy

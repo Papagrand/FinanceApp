@@ -4,7 +4,7 @@
     <string name="expenses">Расходы</string>
     <string name="income">Доходы</string>
     <string name="account">Счет</string>
-    <string name="selection">Статьи</string>
+    <string name="category">Статьи</string>
     <string name="settings">Настройки</string>
 
     <!--    temp-->

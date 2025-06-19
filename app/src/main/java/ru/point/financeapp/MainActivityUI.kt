@@ -39,9 +39,9 @@ fun MainActivityUI(viewModel: MainActivityViewModel) {
             route = "account"
         ),
         BottomNavigationItem(
-            title = stringResource(R.string.selection),
+            title = stringResource(R.string.category),
             icon  = ImageVector.vectorResource(R.drawable.selection_icon),
-            route = "selection"
+            route = "category"
         ),
         BottomNavigationItem(
             title = stringResource(R.string.settings),
