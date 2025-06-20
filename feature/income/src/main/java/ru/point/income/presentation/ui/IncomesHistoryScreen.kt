@@ -55,6 +55,7 @@ import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryIntent
 import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryViewModel
 import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryViewModelFactory
 import ru.point.navigation.Navigator
+import ru.point.network.BuildConfig
 import ru.point.network.client.RetrofitProvider
 import java.time.Instant
 import java.time.LocalDate
@@ -92,7 +93,7 @@ fun IncomesHistoryScreen(
         )
 
     LaunchedEffect(Unit) {
-        viewModel.dispatch(IncomesHistoryIntent.Load(65))
+        viewModel.dispatch(IncomesHistoryIntent.Load(BuildConfig.ACCOUNT_ID.toInt())) //Todo пока без кеша, определяю в local.properties
         viewModel.effect.collect { eff ->
             if (eff is IncomesHistoryEffect.ShowSnackbar) snackbarHostState.showSnackbar(eff.message)
         }

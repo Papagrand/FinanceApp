@@ -1,5 +1,6 @@
 package ru.point.categories.presentation.mvi
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
+import ru.point.network.BuildConfig
 
 class CategoriesViewModel(
     private val observeCategoriesUseCase: ObserveCategoriesUseCase
@@ -64,7 +66,7 @@ class CategoriesViewModel(
 
     private fun performLoad() {
         viewModelScope.launch {
-            observeCategoriesUseCase().collect { result ->
+            observeCategoriesUseCase(BuildConfig.ACCOUNT_ID.toInt()).collect { result -> //todo переделать этот хардкод в кэш
                 when (result) {
                     is Result.Loading -> {
                         _state.update { it.copy(isLoading = true, error = null) }
@@ -81,6 +83,7 @@ class CategoriesViewModel(
                     }
 
                     is Result.Error -> {
+                        Log.e("WhyCause", result.cause.toString())
                         val msg = when (val cause = result.cause) {
                             AppError.BadRequest -> "Неверный формат данных"
                             AppError.Unauthorized -> "Неавторизованный доступ"

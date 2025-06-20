@@ -17,21 +17,22 @@ class CategoryRepositoryImpl(
 
     private val api = retrofit.create(CategoryService::class.java)
 
-    override fun observe(): Flow<Result<List<Category>>> =
-        safeApiFlow { api.getAll() }
+    override fun observe(accountId: Int): Flow<Result<List<Category>>> =
+        safeApiFlow { api.getMyCategories(accountId) }
             .map { result ->
                 when (result) {
                     is Loading -> Loading
                     is Error -> Error(result.cause)
                     is Success -> Success(
-                        result.data.map { dto ->
-                            Category(
-                                id = dto.id,
-                                name = dto.name,
-                                emoji = dto.emoji,
-                                isIncome = dto.isIncome
-                            )
-                        }
+                        (result.data.incomeStats + result.data.expenseStats)
+                            .map { dto ->
+                                Category(
+                                    categoryId = dto.categoryId,
+                                    categoryName = dto.categoryName,
+                                    emoji = dto.emoji,
+                                    amount = dto.amount
+                                )
+                            }
                     )
                 }
             }

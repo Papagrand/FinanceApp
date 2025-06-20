@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetIncomesTodayUseCase
+import ru.point.network.BuildConfig
 
 class IncomesViewModel(
     private val getIncomesTodayUseCase: GetIncomesTodayUseCase
@@ -38,7 +39,7 @@ class IncomesViewModel(
             intents.collectLatest { intent ->
                 when (intent) {
                     is IncomesIntent.Load,
-                    is IncomesIntent.Retry -> load(65) //TODO переделать хардкод
+                    is IncomesIntent.Retry -> load(BuildConfig.ACCOUNT_ID.toInt()) //Todo пока без кеша, определяю в local.properties
                 }
             }
         }

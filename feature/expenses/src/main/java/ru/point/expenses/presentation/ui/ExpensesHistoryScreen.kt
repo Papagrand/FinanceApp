@@ -55,6 +55,7 @@ import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryIntent
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModel
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModelFactory
 import ru.point.navigation.Navigator
+import ru.point.network.BuildConfig
 import ru.point.network.client.RetrofitProvider
 import java.time.Instant
 import java.time.LocalDate
@@ -92,7 +93,7 @@ fun ExpensesHistoryScreen(
         )
 
     LaunchedEffect(Unit) {
-        viewModel.dispatch(ExpensesHistoryIntent.Load(65))
+        viewModel.dispatch(ExpensesHistoryIntent.Load(BuildConfig.ACCOUNT_ID.toInt())) //Todo пока без кеша, определяю в local.properties
         viewModel.effect.collect { eff ->
             if (eff is ExpensesHistoryEffect.ShowSnackbar) snackbarHostState.showSnackbar(eff.message)
         }

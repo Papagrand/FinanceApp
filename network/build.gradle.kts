@@ -20,6 +20,7 @@ android {
         val properties=Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
         buildConfigField ("String","API_KEY","\"${properties.getProperty("API_KEY")}\"")
+        buildConfigField("String","ACCOUNT_ID","\"${properties.getProperty("ACCOUNT_ID")}\"")
 
 
     }

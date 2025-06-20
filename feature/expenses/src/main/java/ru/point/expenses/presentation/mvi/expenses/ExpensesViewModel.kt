@@ -18,6 +18,7 @@ import ru.point.domain.usecase.GetExpensesTodayUseCase
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryEffect
+import ru.point.network.BuildConfig
 
 class ExpensesViewModel(
     private val getExpensesTodayUseCase: GetExpensesTodayUseCase
@@ -39,7 +40,7 @@ class ExpensesViewModel(
             intents.collectLatest { intent ->
                 when (intent) {
                     is ExpensesIntent.Load,
-                    is ExpensesIntent.Retry -> load(65) //пока хардкод
+                    is ExpensesIntent.Retry -> load(BuildConfig.ACCOUNT_ID.toInt()) //Todo пока без кеша, определяю в local.properties)
                 }
             }
         }

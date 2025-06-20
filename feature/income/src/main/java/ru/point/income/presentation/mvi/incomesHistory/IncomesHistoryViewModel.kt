@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetTransactionHistoryUseCase
+import ru.point.network.BuildConfig
 
 class IncomesHistoryViewModel(
     private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase
@@ -38,7 +39,7 @@ class IncomesHistoryViewModel(
             intents.collectLatest { intent ->
                 when (intent) {
                     is IncomesHistoryIntent.Load,
-                    is IncomesHistoryIntent.Retry -> load(65) //пока хардкод
+                    is IncomesHistoryIntent.Retry -> load(BuildConfig.ACCOUNT_ID.toInt()) //Todo пока без кеша, определяю в local.properties
                 }
             }
         }

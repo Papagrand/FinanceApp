@@ -45,6 +45,7 @@ import ru.point.data.repositoryImpl.TransactionRepositoryImpl
 import ru.point.domain.model.TransactionPlaceHolder
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
+import ru.point.network.BuildConfig
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,7 +67,7 @@ fun ExpensesScreen(
     val placeholder = expensesPlaceholder()
 
     LaunchedEffect(Unit) {
-        viewModel.dispatch(ExpensesIntent.Load(65))
+        viewModel.dispatch(ExpensesIntent.Load(BuildConfig.ACCOUNT_ID.toInt())) //Todo пока без кеша, определяю в local.properties
         viewModel.effect.collect { eff ->
             if (eff is ExpensesEffect.ShowSnackbar){
                 snackbarHostState.showSnackbar(eff.message)

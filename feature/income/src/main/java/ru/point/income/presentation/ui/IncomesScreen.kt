@@ -49,6 +49,7 @@ import ru.point.income.presentation.mvi.incomes.IncomesViewModel
 import ru.point.income.presentation.mvi.incomes.IncomesViewModelFactory
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
+import ru.point.network.BuildConfig
 import ru.point.network.client.RetrofitProvider
 
 
@@ -70,7 +71,7 @@ fun IncomeScreen(
     val placeholder = expensesPlaceholder()
 
     LaunchedEffect(Unit) {
-        viewModel.dispatch(IncomesIntent.Load(65))
+        viewModel.dispatch(IncomesIntent.Load(BuildConfig.ACCOUNT_ID.toInt())) //Todo пока без кеша, определяю в local.properties
         viewModel.effect.collect { eff ->
             if (eff is IncomesEffect.ShowSnackbar) snackbarHostState.showSnackbar(eff.message)
         }

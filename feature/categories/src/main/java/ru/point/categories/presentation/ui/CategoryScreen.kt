@@ -215,7 +215,7 @@ fun SelectionRow(
         .clickable(onClick = { })
         .padding(horizontal = 16.dp),
     lead = {
-        val initials = remember(category.name) { initialsOf(category.name) }
+        val initials = remember(category.categoryName) { initialsOf(category.categoryName) }
         val iconText = category.emoji ?: initials
 
         Box(
@@ -243,7 +243,7 @@ fun SelectionRow(
 
     content = {
         Text(
-            text = category.name,
+            text = category.categoryName,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
