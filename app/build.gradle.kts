@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("kapt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -44,6 +45,7 @@ android {
 dependencies {
 
     implementation(project(":core"))
+    implementation(project(":core:navigation"))
     implementation(project(":network"))
     implementation(project(":feature:account"))
     implementation(project(":feature:expenses"))
@@ -51,6 +53,8 @@ dependencies {
     implementation(project(":feature:categories"))
     implementation(project(":feature:settings"))
 
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

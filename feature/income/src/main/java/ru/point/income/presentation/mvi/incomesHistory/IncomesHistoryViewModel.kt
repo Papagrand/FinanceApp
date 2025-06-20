@@ -1,4 +1,4 @@
-package ru.point.categories.presentation.mvi
+package ru.point.income.presentation.mvi.incomesHistory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,41 +14,34 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
+import ru.point.domain.usecase.GetTransactionHistoryUseCase
 
-class CategoriesViewModel(
-    private val observeCategoriesUseCase: ObserveCategoriesUseCase
+class IncomesHistoryViewModel(
+    private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
     private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
 
-    private val intents = MutableSharedFlow<CategoriesIntent>(extraBufferCapacity = 1)
+    private val intents = MutableSharedFlow<IncomesHistoryIntent>(extraBufferCapacity = 1)
 
-    private val _state = MutableStateFlow(CategoriesState())
-    val state: StateFlow<CategoriesState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(IncomesHistoryState())
+    val state: StateFlow<IncomesHistoryState> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<CategoriesEffect>()
-    val effect: SharedFlow<CategoriesEffect> = _effect.asSharedFlow()
+    private val _effect = MutableSharedFlow<IncomesHistoryEffect>()
+    val effect: SharedFlow<IncomesHistoryEffect> = _effect.asSharedFlow()
 
     init {
         viewModelScope.launch {
             intents.collectLatest { intent ->
                 when (intent) {
-                    CategoriesIntent.Load,
-                    CategoriesIntent.Retry -> performLoad()
-
-                    is CategoriesIntent.Search -> {
-                        _state.update { it.copy(query = intent.query) }
-                        performLoad()
-                    }
+                    is IncomesHistoryIntent.Load,
+                    is IncomesHistoryIntent.Retry -> load(65) //пока хардкод
                 }
             }
         }
-
-        dispatch(CategoriesIntent.Load)
     }
 
     override fun onCleared() {
@@ -56,28 +49,22 @@ class CategoriesViewModel(
         super.onCleared()
     }
 
-    fun dispatch(intent: CategoriesIntent) {
-        viewModelScope.launch {
-            intents.emit(intent)
-        }
+    fun dispatch(intent: IncomesHistoryIntent) {
+        intents.tryEmit(intent)
     }
 
-    private fun performLoad() {
+    private fun load(accountId: Int) {
         viewModelScope.launch {
-            observeCategoriesUseCase().collect { result ->
+            getTransactionHistoryUseCase(accountId).collect { result ->
                 when (result) {
-                    is Result.Loading -> {
-                        _state.update { it.copy(isLoading = true, error = null) }
-                    }
-
-                    is Result.Success -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                list = result.data,
-                                error = null
-                            )
-                        }
+                    is Result.Loading -> _state.update { it.copy(isLoading = true, error = null) }
+                    is Result.Success -> _state.update {
+                        it.copy(
+                            isLoading = false,
+                            list = result.data.list,
+                            total = result.data.total,
+                            error = null
+                        )
                     }
 
                     is Result.Error -> {
@@ -89,16 +76,13 @@ class CategoriesViewModel(
                             is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
                             else -> "Неизвестная ошибка"
                         }
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                error = msg
-                            )
-                        }
-                        _effect.emit(CategoriesEffect.ShowSnackbar("Ошибка: $msg"))
+                        _state.update { it.copy(isLoading = false, error = msg) }
+                        _effect.emit(IncomesHistoryEffect.ShowSnackbar("Ошибка: $msg"))
                     }
                 }
             }
         }
     }
+
+
 }

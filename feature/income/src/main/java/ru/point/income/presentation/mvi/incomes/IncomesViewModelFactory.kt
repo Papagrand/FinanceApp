@@ -1,4 +1,4 @@
-package ru.point.income.presentation.mvi
+package ru.point.income.presentation.mvi.incomes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

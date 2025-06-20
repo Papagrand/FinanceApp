@@ -3,5 +3,7 @@
 
     <string name="total">Всего</string>
     <string name="income_today">Доходы сегодня</string>
+    <string name="history_start">Начало</string>
+    <string name="my_history">Моя история</string>
 
 </resources>

@@ -17,10 +17,11 @@ sealed class AppError {
 }
 
 fun Throwable.toAppError(): AppError = when (this) {
-    is NoInternetException -> AppError.NoInternet
-    is UnknownHostException -> AppError.NoInternet
+    is UnknownHostException, is NoInternetException ->
+        AppError.NoInternet
+
     is HttpException -> {
-        val body = response()?.errorBody()?.string()
+        val body = response()?.errorBody()?.string().orEmpty()
         when (code()) {
             400 -> AppError.BadRequest
             401 -> AppError.Unauthorized

@@ -1,4 +1,4 @@
-package ru.point.income.presentation.mvi
+package ru.point.expenses.presentation.mvi.expenses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,31 +14,32 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.point.domain.usecase.GetExpensesTodayUseCase
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
-import ru.point.domain.usecase.GetIncomesTodayUseCase
+import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryEffect
 
-class IncomesViewModel(
-    private val getIncomesTodayUseCase: GetIncomesTodayUseCase
+class ExpensesViewModel(
+    private val getExpensesTodayUseCase: GetExpensesTodayUseCase
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
     private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
 
-    private val intents = MutableSharedFlow<IncomesIntent>(extraBufferCapacity = 1)
+    private val intents = MutableSharedFlow<ExpensesIntent>(extraBufferCapacity = 1)
 
-    private val _state = MutableStateFlow(IncomesState())
-    val state: StateFlow<IncomesState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(ExpensesState())
+    val state: StateFlow<ExpensesState> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<IncomesEffect>()
-    val effect: SharedFlow<IncomesEffect> = _effect.asSharedFlow()
+    private val _effect = MutableSharedFlow<ExpensesEffect>()
+    val effect: SharedFlow<ExpensesEffect> = _effect.asSharedFlow()
 
     init {
         viewModelScope.launch {
             intents.collectLatest { intent ->
                 when (intent) {
-                    is IncomesIntent.Load,
-                    is IncomesIntent.Retry -> load(65) //TODO переделать хардкод
+                    is ExpensesIntent.Load,
+                    is ExpensesIntent.Retry -> load(65) //пока хардкод
                 }
             }
         }
@@ -49,13 +50,13 @@ class IncomesViewModel(
         super.onCleared()
     }
 
-    fun dispatch(intent: IncomesIntent) {
+    fun dispatch(intent: ExpensesIntent) {
         intents.tryEmit(intent)
     }
 
     private fun load(accountId: Int) {
         viewModelScope.launch {
-            getIncomesTodayUseCase(accountId).collect { result ->
+            getExpensesTodayUseCase(accountId).collect { result ->
                 when (result) {
                     is Result.Loading -> _state.update { it.copy(isLoading = true, error = null) }
                     is Result.Success -> _state.update {
@@ -74,15 +75,13 @@ class IncomesViewModel(
                             AppError.NoInternet -> "Нет подключения к интернету"
                             is AppError.ServerError -> "Сервер временно недоступен"
                             is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                            else -> result.cause.toString()
+                            else -> "Неизвестная ошибка"
                         }
                         _state.update { it.copy(isLoading = false, error = msg) }
-                        _effect.emit(IncomesEffect.ShowSnackbar("Ошибка: $msg"))
+                        _effect.emit(ExpensesEffect.ShowSnackbar("Ошибка: $msg"))
                     }
                 }
             }
         }
     }
-
-
 }

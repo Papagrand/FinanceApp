@@ -1,4 +1,4 @@
-package ru.point.expenses.presentation.mvi
+package ru.point.expenses.presentation.mvi.expensesHistory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,31 +14,31 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.point.domain.usecase.GetExpensesTodayUseCase
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
+import ru.point.domain.usecase.GetTransactionHistoryUseCase
 
-class ExpensesViewModel(
-    private val getExpensesTodayUseCase: GetExpensesTodayUseCase
+class ExpensesHistoryViewModel(
+    private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
     private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
 
-    private val intents = MutableSharedFlow<ExpensesIntent>(extraBufferCapacity = 1)
+    private val intents = MutableSharedFlow<ExpensesHistoryIntent>(extraBufferCapacity = 1)
 
-    private val _state = MutableStateFlow(ExpensesState())
-    val state: StateFlow<ExpensesState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(ExpensesHistoryState())
+    val state: StateFlow<ExpensesHistoryState> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<ExpensesEffect>()
-    val effect: SharedFlow<ExpensesEffect> = _effect.asSharedFlow()
+    private val _effect = MutableSharedFlow<ExpensesHistoryEffect>()
+    val effect: SharedFlow<ExpensesHistoryEffect> = _effect.asSharedFlow()
 
     init {
         viewModelScope.launch {
             intents.collectLatest { intent ->
                 when (intent) {
-                    is ExpensesIntent.Load,
-                    is ExpensesIntent.Retry -> load(65) //пока хардкод
+                    is ExpensesHistoryIntent.Load,
+                    is ExpensesHistoryIntent.Retry -> load(65) //пока хардкод
                 }
             }
         }
@@ -49,13 +49,13 @@ class ExpensesViewModel(
         super.onCleared()
     }
 
-    fun dispatch(intent: ExpensesIntent) {
+    fun dispatch(intent: ExpensesHistoryIntent) {
         intents.tryEmit(intent)
     }
 
     private fun load(accountId: Int) {
         viewModelScope.launch {
-            getExpensesTodayUseCase(accountId).collect { result ->
+            getTransactionHistoryUseCase(accountId).collect { result ->
                 when (result) {
                     is Result.Loading -> _state.update { it.copy(isLoading = true, error = null) }
                     is Result.Success -> _state.update {
@@ -77,7 +77,7 @@ class ExpensesViewModel(
                             else -> "Неизвестная ошибка"
                         }
                         _state.update { it.copy(isLoading = false, error = msg) }
-                        _effect.emit(ExpensesEffect.ShowSnackbar("Ошибка: $msg"))
+                        _effect.emit(ExpensesHistoryEffect.ShowSnackbar("Ошибка: $msg"))
                     }
                 }
             }

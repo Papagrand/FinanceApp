@@ -1,4 +1,4 @@
-package ru.point.expenses.presentation.mvi
+package ru.point.expenses.presentation.mvi.expenses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
