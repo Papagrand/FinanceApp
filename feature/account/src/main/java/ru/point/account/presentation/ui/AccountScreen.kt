@@ -1,6 +1,5 @@
 package ru.point.account.presentation.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,9 +17,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import ru.point.account.domain.model.Account
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BaseListItem
@@ -29,9 +28,9 @@ import ru.point.core.ui.FabState
 import ru.point.core.ui.TopBarAction
 import ru.point.account.R
 import ru.point.account.data.repositoryImpl.AccountRepositoryImpl
-import ru.point.account.domain.model.AccountPlaceholder
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.account.presentation.mvi.AccountEffect
+import ru.point.account.presentation.mvi.AccountIntent
 import ru.point.account.presentation.mvi.AccountViewModel
 import ru.point.account.presentation.mvi.AccountViewModelFactory
 import ru.point.core.ui.NoInternetBanner
@@ -39,11 +38,12 @@ import ru.point.core.utils.NetworkHolder
 import ru.point.network.client.RetrofitProvider
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.core.utils.toPrettyNumber
+import ru.point.navigation.Navigator
 
-@Preview()
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
+    navigator: Navigator,
     onAddClick: () -> Unit = {}
 ) {
 
@@ -60,6 +60,7 @@ fun AccountScreen(
     val tracker = remember { NetworkHolder.tracker }
 
     LaunchedEffect(Unit) {
+        viewModel.dispatch(AccountIntent.Load)
         viewModel.effect.collect { effect ->
             when (effect) {
                 is AccountEffect.ShowSnackbar ->

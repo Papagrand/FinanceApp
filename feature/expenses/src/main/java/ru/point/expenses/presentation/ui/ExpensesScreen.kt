@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,23 +31,26 @@ import ru.point.core.ui.TopBarAction
 import ru.point.domain.model.Transaction
 import ru.point.expenses.R
 import ru.point.domain.usecase.GetExpensesTodayUseCase
-import ru.point.expenses.presentation.mvi.ExpensesViewModel
-import ru.point.expenses.presentation.mvi.ExpensesViewModelFactory
+import ru.point.expenses.presentation.mvi.expenses.ExpensesViewModel
+import ru.point.expenses.presentation.mvi.expenses.ExpensesViewModelFactory
 import ru.point.network.client.RetrofitProvider
 import androidx.compose.runtime.getValue
 import ru.point.core.ui.NoInternetBanner
 import ru.point.core.utils.NetworkHolder
-import ru.point.expenses.presentation.mvi.ExpensesEffect
-import ru.point.expenses.presentation.mvi.ExpensesIntent
+import ru.point.expenses.presentation.mvi.expenses.ExpensesEffect
+import ru.point.expenses.presentation.mvi.expenses.ExpensesIntent
 import ru.point.core.utils.toPrettyNumber
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.data.repositoryImpl.TransactionRepositoryImpl
 import ru.point.domain.model.TransactionPlaceHolder
+import ru.point.navigation.Navigator
+import ru.point.navigation.Route
 
-@Preview()
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpensesScreen(
+    navigator: Navigator,
     onAddClick: () -> Unit = {}
 ) {
     val repo = TransactionRepositoryImpl(RetrofitProvider.instance)
@@ -66,7 +68,9 @@ fun ExpensesScreen(
     LaunchedEffect(Unit) {
         viewModel.dispatch(ExpensesIntent.Load(65))
         viewModel.effect.collect { eff ->
-            if (eff is ExpensesEffect.ShowSnackbar) snackbarHostState.showSnackbar(eff.message)
+            if (eff is ExpensesEffect.ShowSnackbar){
+                snackbarHostState.showSnackbar(eff.message)
+            }
         }
     }
 
@@ -75,11 +79,14 @@ fun ExpensesScreen(
         action = TopBarAction(
             iconRes = R.drawable.history,
             contentDescription = "История",
-            onClick = {}
+            onClick = {
+                navigator.navigate(Route.ExpensesHistory)
+            }
         ),
         actionState = ActionState.Shown,
         fabState = FabState.Shown,
         onFabClick = onAddClick,
+        snackbarHostState = snackbarHostState
     ) { innerPadding ->
 
         NoInternetBanner(tracker = tracker)

@@ -1,6 +1,5 @@
 package ru.point.settings.presentation
 
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,18 +15,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BaseListItem
 import ru.point.core.ui.BaseScaffold
 import ru.point.core.ui.FabState
+import ru.point.navigation.Navigator
 import ru.point.settings.R
 
-@Preview()
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    navigator: Navigator,
+) {
     val settings = remember { demoSettings() }
 
     BaseScaffold(

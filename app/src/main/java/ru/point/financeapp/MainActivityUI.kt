@@ -13,7 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.navigation.NavHostController
 import ru.point.financeapp.ui.navigation.NavGraph
+import ru.point.financeapp.ui.navigation.NavRoute
+import ru.point.navigation.Navigator
+import ru.point.navigation.Route
 
 @Composable
 fun MainActivityUI(viewModel: MainActivityViewModel) {
@@ -25,27 +29,27 @@ fun MainActivityUI(viewModel: MainActivityViewModel) {
     val items = listOf(
         BottomNavigationItem(
             title = stringResource(R.string.expenses),
-            icon  = ImageVector.vectorResource(R.drawable.expenses_icon),
-            route = "expenses"
+            icon = ImageVector.vectorResource(R.drawable.expenses_icon),
+            route = "expenses_graph"
         ),
         BottomNavigationItem(
             title = stringResource(R.string.income),
-            icon  = ImageVector.vectorResource(R.drawable.income_icon),
-            route = "income"
+            icon = ImageVector.vectorResource(R.drawable.income_icon),
+            route = "incomes_graph"
         ),
         BottomNavigationItem(
             title = stringResource(R.string.account),
-            icon  = ImageVector.vectorResource(R.drawable.account_icon),
+            icon = ImageVector.vectorResource(R.drawable.account_icon),
             route = "account"
         ),
         BottomNavigationItem(
             title = stringResource(R.string.category),
-            icon  = ImageVector.vectorResource(R.drawable.selection_icon),
+            icon = ImageVector.vectorResource(R.drawable.selection_icon),
             route = "category"
         ),
         BottomNavigationItem(
             title = stringResource(R.string.settings),
-            icon  = ImageVector.vectorResource(R.drawable.settings_icon),
+            icon = ImageVector.vectorResource(R.drawable.settings_icon),
             route = "settings"
         )
     )
@@ -55,25 +59,43 @@ fun MainActivityUI(viewModel: MainActivityViewModel) {
             BottomBar(
                 items = items,
                 currentDestination = hierarchy,
-                onItemClick = { route ->
-                    navController.navigate(route) {
+                onItemClick = { graphRoute ->
+                    navController.navigate(graphRoute) {
+                        popUpTo(graphRoute) { inclusive = false }
                         launchSingleTop = true
                         restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
                     }
                 }
             )
         }
     ) { innerPadding ->
-        Surface (
+        Surface(
             Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
             color = MaterialTheme.colorScheme.background
         ) {
-            NavGraph(navController)
+            NavGraph(navController = navController)
         }
     }
+}
+
+class NavigatorImpl(private val navController: NavHostController) : Navigator {
+    override fun navigate(route: Route) {
+        navController.navigate(route.toNavRoute().route)
+    }
+
+    override fun popBackStack() {
+        navController.popBackStack()
+    }
+}
+
+fun Route.toNavRoute(): NavRoute = when (this) {
+    Route.Account -> NavRoute.Account
+    Route.Category -> NavRoute.Category
+    Route.Expenses -> NavRoute.Expenses
+    Route.ExpensesHistory -> NavRoute.ExpensesHistory
+    Route.Income -> NavRoute.Income
+    Route.IncomesHistory -> NavRoute.IncomesHistory
+    Route.Settings -> NavRoute.Settings
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,12 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.point.income.R
-import ru.point.core.utils.formatMoney
-import ru.point.core.utils.moneyToLong
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BaseListItem
 import ru.point.core.ui.BaseScaffold
@@ -46,20 +41,21 @@ import ru.point.core.utils.toPrettyNumber
 import ru.point.data.repositoryImpl.TransactionRepositoryImpl
 import ru.point.domain.model.Transaction
 import ru.point.domain.model.TransactionPlaceHolder
-import ru.point.domain.usecase.GetExpensesTodayUseCase
 import ru.point.domain.usecase.GetIncomesTodayUseCase
-import ru.point.income.domain.IncomePlaceHolder
-import ru.point.income.presentation.mvi.IncomesEffect
-import ru.point.income.presentation.mvi.IncomesIntent
-import ru.point.income.presentation.mvi.IncomesViewModel
-import ru.point.income.presentation.mvi.IncomesViewModelFactory
+import ru.point.income.R
+import ru.point.income.presentation.mvi.incomes.IncomesEffect
+import ru.point.income.presentation.mvi.incomes.IncomesIntent
+import ru.point.income.presentation.mvi.incomes.IncomesViewModel
+import ru.point.income.presentation.mvi.incomes.IncomesViewModelFactory
+import ru.point.navigation.Navigator
+import ru.point.navigation.Route
 import ru.point.network.client.RetrofitProvider
 
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IncomeScreen(
+    navigator: Navigator,
     onAddClick: () -> Unit = {}
 ) {
     val repo = TransactionRepositoryImpl(RetrofitProvider.instance)
@@ -85,11 +81,14 @@ fun IncomeScreen(
         action = TopBarAction(
             iconRes = R.drawable.history,
             contentDescription = "История",
-            onClick = {}
+            onClick = {
+                navigator.navigate(Route.IncomesHistory)
+            }
         ),
         actionState = ActionState.Shown,
         fabState = FabState.Shown,
-        onFabClick = onAddClick
+        onFabClick = onAddClick,
+        snackbarHostState = snackbarHostState
     )
     { innerPadding ->
         NoInternetBanner(tracker = tracker)

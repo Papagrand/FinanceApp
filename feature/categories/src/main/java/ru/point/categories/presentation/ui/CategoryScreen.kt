@@ -56,12 +56,13 @@ import ru.point.core.ui.BaseScaffold
 import ru.point.core.ui.FabState
 import ru.point.core.ui.NoInternetBanner
 import ru.point.core.utils.NetworkHolder
+import ru.point.navigation.Navigator
 import ru.point.network.client.RetrofitProvider
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
+    navigator: Navigator,
     onAddClick: () -> Unit = {}
 ) {
 
@@ -78,6 +79,7 @@ fun CategoryScreen(
     val tracker = remember { NetworkHolder.tracker }
 
     LaunchedEffect(Unit) {
+        viewModel.dispatch(CategoriesIntent.Load)
         viewModel.effect.collect { effect ->
             when (effect) {
                 is CategoriesEffect.ShowSnackbar ->
