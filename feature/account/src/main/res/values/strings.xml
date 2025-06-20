@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="my_account">Мой счет</string>
+    <string name="balance">Баланс</string>
+    <string name="currency">Валюта</string>
+
+
+</resources>

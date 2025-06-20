@@ -2,10 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("kapt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "ru.point.homework1"
+    namespace = "ru.point.financeapp"
     compileSdk = 35
 
     defaultConfig {
@@ -16,6 +18,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -36,11 +39,28 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
 
+    implementation(project(":core"))
+    implementation(project(":core:navigation"))
+    implementation(project(":network"))
+    implementation(project(":feature:account"))
+    implementation(project(":feature:expenses"))
+    implementation(project(":feature:income"))
+    implementation(project(":feature:categories"))
+    implementation(project(":feature:settings"))
+
+
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+
+    implementation ("androidx.datastore:datastore-preferences:1.1.6")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

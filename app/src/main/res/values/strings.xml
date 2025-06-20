@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">HomeWork1</string>
+    <string name="app_name">FinanceApp</string>
     <string name="search_placeholder">Найти статью</string>
     <string name="expenses">Расходы</string>
     <string name="income">Доходы</string>
     <string name="account">Счет</string>
-    <string name="selection">Статьи</string>
+    <string name="category">Статьи</string>
     <string name="settings">Настройки</string>
 
     <!--    temp-->
@@ -22,4 +22,5 @@
     <string name="currency">Валюта</string>
     <string name="balance">Баланс</string>
     <string name="total">Всего</string>
+    <string name="my_transaction_history">Моя история</string>
 </resources>
