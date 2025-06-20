@@ -2,10 +2,22 @@ package ru.point.account.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,26 +31,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import ru.point.account.domain.model.Account
-import ru.point.core.ui.ActionState
-import ru.point.core.ui.BaseListItem
-import ru.point.core.ui.BaseScaffold
-import ru.point.core.ui.FabState
-import ru.point.core.ui.TopBarAction
 import ru.point.account.R
 import ru.point.account.data.repositoryImpl.AccountRepositoryImpl
+import ru.point.account.domain.model.Account
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.account.presentation.mvi.AccountEffect
 import ru.point.account.presentation.mvi.AccountIntent
 import ru.point.account.presentation.mvi.AccountViewModel
 import ru.point.account.presentation.mvi.AccountViewModelFactory
+import ru.point.core.ui.ActionState
+import ru.point.core.ui.BaseListItem
+import ru.point.core.ui.BaseScaffold
+import ru.point.core.ui.FabState
 import ru.point.core.ui.NoInternetBanner
+import ru.point.core.ui.TopBarAction
 import ru.point.core.utils.NetworkHolder
-import ru.point.network.client.RetrofitProvider
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.core.utils.toPrettyNumber
 import ru.point.navigation.Navigator
+import ru.point.network.client.RetrofitProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,12 +135,12 @@ fun AccountScreen(
                         .padding(innerPadding),
 
                     ) {
-                    if (state.list.isNotEmpty()) {
+                    if (state.accountData != null) {
                         Balance(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp),
-                            state.list[0] //Временно, так как непонятно, как указывать весь список
+                            state.accountData!!
                         )
                     } else {
                         Balance(

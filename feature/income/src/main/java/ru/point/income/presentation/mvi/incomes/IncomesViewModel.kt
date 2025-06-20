@@ -12,15 +12,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetIncomesTodayUseCase
-import ru.point.network.BuildConfig
 
 class IncomesViewModel(
-    private val getIncomesTodayUseCase: GetIncomesTodayUseCase
+    private val getIncomesTodayUseCase: GetIncomesTodayUseCase,
+    private val prefs: AccountPreferences
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
@@ -34,12 +36,32 @@ class IncomesViewModel(
     private val _effect = MutableSharedFlow<IncomesEffect>()
     val effect: SharedFlow<IncomesEffect> = _effect.asSharedFlow()
 
+    private val _accountId = MutableStateFlow<Int?>(null)
+    val accountId: StateFlow<Int?> = _accountId
+
     init {
+        viewModelScope.launch {
+            prefs.accountIdFlow
+                .filterNotNull()
+                .collectLatest { id ->
+                    _accountId.value = id
+                    load(id)
+                }
+        }
+
         viewModelScope.launch {
             intents.collectLatest { intent ->
                 when (intent) {
                     is IncomesIntent.Load,
-                    is IncomesIntent.Retry -> load(BuildConfig.ACCOUNT_ID.toInt()) //Todo пока без кеша, определяю в local.properties
+                    is IncomesIntent.Retry -> {
+                        _accountId.value
+                            ?.let { load(it) }
+                            ?: _effect.emit(
+                                IncomesEffect.ShowSnackbar(
+                                    "Account ID ещё не инициализирован"
+                                )
+                            )
+                    }
                 }
             }
         }

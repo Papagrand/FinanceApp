@@ -5,5 +5,5 @@ import ru.point.account.domain.model.Account
 import ru.point.core.common.Result
 
 interface AccountRepository {
-    fun observe(): Flow<Result<List<Account>>>
+    fun observe(): Flow<Result<Account>>
 }

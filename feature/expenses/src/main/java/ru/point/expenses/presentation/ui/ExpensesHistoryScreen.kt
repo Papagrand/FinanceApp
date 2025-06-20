@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.point.core.common.AccountPreferences
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BackAction
 import ru.point.core.ui.BackState
@@ -55,7 +57,6 @@ import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryIntent
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModel
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModelFactory
 import ru.point.navigation.Navigator
-import ru.point.network.BuildConfig
 import ru.point.network.client.RetrofitProvider
 import java.time.Instant
 import java.time.LocalDate
@@ -70,9 +71,13 @@ fun ExpensesHistoryScreen(
     navigator: Navigator,
     onAddClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    val prefs = remember { AccountPreferences(context) }
+
     val repo = TransactionRepositoryImpl(RetrofitProvider.instance)
     val useCase = GetTransactionHistoryUseCase(repo, false)
-    val factory = remember { ExpensesHistoryViewModelFactory(useCase) }
+    val factory = remember { ExpensesHistoryViewModelFactory(useCase, prefs) }
     val viewModel: ExpensesHistoryViewModel = viewModel(factory = factory)
 
     val state by viewModel.state.collectAsState()
@@ -93,7 +98,7 @@ fun ExpensesHistoryScreen(
         )
 
     LaunchedEffect(Unit) {
-        viewModel.dispatch(ExpensesHistoryIntent.Load(BuildConfig.ACCOUNT_ID.toInt())) //Todo пока без кеша, определяю в local.properties
+        viewModel.dispatch(ExpensesHistoryIntent.Load)
         viewModel.effect.collect { eff ->
             if (eff is ExpensesHistoryEffect.ShowSnackbar) snackbarHostState.showSnackbar(eff.message)
         }

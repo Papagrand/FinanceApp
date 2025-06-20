@@ -10,21 +10,23 @@ import ru.point.core.common.Result.*
 import ru.point.core.common.Result
 import ru.point.network.client.RetrofitProvider
 import ru.point.network.flow.safeApiFlow
-import kotlin.collections.map
 
 class AccountRepositoryImpl(
     retrofit: Retrofit = RetrofitProvider.instance
 ) : AccountRepository {
 
     private val api = retrofit.create(AccountService::class.java)
-    override fun observe(): Flow<Result<List<Account>>> =
+    override fun observe(): Flow<Result<Account>> =
         safeApiFlow { api.getAccounts() }
             .map { result ->
                 when (result) {
                     is Loading -> Loading
                     is Error -> Error(result.cause)
-                    is Success -> Success(
-                        result.data.map { dto ->
+                    is Success -> {
+                        val list = result.data
+                        val dto = list.firstOrNull()
+                            ?: throw NoSuchElementException("No account returned")
+                        Success(
                             Account(
                                 id = dto.id,
                                 userId = dto.userId,
@@ -34,9 +36,8 @@ class AccountRepositoryImpl(
                                 createdAt = dto.createdAt,
                                 updatedAt = dto.updatedAt
                             )
-                        }
-                    )
+                        )
+                    }
                 }
             }
-
 }

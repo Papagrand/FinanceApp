@@ -35,6 +35,8 @@ import ru.point.expenses.presentation.mvi.expenses.ExpensesViewModel
 import ru.point.expenses.presentation.mvi.expenses.ExpensesViewModelFactory
 import ru.point.network.client.RetrofitProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import ru.point.core.common.AccountPreferences
 import ru.point.core.ui.NoInternetBanner
 import ru.point.core.utils.NetworkHolder
 import ru.point.expenses.presentation.mvi.expenses.ExpensesEffect
@@ -45,7 +47,6 @@ import ru.point.data.repositoryImpl.TransactionRepositoryImpl
 import ru.point.domain.model.TransactionPlaceHolder
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
-import ru.point.network.BuildConfig
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,9 +55,13 @@ fun ExpensesScreen(
     navigator: Navigator,
     onAddClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    val prefs = remember { AccountPreferences(context) }
+
     val repo = TransactionRepositoryImpl(RetrofitProvider.instance)
     val useCase = GetExpensesTodayUseCase(repo)
-    val factory = remember { ExpensesViewModelFactory(useCase) }
+    val factory = remember { ExpensesViewModelFactory(useCase, prefs) }
     val viewModel: ExpensesViewModel = viewModel(factory = factory)
 
     val state by viewModel.state.collectAsState()
@@ -67,7 +72,7 @@ fun ExpensesScreen(
     val placeholder = expensesPlaceholder()
 
     LaunchedEffect(Unit) {
-        viewModel.dispatch(ExpensesIntent.Load(BuildConfig.ACCOUNT_ID.toInt())) //Todo пока без кеша, определяю в local.properties
+        viewModel.dispatch(ExpensesIntent.Load)
         viewModel.effect.collect { eff ->
             if (eff is ExpensesEffect.ShowSnackbar){
                 snackbarHostState.showSnackbar(eff.message)

@@ -9,6 +9,6 @@ class GetAllAccountsUseCase (
     private val repo: AccountRepository
 ) {
 
-    operator fun invoke(): Flow<Result<List<Account>>> = repo.observe()
+    operator fun invoke(): Flow<Result<Account>> = repo.observe()
 
 }

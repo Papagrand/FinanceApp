@@ -1,5 +1,6 @@
 package ru.point.account.presentation.mvi
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
@@ -70,13 +71,14 @@ class AccountViewModel(
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                list = result.data,
+                                accountData = result.data,
                                 error = null
                             )
                         }
                     }
 
                     is Result.Error -> {
+                        Log.e("WhyERROR", result.cause.toString())
                         val msg = when (val cause = result.cause) {
                             AppError.BadRequest -> "Неверный формат данных"
                             AppError.Unauthorized -> "Неавторизованный доступ"

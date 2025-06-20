@@ -1,6 +1,6 @@
 package ru.point.expenses.presentation.mvi.expenses
 
 sealed interface ExpensesIntent {
-    data class Load(val accountId: Int) : ExpensesIntent
+    object Load : ExpensesIntent
     object Retry : ExpensesIntent
 }

@@ -44,6 +44,7 @@ dependencies {
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 
     implementation("androidx.core:core-ktx:1.13.1")
+    implementation ("androidx.datastore:datastore-preferences:1.1.6")
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.core.ktx)

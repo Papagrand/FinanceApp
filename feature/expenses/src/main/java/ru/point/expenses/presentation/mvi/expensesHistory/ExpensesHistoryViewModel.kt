@@ -12,15 +12,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetTransactionHistoryUseCase
-import ru.point.network.BuildConfig
 
 class ExpensesHistoryViewModel(
-    private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase
+    private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
+    private val prefs: AccountPreferences
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
@@ -34,12 +36,32 @@ class ExpensesHistoryViewModel(
     private val _effect = MutableSharedFlow<ExpensesHistoryEffect>()
     val effect: SharedFlow<ExpensesHistoryEffect> = _effect.asSharedFlow()
 
+    private val _accountId = MutableStateFlow<Int?>(null)
+    val accountId: StateFlow<Int?> = _accountId
+
     init {
+        viewModelScope.launch {
+            prefs.accountIdFlow
+                .filterNotNull()
+                .collectLatest { id ->
+                    _accountId.value = id
+                    load(id)
+                }
+        }
+
         viewModelScope.launch {
             intents.collectLatest { intent ->
                 when (intent) {
                     is ExpensesHistoryIntent.Load,
-                    is ExpensesHistoryIntent.Retry -> load(BuildConfig.ACCOUNT_ID.toInt()) //Todo пока без кеша, определяю в local.properties)
+                    is ExpensesHistoryIntent.Retry -> {
+                        _accountId.value
+                            ?.let { load(it) }
+                            ?: _effect.emit(
+                                ExpensesHistoryEffect.ShowSnackbar(
+                                    "Account ID ещё не инициализирован"
+                                )
+                            )
+                    }
                 }
             }
         }

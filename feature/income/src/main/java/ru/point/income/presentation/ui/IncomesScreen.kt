@@ -25,10 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.point.core.common.AccountPreferences
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BaseListItem
 import ru.point.core.ui.BaseScaffold
@@ -49,7 +51,6 @@ import ru.point.income.presentation.mvi.incomes.IncomesViewModel
 import ru.point.income.presentation.mvi.incomes.IncomesViewModelFactory
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
-import ru.point.network.BuildConfig
 import ru.point.network.client.RetrofitProvider
 
 
@@ -59,9 +60,13 @@ fun IncomeScreen(
     navigator: Navigator,
     onAddClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    val prefs = remember { AccountPreferences(context) }
+
     val repo = TransactionRepositoryImpl(RetrofitProvider.instance)
     val useCase = GetIncomesTodayUseCase(repo)
-    val factory = remember { IncomesViewModelFactory(useCase) }
+    val factory = remember { IncomesViewModelFactory(useCase, prefs) }
     val viewModel: IncomesViewModel = viewModel(factory = factory)
 
     val state by viewModel.state.collectAsState()
@@ -71,7 +76,7 @@ fun IncomeScreen(
     val placeholder = expensesPlaceholder()
 
     LaunchedEffect(Unit) {
-        viewModel.dispatch(IncomesIntent.Load(BuildConfig.ACCOUNT_ID.toInt())) //Todo пока без кеша, определяю в local.properties
+        viewModel.dispatch(IncomesIntent.Load)
         viewModel.effect.collect { eff ->
             if (eff is IncomesEffect.ShowSnackbar) snackbarHostState.showSnackbar(eff.message)
         }
@@ -244,7 +249,7 @@ fun IncomeRow(
 )
 
 private fun expensesPlaceholder(): TransactionPlaceHolder {
-    val placeholder: TransactionPlaceHolder = TransactionPlaceHolder(
+    val placeholder = TransactionPlaceHolder(
         amount = "0",
         currency = "RUB"
     )

@@ -4,16 +4,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
+import ru.point.financeapp.events.SnackbarEvents
 import ru.point.financeapp.ui.navigation.NavGraph
 import ru.point.financeapp.ui.navigation.NavRoute
 import ru.point.navigation.Navigator
@@ -25,6 +30,14 @@ fun MainActivityUI(viewModel: MainActivityViewModel) {
     val navController = rememberNavController()
     val currentDestination by navController.currentBackStackEntryAsState()
     val hierarchy = currentDestination?.destination
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        SnackbarEvents.messages.collect { msg ->
+            snackbarHostState.showSnackbar(msg)
+        }
+    }
 
     val items = listOf(
         BottomNavigationItem(
@@ -55,6 +68,7 @@ fun MainActivityUI(viewModel: MainActivityViewModel) {
     )
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
             BottomBar(
                 items = items,

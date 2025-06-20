@@ -13,15 +13,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
+import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
-import ru.point.network.BuildConfig
 
 class CategoriesViewModel(
-    private val observeCategoriesUseCase: ObserveCategoriesUseCase
+    private val observeCategoriesUseCase: ObserveCategoriesUseCase,
+    private val prefs: AccountPreferences
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
@@ -35,16 +37,36 @@ class CategoriesViewModel(
     private val _effect = MutableSharedFlow<CategoriesEffect>()
     val effect: SharedFlow<CategoriesEffect> = _effect.asSharedFlow()
 
+    private val _accountId = MutableStateFlow<Int?>(null)
+    val accountId: StateFlow<Int?> = _accountId
+
     init {
+        viewModelScope.launch {
+            prefs.accountIdFlow
+                .filterNotNull()
+                .collectLatest { id ->
+                    _accountId.value = id
+                    performLoad(id)
+                }
+        }
+
         viewModelScope.launch {
             intents.collectLatest { intent ->
                 when (intent) {
                     CategoriesIntent.Load,
-                    CategoriesIntent.Retry -> performLoad()
-
+                    CategoriesIntent.Retry -> {
+                        _accountId.value
+                            ?.let { performLoad(it) }
+                            ?: _effect.emit(
+                                CategoriesEffect.ShowSnackbar(
+                                    "Account ID ещё не инициализирован"
+                                )
+                            )
+                    }
                     is CategoriesIntent.Search -> {
                         _state.update { it.copy(query = intent.query) }
-                        performLoad()
+                        _accountId.value
+                            ?.let { performLoad(it) }
                     }
                 }
             }
@@ -64,9 +86,9 @@ class CategoriesViewModel(
         }
     }
 
-    private fun performLoad() {
+    private fun performLoad(accountId: Int) {
         viewModelScope.launch {
-            observeCategoriesUseCase(BuildConfig.ACCOUNT_ID.toInt()).collect { result -> //todo переделать этот хардкод в кэш
+            observeCategoriesUseCase(accountId).collect { result ->
                 when (result) {
                     is Result.Loading -> {
                         _state.update { it.copy(isLoading = true, error = null) }

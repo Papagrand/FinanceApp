@@ -12,16 +12,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.point.domain.usecase.GetExpensesTodayUseCase
+import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
-import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryEffect
-import ru.point.network.BuildConfig
+import ru.point.domain.usecase.GetExpensesTodayUseCase
 
 class ExpensesViewModel(
-    private val getExpensesTodayUseCase: GetExpensesTodayUseCase
+    private val getExpensesTodayUseCase: GetExpensesTodayUseCase,
+    private val prefs: AccountPreferences
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
@@ -35,12 +36,32 @@ class ExpensesViewModel(
     private val _effect = MutableSharedFlow<ExpensesEffect>()
     val effect: SharedFlow<ExpensesEffect> = _effect.asSharedFlow()
 
+    private val _accountId = MutableStateFlow<Int?>(null)
+    val accountId: StateFlow<Int?> = _accountId
+
     init {
+        viewModelScope.launch {
+            prefs.accountIdFlow
+                .filterNotNull()
+                .collectLatest { id ->
+                    _accountId.value = id
+                    load(id)
+                }
+        }
+
         viewModelScope.launch {
             intents.collectLatest { intent ->
                 when (intent) {
                     is ExpensesIntent.Load,
-                    is ExpensesIntent.Retry -> load(BuildConfig.ACCOUNT_ID.toInt()) //Todo пока без кеша, определяю в local.properties)
+                    is ExpensesIntent.Retry -> {
+                        _accountId.value
+                            ?.let { load(it) }
+                            ?: _effect.emit(
+                                ExpensesEffect.ShowSnackbar(
+                                    "Account ID ещё не инициализирован"
+                                )
+                            )
+                    }
                 }
             }
         }
