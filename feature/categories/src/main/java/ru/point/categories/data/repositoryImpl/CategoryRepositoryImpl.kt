@@ -11,6 +11,15 @@ import ru.point.network.flow.safeApiFlow
 import ru.point.core.common.Result.*
 import ru.point.core.common.Result
 
+/**
+ * CategoryRepositoryImpl
+ *
+ * Ответственность:
+ * - обращение к REST-API через Retrofit для получения категорий пользователя;
+ * - преобразование полученных DTO в доменную модель Category;
+ * - обёртывание результата в Flow<Result<List<Category>>> через safeApiFlow.
+ */
+
 class CategoryRepositoryImpl(
     retrofit: Retrofit = RetrofitProvider.instance
 ) : CategoryRepository {

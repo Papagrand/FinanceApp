@@ -20,13 +20,23 @@ import ru.point.core.common.Result
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetExpensesTodayUseCase
 
+/**
+ * ExpensesViewModel
+ *
+ * Ответственность:
+ * - управление потоком MVI-интентов (Load, Retry) через SharedFlow;
+ * - загрузка и хранение списка трат за сегодня и их суммы в StateFlow;
+ * - эмиссия эффектов (показывать Snackbar) при ошибках;
+ * - отслеживание текущего accountId из AccountPreferences.
+ *
+ */
+
 class ExpensesViewModel(
     private val getExpensesTodayUseCase: GetExpensesTodayUseCase,
     private val prefs: AccountPreferences
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
-    private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
 
     private val intents = MutableSharedFlow<ExpensesIntent>(extraBufferCapacity = 1)
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="start_period">Начало</string>
+    <string name="end_period">Конец</string>
+    <string name="amount_placeholder">Сумма</string>
+</resources>

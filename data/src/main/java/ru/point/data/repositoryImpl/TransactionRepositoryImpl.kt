@@ -12,6 +12,16 @@ import ru.point.network.flow.safeApiFlow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+/**
+ * TransactionRepositoryImpl
+ *
+ * Ответственность:
+ * - запрашивать транзакции из API через Retrofit;
+ * - преобразовывать DTO в доменную модель Transaction;
+ * - оборачивать результаты в Flow<Result<List<Transaction>>>.
+ *
+ */
+
 class TransactionRepositoryImpl(
     retrofit: Retrofit = RetrofitProvider.instance
 ) : TransactionRepository {

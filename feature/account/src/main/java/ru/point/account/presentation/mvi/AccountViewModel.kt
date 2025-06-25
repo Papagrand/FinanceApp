@@ -19,12 +19,23 @@ import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
 
+/**
+ * AccountViewModel
+ *
+ * Ответственность:
+ * - управление потоком MVI-интентов (Load/Retry) через SharedFlow;
+ * - загрузка данных аккаунтов через GetAllAccountsUseCase;
+ * - обновление StateFlow состояния (isLoading, accountData, error);
+ * - эмиссия эффектов (показ Snackbar) через SharedFlow.
+ *
+ * @param getAllAccountsUseCase юзкейс для получения списка аккаунтов
+ */
+
 class AccountViewModel(
     private val getAllAccountsUseCase: GetAllAccountsUseCase
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
-    private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
 
     private val intents = MutableSharedFlow<AccountIntent>(extraBufferCapacity = 1)
 
@@ -44,7 +55,6 @@ class AccountViewModel(
                 }
             }
         }
-
         dispatch(AccountIntent.Load)
     }
 

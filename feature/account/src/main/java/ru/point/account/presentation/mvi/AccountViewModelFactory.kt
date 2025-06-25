@@ -4,6 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
 
+/**
+ * AccountViewModelFactory
+ *
+ * Ответственность:
+ * - создание экземпляров AccountViewModel с передачей юзкейсов;
+ * - выбрасывание исключения при неподдерживаемом классе ViewModel.
+ *
+ */
+
 class AccountViewModelFactory(
     private val getAllAccountsUseCase: GetAllAccountsUseCase
 ) : ViewModelProvider.Factory {

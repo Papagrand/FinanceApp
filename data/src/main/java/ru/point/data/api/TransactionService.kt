@@ -5,6 +5,13 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.point.network.dto.TransactionDto
 
+/**
+ * TransactionService
+ *
+ * Ответственность:
+ * - объявлять HTTP методы для получения списка транзакций за период.
+ */
+
 interface TransactionService {
 
     @GET("api/v1/transactions/account/{accountId}/period")

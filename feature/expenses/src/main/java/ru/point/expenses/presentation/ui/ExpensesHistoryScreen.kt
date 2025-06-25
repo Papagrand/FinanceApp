@@ -1,23 +1,16 @@
 package ru.point.expenses.presentation.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,22 +18,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.core.common.AccountPreferences
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BackAction
 import ru.point.core.ui.BackState
+import ru.point.core.ui.BaseHistoryTopColumnPlaceholder
 import ru.point.core.ui.BaseHistoryTopElement
-import ru.point.core.ui.BaseListItem
 import ru.point.core.ui.BaseScaffold
 import ru.point.core.ui.FabState
 import ru.point.core.ui.NoInternetBanner
@@ -49,21 +36,30 @@ import ru.point.core.utils.NetworkHolder
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.core.utils.toPrettyNumber
 import ru.point.data.repositoryImpl.TransactionRepositoryImpl
-import ru.point.domain.model.Transaction
 import ru.point.domain.usecase.GetTransactionHistoryUseCase
 import ru.point.expenses.R
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryEffect
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryIntent
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModel
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModelFactory
+import ru.point.expenses.presentation.ui.composable_functions.ExpensesHistoryRow
 import ru.point.navigation.Navigator
 import ru.point.network.client.RetrofitProvider
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+
+/**
+ * ExpensesHistoryScreen
+ *
+ * Ответственность:
+ * - отображение истории расходов за текущий период: шапка с датами и суммой, список транзакций или состояния загрузки/ошибки;
+ * - отправка MVI-интента Load и обработка эффектов (показ Snackbar);
+ * - навигация назад и реакция на нажатие кнопки анализа;
+ * - показ баннера об отсутствии подключения.
+ *
+ */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,43 +126,7 @@ fun ExpensesHistoryScreen(
             ) { CircularProgressIndicator() }
 
             state.error != null -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                ) {
-                    BaseHistoryTopElement(
-                        modifier = Modifier,
-                        contentText = "Начало",
-                        trailText = monthYear
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier,
-                        color = MaterialTheme.colorScheme.surfaceDim,
-                        thickness = 1.dp
-                    )
-                    BaseHistoryTopElement(
-                        modifier = Modifier,
-                        contentText = "Конец",
-                        trailText = nowWithTime
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier,
-                        color = MaterialTheme.colorScheme.surfaceDim,
-                        thickness = 1.dp
-                    )
-                    BaseHistoryTopElement(
-                        modifier = Modifier,
-                        contentText = "Сумма",
-                        trailText = "0 ₽"
-                    )
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        text = "${state.error}",
-                    )
-                }
+                BaseHistoryTopColumnPlaceholder(innerPadding, state.error)
             }
 
             else -> {
@@ -209,7 +169,7 @@ fun ExpensesHistoryScreen(
                                 .fillMaxSize()
                         ) {
                             items(state.list) { expenseHistoryItem ->
-                                ExpenseHistoryRow(
+                                ExpensesHistoryRow(
                                     modifier = Modifier,
                                     expenseHistoryItem
                                 )
@@ -223,139 +183,9 @@ fun ExpensesHistoryScreen(
                         }
                     }
                 } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                    ) {
-                        BaseHistoryTopElement(
-                            modifier = Modifier,
-                            contentText = "Начало",
-                            trailText = monthYear
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier,
-                            color = MaterialTheme.colorScheme.surfaceDim,
-                            thickness = 1.dp
-                        )
-                        BaseHistoryTopElement(
-                            modifier = Modifier,
-                            contentText = "Конец",
-                            trailText = nowWithTime
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier,
-                            color = MaterialTheme.colorScheme.surfaceDim,
-                            thickness = 1.dp
-                        )
-                        BaseHistoryTopElement(
-                            modifier = Modifier,
-                            contentText = "Сумма",
-                            trailText = "0 ₽"
-                        )
-                    }
+                    BaseHistoryTopColumnPlaceholder(innerPadding)
                 }
             }
         }
-    }
-}
-
-@Composable
-fun ExpenseHistoryRow(
-    modifier: Modifier,
-    expenseHistoryItem: Transaction,
-    onClick: () -> Unit = {}
-) = BaseListItem(
-    rowHeight = 70.dp,
-    onClick = onClick,
-    modifier = modifier
-        .fillMaxWidth()
-        .clickable(onClick = { })
-        .padding(horizontal = 16.dp),
-    lead = {
-        val initials =
-            remember(expenseHistoryItem.categoryName) { initialsOf(expenseHistoryItem.categoryName) }
-        val iconText = expenseHistoryItem.emoji ?: initials
-
-        Box(
-            modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = iconText,
-                style = if (expenseHistoryItem.emoji != null)
-                    MaterialTheme.typography.bodyLarge
-                else
-                    TextStyle(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 12.sp,
-                        lineHeight = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        letterSpacing = 0.0.sp
-                    )
-            )
-        }
-    },
-
-    content = {
-        Text(
-            text = expenseHistoryItem.categoryName,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        if (expenseHistoryItem.comment != "") {
-            Text(
-                text = expenseHistoryItem.comment,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    },
-
-    trail = {
-        val instant = Instant.parse(expenseHistoryItem.dateTime)
-
-        val dateTime = instant
-            .atZone(ZoneId.systemDefault())
-            .toLocalDateTime()
-
-        val expenseTime = dateTime.format(
-            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm", Locale("ru"))
-        )
-
-        Column (
-            horizontalAlignment = Alignment.End
-        ) {
-            Text(
-                text = "${expenseHistoryItem.amount.toPrettyNumber()} ${expenseHistoryItem.currency.toCurrencySymbol()}",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = expenseTime,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.right_arrow),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp)
-        )
-
-    }
-)
-
-
-private fun initialsOf(title: String): String {
-    val words = title.trim().split("\\s+".toRegex())
-    val first = words.getOrNull(0)?.firstOrNull()?.uppercase() ?: ""
-    val second = words.getOrNull(1)?.firstOrNull()?.uppercase() ?: ""
-    return buildString {
-        append(first)
-        if (second.isNotEmpty()) append(second)
     }
 }

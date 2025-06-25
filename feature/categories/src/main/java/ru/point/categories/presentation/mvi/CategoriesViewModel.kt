@@ -21,13 +21,21 @@ import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
 
+/**
+ * CategoriesViewModel
+ *
+ * Ответственность:
+ * - получение и фильтрация списка категорий через ObserveCategoriesUseCase;
+ * - управление MVI-потоком: приём интентов (Load, Retry, Search), обновление состояния и эмиссия эффектов (Snackbar);
+ *
+ */
+
 class CategoriesViewModel(
     private val observeCategoriesUseCase: ObserveCategoriesUseCase,
     private val prefs: AccountPreferences
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
-    private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
 
     private val intents = MutableSharedFlow<CategoriesIntent>(extraBufferCapacity = 1)
 

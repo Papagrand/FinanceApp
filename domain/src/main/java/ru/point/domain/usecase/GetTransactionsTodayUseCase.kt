@@ -13,6 +13,15 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+/**
+ * GetExpensesTodayUseCase GetIncomesTodayUseCase
+ *
+ * Ответственность:
+ * - фильтровать поток транзакций по расходам или расходам;
+ * - вычислять общую сумму расходов и упаковывать в TodayTransactions.
+ *
+ */
+
 class GetExpensesTodayUseCase(private val repo: TransactionRepository) {
     operator fun invoke(id: Int): Flow<Result<TodayTransactions>> =
         repo.observeToday(id)
@@ -52,6 +61,16 @@ class GetIncomesTodayUseCase(private val repo: TransactionRepository) {
                 }
             }
 }
+
+/**
+ * GetTransactionHistoryUseCase
+ *
+ * Ответственность:
+ * - получать транзакции за текущий месяц, фильтровать по типу (доход/расход);
+ * - сортировать по дате и суммировать их;
+ * - упаковывать результат в TodayTransactions.
+ *
+ */
 
 class GetTransactionHistoryUseCase(
     private val repo: TransactionRepository,
@@ -93,15 +112,6 @@ class GetTransactionHistoryUseCase(
                 }
             }
     }
-}
-
-
-inline fun <T> Result<List<T>>.filterSuccess(
-    predicate: (T) -> Boolean
-): Result<List<T>> = when (this) {
-    is Result.Success -> Result.Success(data.filter(predicate))
-    is Result.Loading,
-    is Result.Error -> this
 }
 
 fun List<Transaction>.sumAmounts(): BigDecimal =

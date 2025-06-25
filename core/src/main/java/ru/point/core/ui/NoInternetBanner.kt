@@ -23,7 +23,7 @@ fun NoInternetBanner(tracker: NetworkTracker) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Нет подключения к интернету!",
+                text = "Нет подключения к интернету",
                 color = MaterialTheme.colorScheme.onError,
                 modifier = Modifier.padding(8.dp)
             )

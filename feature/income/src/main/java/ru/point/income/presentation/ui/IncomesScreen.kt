@@ -1,21 +1,17 @@
 package ru.point.income.presentation.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,15 +20,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.core.common.AccountPreferences
 import ru.point.core.ui.ActionState
-import ru.point.core.ui.BaseListItem
 import ru.point.core.ui.BaseScaffold
 import ru.point.core.ui.FabState
 import ru.point.core.ui.NoInternetBanner
@@ -41,7 +34,6 @@ import ru.point.core.utils.NetworkHolder
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.core.utils.toPrettyNumber
 import ru.point.data.repositoryImpl.TransactionRepositoryImpl
-import ru.point.domain.model.Transaction
 import ru.point.domain.model.TransactionPlaceHolder
 import ru.point.domain.usecase.GetIncomesTodayUseCase
 import ru.point.income.R
@@ -49,10 +41,11 @@ import ru.point.income.presentation.mvi.incomes.IncomesEffect
 import ru.point.income.presentation.mvi.incomes.IncomesIntent
 import ru.point.income.presentation.mvi.incomes.IncomesViewModel
 import ru.point.income.presentation.mvi.incomes.IncomesViewModelFactory
+import ru.point.income.presentation.ui.composable_functions.IncomeRow
+import ru.point.income.presentation.ui.composable_functions.TotalIncomesToday
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
 import ru.point.network.client.RetrofitProvider
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,9 +54,7 @@ fun IncomeScreen(
     onAddClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-
     val prefs = remember { AccountPreferences(context) }
-
     val repo = TransactionRepositoryImpl(RetrofitProvider.instance)
     val useCase = GetIncomesTodayUseCase(repo)
     val factory = remember { IncomesViewModelFactory(useCase, prefs) }
@@ -73,7 +64,7 @@ fun IncomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val tracker = remember { NetworkHolder.tracker }
-    val placeholder = expensesPlaceholder()
+    val placeholder = incomesPlaceholder()
 
     LaunchedEffect(Unit) {
         viewModel.dispatch(IncomesIntent.Load)
@@ -179,76 +170,8 @@ fun IncomeScreen(
     }
 }
 
-@Composable
-fun TotalIncomesToday(
-    modifier: Modifier,
-    total: String
-) {
-    Surface(
-        tonalElevation = 1.dp,
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        BaseListItem(
-            onClick = { },
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            rowHeight = 56.dp,
-            content = {
-                Text(
-                    text = stringResource(R.string.total),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            },
-            trail = {
-                Text(
-                    total,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        )
-    }
-}
 
-@Composable
-fun IncomeRow(
-    modifier: Modifier,
-    income: Transaction,
-    onClick: () -> Unit = {}
-) = BaseListItem(
-    rowHeight = 70.dp,
-    onClick = onClick,
-    modifier = modifier
-        .fillMaxWidth()
-        .clickable(onClick = { })
-        .padding(horizontal = 16.dp),
-    content = {
-        Text(
-            text = income.categoryName,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-    },
-    trail = {
-        Text(
-            text = "${income.amount.toPrettyNumber()} ${income.currency.toCurrencySymbol()}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.right_arrow),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp)
-        )
-    }
-)
-
-private fun expensesPlaceholder(): TransactionPlaceHolder {
+private fun incomesPlaceholder(): TransactionPlaceHolder {
     val placeholder = TransactionPlaceHolder(
         amount = "0",
         currency = "RUB"

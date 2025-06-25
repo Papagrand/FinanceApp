@@ -11,6 +11,17 @@ import ru.point.core.common.Result
 import ru.point.network.client.RetrofitProvider
 import ru.point.network.flow.safeApiFlow
 
+/**
+ * AccountRepositoryImpl
+ *
+ * Ответственность:
+ * - обращаться к REST API через Retrofit для получения данных аккаунта;
+ * - преобразовывать DTO в доменную модель Account;
+ * - оборачивать результаты в поток Flow<Result<Account>> через safeApiFlow.
+ *
+ * @param retrofit инстанс Retrofit для создания сервиса API
+ */
+
 class AccountRepositoryImpl(
     retrofit: Retrofit = RetrofitProvider.instance
 ) : AccountRepository {

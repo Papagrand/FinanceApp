@@ -8,7 +8,5 @@ import ru.point.core.common.Result
 class GetAllAccountsUseCase (
     private val repo: AccountRepository
 ) {
-
     operator fun invoke(): Flow<Result<Account>> = repo.observe()
-
 }

@@ -20,13 +20,24 @@ import ru.point.core.common.Result
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetTransactionHistoryUseCase
 
+/**
+ * ExpensesHistoryViewModel
+ *
+ * Ответственность:
+ * - управление MVI-потоком интентов (Load, Retry) через SharedFlow;
+ * - загрузка списка расходов за выбранный период и вычисление общей суммы;
+ * - обновление состояния экрана (isLoading, list, total, error) в StateFlow;
+ * - эмиссия побочных эффектов (ShowSnackbar) при ошибках;
+ * - отслеживание текущего accountId из AccountPreferences.
+ *
+ */
+
 class ExpensesHistoryViewModel(
     private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
     private val prefs: AccountPreferences
 ) : ViewModel() {
 
     private val bgJob = SupervisorJob()
-    private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
 
     private val intents = MutableSharedFlow<ExpensesHistoryIntent>(extraBufferCapacity = 1)
 

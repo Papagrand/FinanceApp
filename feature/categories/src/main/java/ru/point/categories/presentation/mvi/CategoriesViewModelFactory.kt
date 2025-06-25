@@ -5,6 +5,14 @@ import androidx.lifecycle.ViewModelProvider
 import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
 import ru.point.core.common.AccountPreferences
 
+/**
+ * CategoriesViewModelFactory
+ *
+ * Ответственность:
+ * - создание экземпляров CategoriesViewModel с необходимыми зависимостями;
+ * - выбрасывание исключения при передаче неподдерживаемого класса.
+ */
+
 class CategoriesViewModelFactory(
     private val useCase: ObserveCategoriesUseCase,
     private val prefs: AccountPreferences
