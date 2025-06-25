@@ -10,6 +10,8 @@ import ru.point.core.common.Result.*
 import ru.point.core.common.Result
 import ru.point.network.client.RetrofitProvider
 import ru.point.network.flow.safeApiFlow
+import javax.inject.Inject
+
 
 /**
  * AccountRepositoryImpl
@@ -22,11 +24,11 @@ import ru.point.network.flow.safeApiFlow
  * @param retrofit инстанс Retrofit для создания сервиса API
  */
 
-class AccountRepositoryImpl(
-    retrofit: Retrofit = RetrofitProvider.instance
+
+class AccountRepositoryImpl @Inject constructor(
+    private val api: AccountService
 ) : AccountRepository {
 
-    private val api = retrofit.create(AccountService::class.java)
     override fun observe(): Flow<Result<Account>> =
         safeApiFlow { api.getAccounts() }
             .map { result ->

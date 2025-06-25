@@ -30,6 +30,7 @@ import ru.point.account.presentation.mvi.AccountEffect
 import ru.point.account.presentation.mvi.AccountIntent
 import ru.point.account.presentation.mvi.AccountViewModel
 import ru.point.account.presentation.mvi.AccountViewModelFactory
+import ru.point.core.di.LocalViewModelFactory
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BaseScaffold
 import ru.point.core.ui.FabState
@@ -54,13 +55,7 @@ fun AccountScreen(
     navigator: Navigator,
     onAddClick: () -> Unit = {}
 ) {
-    val repo = AccountRepositoryImpl(RetrofitProvider.instance)
-
-    val useCase = GetAllAccountsUseCase(repo)
-
-    val factory = remember { AccountViewModelFactory(useCase) }
-
-    val viewModel: AccountViewModel = viewModel(factory = factory)
+    val viewModel: AccountViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsState()
 

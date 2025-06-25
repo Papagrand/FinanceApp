@@ -3,8 +3,6 @@ package ru.point.account.presentation.mvi
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +16,7 @@ import kotlinx.coroutines.launch
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
+import javax.inject.Inject
 
 /**
  * AccountViewModel
@@ -31,7 +30,7 @@ import ru.point.core.error.AppError
  * @param getAllAccountsUseCase юзкейс для получения списка аккаунтов
  */
 
-class AccountViewModel(
+class AccountViewModel @Inject constructor(
     private val getAllAccountsUseCase: GetAllAccountsUseCase
 ) : ViewModel() {
 

@@ -13,10 +13,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import ru.point.financeapp.events.SnackbarEvents
 import ru.point.financeapp.ui.navigation.NavGraph

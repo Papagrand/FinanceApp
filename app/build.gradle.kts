@@ -59,6 +59,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 
+    implementation("com.google.dagger:dagger:2.56")
+    kapt("com.google.dagger:dagger-compiler:2.56")
+    implementation("javax.inject:javax.inject:1")
+
     implementation ("androidx.datastore:datastore-preferences:1.1.6")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation(libs.androidx.core.ktx)

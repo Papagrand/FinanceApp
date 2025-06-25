@@ -1,6 +1,7 @@
 package ru.point.financeapp
 
 import android.app.Application
+import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -9,27 +10,35 @@ import kotlinx.coroutines.launch
 import ru.point.account.data.repositoryImpl.AccountRepositoryImpl
 import ru.point.core.common.AccountPreferences
 import ru.point.core.utils.NetworkHolder
-import ru.point.network.client.RetrofitProvider
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
+import ru.point.financeapp.di.AppComponent
+import ru.point.financeapp.di.DaggerAppComponent
 import ru.point.financeapp.events.SnackbarEvents
+import javax.inject.Inject
 
 class App : Application() {
 
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    private lateinit var accountPrefs: AccountPreferences
+    @Inject
+    lateinit var accountPrefs: AccountPreferences
 
-    private lateinit var accountRepo: AccountRepositoryImpl
+    @Inject
+    lateinit var accountRepo: AccountRepositoryImpl
+
+    lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
+
+        //TODO Потом сделать Инжект NetworkTracker в экраны (через ViewModel или напрямую в Composable), вместо обращения к NetworkHolder.tracker.
         NetworkHolder.init(this)
-        RetrofitProvider.init(NetworkHolder.tracker)
+
+        appComponent = DaggerAppComponent.factory().create(this)
+        appComponent.inject(this)
 
         accountPrefs = AccountPreferences(this)
-
-        accountRepo = AccountRepositoryImpl()
 
         appScope.launch {
             accountRepo.observe()
@@ -62,3 +71,6 @@ class App : Application() {
         super.onTerminate()
     }
 }
+
+val Context.appComponent: AppComponent
+    get() = (applicationContext as App).appComponent
