@@ -25,25 +25,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.categories.R
-import ru.point.categories.data.repositoryImpl.CategoryRepositoryImpl
-import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
 import ru.point.categories.presentation.mvi.CategoriesEffect
 import ru.point.categories.presentation.mvi.CategoriesIntent
 import ru.point.categories.presentation.mvi.CategoriesViewModel
-import ru.point.categories.presentation.mvi.CategoriesViewModelFactory
-import ru.point.core.common.AccountPreferences
+import ru.point.core.di.LocalViewModelFactory
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BaseScaffold
 import ru.point.core.ui.FabState
 import ru.point.core.ui.NoInternetBanner
 import ru.point.core.utils.NetworkHolder
 import ru.point.navigation.Navigator
-import ru.point.network.client.RetrofitProvider
 
 /**
  * CategoryScreen
@@ -59,15 +54,7 @@ fun CategoryScreen(
     navigator: Navigator,
     onAddClick: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-
-    val prefs = remember { AccountPreferences(context) }
-
-    val repo = CategoryRepositoryImpl(RetrofitProvider.instance)
-    val useCase = ObserveCategoriesUseCase(repo)
-    val factory = remember { CategoriesViewModelFactory(useCase, prefs) }
-
-    val viewModel: CategoriesViewModel = viewModel(factory = factory)
+    val viewModel: CategoriesViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsState()
 

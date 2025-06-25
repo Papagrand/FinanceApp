@@ -3,7 +3,6 @@ package ru.point.categories.presentation.mvi
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,6 +17,7 @@ import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
 import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
+import javax.inject.Inject
 
 /**
  * CategoriesViewModel
@@ -28,12 +28,10 @@ import ru.point.core.error.AppError
  *
  */
 
-class CategoriesViewModel(
+class CategoriesViewModel @Inject constructor(
     private val observeCategoriesUseCase: ObserveCategoriesUseCase,
     private val prefs: AccountPreferences,
 ) : ViewModel() {
-    private val bgJob = SupervisorJob()
-
     private val intents = MutableSharedFlow<CategoriesIntent>(extraBufferCapacity = 1)
 
     private val _state = MutableStateFlow(CategoriesState())
@@ -43,7 +41,6 @@ class CategoriesViewModel(
     val effect: SharedFlow<CategoriesEffect> = _effect.asSharedFlow()
 
     private val _accountId = MutableStateFlow<Int?>(null)
-    val accountId: StateFlow<Int?> = _accountId
 
     init {
         viewModelScope.launch {
@@ -69,6 +66,7 @@ class CategoriesViewModel(
                                 ),
                             )
                     }
+
                     is CategoriesIntent.Search -> {
                         _state.update { it.copy(query = intent.query) }
                         _accountId.value
@@ -79,11 +77,6 @@ class CategoriesViewModel(
         }
 
         dispatch(CategoriesIntent.Load)
-    }
-
-    override fun onCleared() {
-        bgJob.cancel()
-        super.onCleared()
     }
 
     fun dispatch(intent: CategoriesIntent) {

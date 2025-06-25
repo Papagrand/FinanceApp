@@ -19,38 +19,31 @@ import javax.inject.Inject
  * - обращаться к REST API через Retrofit для получения данных аккаунта;
  * - преобразовывать DTO в доменную модель Account;
  * - оборачивать результаты в поток Flow<Result<Account>> через safeApiFlow.
- *
- * @param retrofit инстанс Retrofit для создания сервиса API
  */
 
-class AccountRepositoryImpl
-    @Inject
-    constructor(
-        private val api: AccountService,
-    ) : AccountRepository {
-        override fun observe(): Flow<Result<Account>> =
-            safeApiFlow { api.getAccounts() }
-                .map { result ->
-                    when (result) {
-                        is Loading -> Loading
-                        is Error -> Error(result.cause)
-                        is Success -> {
-                            val list = result.data
-                            val dto =
-                                list.firstOrNull()
-                                    ?: throw NoSuchElementException("No account returned")
-                            Success(
-                                Account(
-                                    id = dto.id,
-                                    userId = dto.userId,
-                                    name = dto.name,
-                                    balance = dto.balance,
-                                    currency = dto.currency,
-                                    createdAt = dto.createdAt,
-                                    updatedAt = dto.updatedAt,
-                                ),
-                            )
-                        }
+class AccountRepositoryImpl @Inject constructor(
+    private val api: AccountService,
+) : AccountRepository {
+    override fun observe(): Flow<Result<Account>> =
+        safeApiFlow { api.getAccounts() }
+            .map { result ->
+                when (result) {
+                    is Loading -> Loading
+                    is Error -> Error(result.cause)
+                    is Success -> {
+                        val dto = result.data.first()
+                        Success(
+                            Account(
+                                id = dto.id,
+                                userId = dto.userId,
+                                name = dto.name,
+                                balance = dto.balance,
+                                currency = dto.currency,
+                                createdAt = dto.createdAt,
+                                updatedAt = dto.updatedAt,
+                            ),
+                        )
                     }
                 }
-    }
+            }
+}

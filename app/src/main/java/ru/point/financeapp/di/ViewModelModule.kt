@@ -6,6 +6,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import ru.point.account.presentation.mvi.AccountViewModel
+import ru.point.categories.presentation.mvi.CategoriesViewModel
 import ru.point.financeapp.MainActivityViewModel
 
 @Module
@@ -17,6 +18,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AccountViewModel::class)
     abstract fun bindAccountVM(vm: AccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CategoriesViewModel::class)
+    abstract fun bindCategoriesVM(vm: CategoriesViewModel): ViewModel
 
     @Binds
     @IntoMap
