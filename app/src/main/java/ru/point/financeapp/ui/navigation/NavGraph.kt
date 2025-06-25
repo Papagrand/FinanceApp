@@ -9,11 +9,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import ru.point.account.presentation.ui.AccountScreen
-import ru.point.expenses.presentation.ui.ExpensesScreen
-import ru.point.income.presentation.ui.IncomeScreen
 import ru.point.categories.presentation.ui.CategoryScreen
 import ru.point.expenses.presentation.ui.ExpensesHistoryScreen
+import ru.point.expenses.presentation.ui.ExpensesScreen
 import ru.point.financeapp.NavigatorImpl
+import ru.point.income.presentation.ui.IncomeScreen
 import ru.point.income.presentation.ui.IncomesHistoryScreen
 import ru.point.settings.presentation.SettingsScreen
 
@@ -23,7 +23,7 @@ fun NavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = "expenses_graph") {
         navigation(
             startDestination = NavRoute.Expenses.route,
-            route = "expenses_graph"
+            route = "expenses_graph",
         ) {
             composable(
                 NavRoute.Expenses.route,
@@ -48,9 +48,8 @@ fun NavGraph(navController: NavHostController) {
 
         navigation(
             startDestination = NavRoute.Income.route,
-            route = "incomes_graph"
+            route = "incomes_graph",
         ) {
-
             composable(
                 NavRoute.Income.route,
                 enterTransition = { EnterTransition.None },

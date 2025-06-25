@@ -22,9 +22,8 @@ import ru.point.domain.usecase.GetIncomesTodayUseCase
 
 class IncomesViewModel(
     private val getIncomesTodayUseCase: GetIncomesTodayUseCase,
-    private val prefs: AccountPreferences
+    private val prefs: AccountPreferences,
 ) : ViewModel() {
-
     private val bgJob = SupervisorJob()
     private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
 
@@ -53,13 +52,14 @@ class IncomesViewModel(
             intents.collectLatest { intent ->
                 when (intent) {
                     is IncomesIntent.Load,
-                    is IncomesIntent.Retry -> {
+                    is IncomesIntent.Retry,
+                    -> {
                         _accountId.value
                             ?.let { load(it) }
                             ?: _effect.emit(
                                 IncomesEffect.ShowSnackbar(
-                                    "Account ID ещё не инициализирован"
-                                )
+                                    "Account ID ещё не инициализирован",
+                                ),
                             )
                     }
                 }
@@ -81,24 +81,26 @@ class IncomesViewModel(
             getIncomesTodayUseCase(accountId).collect { result ->
                 when (result) {
                     is Result.Loading -> _state.update { it.copy(isLoading = true, error = null) }
-                    is Result.Success -> _state.update {
-                        it.copy(
-                            isLoading = false,
-                            list = result.data.list,
-                            total = result.data.total,
-                            error = null
-                        )
-                    }
+                    is Result.Success ->
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                list = result.data.list,
+                                total = result.data.total,
+                                error = null,
+                            )
+                        }
 
                     is Result.Error -> {
-                        val msg = when (val cause = result.cause) {
-                            AppError.BadRequest -> "Неверный формат данных"
-                            AppError.Unauthorized -> "Неавторизованный доступ"
-                            AppError.NoInternet -> "Нет подключения к интернету"
-                            is AppError.ServerError -> "Сервер временно недоступен"
-                            is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                            else -> result.cause.toString()
-                        }
+                        val msg =
+                            when (val cause = result.cause) {
+                                AppError.BadRequest -> "Неверный формат данных"
+                                AppError.Unauthorized -> "Неавторизованный доступ"
+                                AppError.NoInternet -> "Нет подключения к интернету"
+                                is AppError.ServerError -> "Сервер временно недоступен"
+                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
+                                else -> result.cause.toString()
+                            }
                         _state.update { it.copy(isLoading = false, error = msg) }
                         _effect.emit(IncomesEffect.ShowSnackbar("Ошибка: $msg"))
                     }
@@ -106,6 +108,4 @@ class IncomesViewModel(
             }
         }
     }
-
-
 }

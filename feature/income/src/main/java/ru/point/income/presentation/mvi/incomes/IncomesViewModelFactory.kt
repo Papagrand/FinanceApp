@@ -7,8 +7,7 @@ import ru.point.domain.usecase.GetIncomesTodayUseCase
 
 class IncomesViewModelFactory(
     private val getIncomesTodayUseCase: GetIncomesTodayUseCase,
-    private val prefs: AccountPreferences
-
+    private val prefs: AccountPreferences,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(IncomesViewModel::class.java)) {

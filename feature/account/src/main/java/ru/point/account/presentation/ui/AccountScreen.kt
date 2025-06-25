@@ -23,13 +23,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.account.R
-import ru.point.account.data.repositoryImpl.AccountRepositoryImpl
 import ru.point.account.domain.model.Account
-import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.account.presentation.mvi.AccountEffect
 import ru.point.account.presentation.mvi.AccountIntent
 import ru.point.account.presentation.mvi.AccountViewModel
-import ru.point.account.presentation.mvi.AccountViewModelFactory
 import ru.point.core.di.LocalViewModelFactory
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BaseScaffold
@@ -38,7 +35,6 @@ import ru.point.core.ui.NoInternetBanner
 import ru.point.core.ui.TopBarAction
 import ru.point.core.utils.NetworkHolder
 import ru.point.navigation.Navigator
-import ru.point.network.client.RetrofitProvider
 
 /**
  * AccountScreen
@@ -53,7 +49,7 @@ import ru.point.network.client.RetrofitProvider
 @Composable
 fun AccountScreen(
     navigator: Navigator,
-    onAddClick: () -> Unit = {}
+    onAddClick: () -> Unit = {},
 ) {
     val viewModel: AccountViewModel = viewModel(factory = LocalViewModelFactory.current)
 
@@ -75,11 +71,12 @@ fun AccountScreen(
 
     BaseScaffold(
         title = stringResource(R.string.my_account),
-        action = TopBarAction(
-            iconRes = R.drawable.edit,
-            contentDescription = "Редактировать",
-            onClick = {}
-        ),
+        action =
+            TopBarAction(
+                iconRes = R.drawable.edit,
+                contentDescription = "Редактировать",
+                onClick = {},
+            ),
         actionState = ActionState.Shown,
         fabState = FabState.Shown,
         onFabClick = onAddClick,
@@ -88,11 +85,12 @@ fun AccountScreen(
         when {
             state.isLoading -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(top = 32.dp),
-                    contentAlignment = Alignment.TopCenter
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(top = 32.dp),
+                    contentAlignment = Alignment.TopCenter,
                 ) {
                     CircularProgressIndicator()
                 }
@@ -100,21 +98,23 @@ fun AccountScreen(
 
             state.error != null -> {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-
-                    ) {
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                ) {
                     Balance(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        accountPlaceholder()
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                        accountPlaceholder(),
                     )
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                         text = "${state.error}",
                     )
                 }
@@ -122,38 +122,40 @@ fun AccountScreen(
 
             else -> {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-
-                    ) {
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                ) {
                     if (state.accountData != null) {
                         Balance(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp),
-                            state.accountData!!
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                            state.accountData!!,
                         )
                     } else {
                         Balance(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp),
-                            accountPlaceholder()
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                            accountPlaceholder(),
                         )
                     }
                     HorizontalDivider(
                         modifier = Modifier,
                         color = MaterialTheme.colorScheme.surfaceDim,
-                        thickness = 1.dp
+                        thickness = 1.dp,
                     )
 
                     Currency(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
                     )
-
                 }
             }
         }
@@ -162,15 +164,15 @@ fun AccountScreen(
 }
 
 private fun accountPlaceholder(): Account {
-    val placeholder = Account(
-        balance = "0",
-        currency = "RUB",
-        id = 1,
-        userId = 1,
-        name = "Баланс",
-        createdAt = "",
-        updatedAt = ""
-    )
+    val placeholder =
+        Account(
+            balance = "0",
+            currency = "RUB",
+            id = 1,
+            userId = 1,
+            name = "Баланс",
+            createdAt = "",
+            updatedAt = "",
+        )
     return placeholder
 }
-

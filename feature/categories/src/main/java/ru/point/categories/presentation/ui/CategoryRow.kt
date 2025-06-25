@@ -32,46 +32,49 @@ import ru.point.core.ui.BaseListItem
 fun CategoryRow(
     modifier: Modifier,
     category: Category,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) = BaseListItem(
     rowHeight = 70.dp,
     onClick = onClick,
-    modifier = modifier
-        .fillMaxWidth()
-        .clickable(onClick = { })
-        .padding(horizontal = 16.dp),
+    modifier =
+        modifier
+            .fillMaxWidth()
+            .clickable(onClick = { })
+            .padding(horizontal = 16.dp),
     lead = {
         val initials = remember(category.categoryName) { initialsOf(category.categoryName) }
         val iconText = category.emoji ?: initials
 
         Box(
-            modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = iconText,
-                style = if (category.emoji != null)
-                    MaterialTheme.typography.bodyLarge
-                else
-                    TextStyle(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 12.sp,
-                        lineHeight = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        letterSpacing = 0.0.sp
-                    )
+                style =
+                    if (category.emoji != null) {
+                        MaterialTheme.typography.bodyLarge
+                    } else {
+                        TextStyle(
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 12.sp,
+                            lineHeight = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            letterSpacing = 0.0.sp,
+                        )
+                    },
             )
         }
     },
-
     content = {
         Text(
             text = category.categoryName,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
-    }
+    },
 )

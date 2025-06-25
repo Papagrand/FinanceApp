@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import ru.point.core.ui.BaseListItem
 import ru.point.settings.R
 
-
 @Composable
 fun SettingsRow(
     title: String,
@@ -32,48 +31,50 @@ fun SettingsRow(
     var checked by remember { mutableStateOf(false) }
 
     BaseListItem(
-
         rowHeight = 56.dp,
         onClick = if (isTheme) null else onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .then(
-                if (!isTheme) Modifier.clickable(onClick = onClick)
-                else Modifier
-            )
-            .padding(horizontal = 16.dp),
-
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (!isTheme) {
+                        Modifier.clickable(onClick = onClick)
+                    } else {
+                        Modifier
+                    },
+                )
+                .padding(horizontal = 16.dp),
         content = {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         },
-
         trail = {
             if (isTheme) {
                 Switch(
                     modifier = Modifier.size(52.dp, 32.dp),
                     checked = checked,
                     onCheckedChange = { checked = it },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.primary,
-                        uncheckedThumbColor = MaterialTheme.colorScheme.inverseSurface,
-                        checkedTrackColor = MaterialTheme.colorScheme.inverseOnSurface,
-                        uncheckedTrackColor = MaterialTheme.colorScheme.inverseOnSurface,
-                        uncheckedBorderColor = MaterialTheme.colorScheme.inverseSurface,
-                        checkedBorderColor = MaterialTheme.colorScheme.primary
-                    )
+                    colors =
+                        SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.primary,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.inverseSurface,
+                            checkedTrackColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            uncheckedTrackColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            uncheckedBorderColor = MaterialTheme.colorScheme.inverseSurface,
+                            checkedBorderColor = MaterialTheme.colorScheme.primary,
+                        ),
                 )
             } else {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.triangle_right),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
             }
-        }
+        },
     )
 }

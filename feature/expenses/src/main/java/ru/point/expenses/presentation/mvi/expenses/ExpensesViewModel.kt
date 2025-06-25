@@ -2,8 +2,6 @@ package ru.point.expenses.presentation.mvi.expenses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,9 +31,8 @@ import ru.point.domain.usecase.GetExpensesTodayUseCase
 
 class ExpensesViewModel(
     private val getExpensesTodayUseCase: GetExpensesTodayUseCase,
-    private val prefs: AccountPreferences
+    private val prefs: AccountPreferences,
 ) : ViewModel() {
-
     private val bgJob = SupervisorJob()
 
     private val intents = MutableSharedFlow<ExpensesIntent>(extraBufferCapacity = 1)
@@ -63,13 +60,14 @@ class ExpensesViewModel(
             intents.collectLatest { intent ->
                 when (intent) {
                     is ExpensesIntent.Load,
-                    is ExpensesIntent.Retry -> {
+                    is ExpensesIntent.Retry,
+                    -> {
                         _accountId.value
                             ?.let { load(it) }
                             ?: _effect.emit(
                                 ExpensesEffect.ShowSnackbar(
-                                    "Account ID ещё не инициализирован"
-                                )
+                                    "Account ID ещё не инициализирован",
+                                ),
                             )
                     }
                 }
@@ -91,24 +89,26 @@ class ExpensesViewModel(
             getExpensesTodayUseCase(accountId).collect { result ->
                 when (result) {
                     is Result.Loading -> _state.update { it.copy(isLoading = true, error = null) }
-                    is Result.Success -> _state.update {
-                        it.copy(
-                            isLoading = false,
-                            list = result.data.list,
-                            total = result.data.total,
-                            error = null
-                        )
-                    }
+                    is Result.Success ->
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                list = result.data.list,
+                                total = result.data.total,
+                                error = null,
+                            )
+                        }
 
                     is Result.Error -> {
-                        val msg = when (val cause = result.cause) {
-                            AppError.BadRequest -> "Неверный формат данных"
-                            AppError.Unauthorized -> "Неавторизованный доступ"
-                            AppError.NoInternet -> "Нет подключения к интернету"
-                            is AppError.ServerError -> "Сервер временно недоступен"
-                            is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                            else -> "Неизвестная ошибка"
-                        }
+                        val msg =
+                            when (val cause = result.cause) {
+                                AppError.BadRequest -> "Неверный формат данных"
+                                AppError.Unauthorized -> "Неавторизованный доступ"
+                                AppError.NoInternet -> "Нет подключения к интернету"
+                                is AppError.ServerError -> "Сервер временно недоступен"
+                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
+                                else -> "Неизвестная ошибка"
+                            }
                         _state.update { it.copy(isLoading = false, error = msg) }
                         _effect.emit(ExpensesEffect.ShowSnackbar("Ошибка: $msg"))
                     }

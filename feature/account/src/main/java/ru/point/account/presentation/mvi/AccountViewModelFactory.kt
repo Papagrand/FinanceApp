@@ -14,7 +14,7 @@ import ru.point.account.domain.usecase.GetAllAccountsUseCase
  */
 
 class AccountViewModelFactory(
-    private val getAllAccountsUseCase: GetAllAccountsUseCase
+    private val getAllAccountsUseCase: GetAllAccountsUseCase,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AccountViewModel::class.java)) {

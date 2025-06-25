@@ -1,4 +1,4 @@
-package ru.point.income.presentation.ui.composable_functions
+package ru.point.income.presentation.ui.composableFunctions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,92 +36,94 @@ import java.util.Locale
 fun IncomesHistoryRow(
     modifier: Modifier,
     incomeHistoryItem: Transaction,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) = BaseListItem(
     rowHeight = 70.dp,
     onClick = onClick,
-    modifier = modifier
-        .fillMaxWidth()
-        .clickable(onClick = { })
-        .padding(horizontal = 16.dp),
+    modifier =
+        modifier
+            .fillMaxWidth()
+            .clickable(onClick = { })
+            .padding(horizontal = 16.dp),
     lead = {
         val initials =
             remember(incomeHistoryItem.categoryName) { initialsOf(incomeHistoryItem.categoryName) }
         val iconText = incomeHistoryItem.emoji ?: initials
 
         Box(
-            modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = iconText,
-                style = if (incomeHistoryItem.emoji != null)
-                    MaterialTheme.typography.bodyLarge
-                else
-                    TextStyle(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 12.sp,
-                        lineHeight = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        letterSpacing = 0.0.sp
-                    )
+                style =
+                    if (incomeHistoryItem.emoji != null) {
+                        MaterialTheme.typography.bodyLarge
+                    } else {
+                        TextStyle(
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 12.sp,
+                            lineHeight = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            letterSpacing = 0.0.sp,
+                        )
+                    },
             )
         }
     },
-
     content = {
         Text(
             text = incomeHistoryItem.categoryName,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
         if (incomeHistoryItem.comment != "") {
             Text(
                 text = incomeHistoryItem.comment,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     },
-
     trail = {
         val instant = Instant.parse(incomeHistoryItem.dateTime)
 
-        val dateTime = instant
-            .atZone(ZoneId.systemDefault())
-            .toLocalDateTime()
+        val dateTime =
+            instant
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime()
 
-        val incomeTime = dateTime.format(
-            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm", Locale("ru"))
-        )
+        val incomeTime =
+            dateTime.format(
+                DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm", Locale("ru")),
+            )
 
-        Column (
-            horizontalAlignment = Alignment.End
+        Column(
+            horizontalAlignment = Alignment.End,
         ) {
             Text(
                 text = "${incomeHistoryItem.amount.toPrettyNumber()} ${incomeHistoryItem.currency.toCurrencySymbol()}",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = incomeTime,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.right_arrow),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
-
-    }
+    },
 )
-
 
 private fun initialsOf(title: String): String {
     val words = title.trim().split("\\s+".toRegex())

@@ -1,4 +1,4 @@
-package ru.point.expenses.presentation.ui.composable_functions
+package ru.point.income.presentation.ui.composableFunctions
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,40 +10,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.point.core.ui.BaseListItem
-import ru.point.expenses.R
+import ru.point.income.R
 
 @Composable
-fun TotalExpensesToday(
+fun TotalIncomesToday(
     modifier: Modifier,
-    total: String
+    total: String,
 ) {
     Surface(
         tonalElevation = 1.dp,
         color = MaterialTheme.colorScheme.secondaryContainer,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier =
+            Modifier
+                .fillMaxWidth(),
     ) {
         BaseListItem(
             onClick = { },
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             rowHeight = 56.dp,
-            lead = { },
             content = {
                 Text(
                     text = stringResource(R.string.total),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             },
             trail = {
                 Text(
                     total,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
-            }
+            },
         )
     }
 }

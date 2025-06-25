@@ -25,7 +25,7 @@ import ru.point.expenses.presentation.mvi.expenses.ExpensesEffect
 import ru.point.expenses.presentation.mvi.expenses.ExpensesIntent
 import ru.point.expenses.presentation.mvi.expenses.ExpensesViewModel
 import ru.point.expenses.presentation.mvi.expenses.ExpensesViewModelFactory
-import ru.point.expenses.presentation.ui.composable_functions.ExpensesColumn
+import ru.point.expenses.presentation.ui.composableFunctions.ExpensesColumn
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
 import ru.point.network.client.RetrofitProvider
@@ -45,7 +45,7 @@ import ru.point.network.client.RetrofitProvider
 @Composable
 fun ExpensesScreen(
     navigator: Navigator,
-    onAddClick: () -> Unit = {}
+    onAddClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -66,7 +66,7 @@ fun ExpensesScreen(
     LaunchedEffect(Unit) {
         viewModel.dispatch(ExpensesIntent.Load)
         viewModel.effect.collect { eff ->
-            if (eff is ExpensesEffect.ShowSnackbar){
+            if (eff is ExpensesEffect.ShowSnackbar) {
                 snackbarHostState.showSnackbar(eff.message)
             }
         }
@@ -74,17 +74,18 @@ fun ExpensesScreen(
 
     BaseScaffold(
         title = stringResource(R.string.expenses_today),
-        action = TopBarAction(
-            iconRes = R.drawable.history,
-            contentDescription = "История",
-            onClick = {
-                navigator.navigate(Route.ExpensesHistory)
-            }
-        ),
+        action =
+            TopBarAction(
+                iconRes = R.drawable.history,
+                contentDescription = "История",
+                onClick = {
+                    navigator.navigate(Route.ExpensesHistory)
+                },
+            ),
         actionState = ActionState.Shown,
         fabState = FabState.Shown,
         onFabClick = onAddClick,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
     ) { innerPadding ->
 
         NoInternetBanner(tracker = tracker)
@@ -93,11 +94,11 @@ fun ExpensesScreen(
     }
 }
 
-
 private fun expensesPlaceholder(): TransactionPlaceHolder {
-    val placeholder = TransactionPlaceHolder(
-        amount = "0",
-        currency = "RUB"
-    )
+    val placeholder =
+        TransactionPlaceHolder(
+            amount = "0",
+            currency = "RUB",
+        )
     return placeholder
 }

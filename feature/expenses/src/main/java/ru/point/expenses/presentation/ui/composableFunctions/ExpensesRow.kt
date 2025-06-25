@@ -1,4 +1,4 @@
-package ru.point.expenses.presentation.ui.composable_functions
+package ru.point.expenses.presentation.ui.composableFunctions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,69 +31,71 @@ import ru.point.expenses.R
 fun ExpenseRow(
     modifier: Modifier,
     expense: Transaction,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) = BaseListItem(
     rowHeight = 70.dp,
     onClick = onClick,
-    modifier = modifier
-        .fillMaxWidth()
-        .clickable(onClick = { })
-        .padding(horizontal = 16.dp),
+    modifier =
+        modifier
+            .fillMaxWidth()
+            .clickable(onClick = { })
+            .padding(horizontal = 16.dp),
     lead = {
         val initials = remember(expense.categoryName) { initialsOf(expense.categoryName) }
         val iconText = expense.emoji ?: initials
 
         Box(
-            modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = iconText,
-                style = if (expense.emoji != null)
-                    MaterialTheme.typography.bodyLarge
-                else
-                    TextStyle(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 12.sp,
-                        lineHeight = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        letterSpacing = 0.0.sp
-                    )
+                style =
+                    if (expense.emoji != null) {
+                        MaterialTheme.typography.bodyLarge
+                    } else {
+                        TextStyle(
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 12.sp,
+                            lineHeight = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            letterSpacing = 0.0.sp,
+                        )
+                    },
             )
         }
     },
-
     content = {
         Text(
             text = expense.categoryName,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
         if (expense.comment != "") {
             Text(
                 text = expense.comment,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     },
-
     trail = {
         Text(
             text = "${expense.amount.toPrettyNumber()} ${expense.currency.toCurrencySymbol()}",
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.right_arrow),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
-    }
+    },
 )
 
 private fun initialsOf(title: String): String {

@@ -7,14 +7,14 @@ import ru.point.domain.usecase.GetExpensesTodayUseCase
 
 class ExpensesViewModelFactory(
     private val getExpensesTodayUseCase: GetExpensesTodayUseCase,
-    private val prefs: AccountPreferences
+    private val prefs: AccountPreferences,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ExpensesViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return ExpensesViewModel(
                 getExpensesTodayUseCase,
-                prefs
+                prefs,
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class ${modelClass.name}")

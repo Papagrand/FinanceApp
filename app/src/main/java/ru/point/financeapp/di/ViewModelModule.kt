@@ -10,7 +10,6 @@ import ru.point.financeapp.MainActivityViewModel
 
 @Module
 abstract class ViewModelModule {
-
     @Binds
     abstract fun bindFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 
@@ -19,6 +18,8 @@ abstract class ViewModelModule {
     @ViewModelKey(AccountViewModel::class)
     abstract fun bindAccountVM(vm: AccountViewModel): ViewModel
 
-    @Binds @IntoMap @ViewModelKey(MainActivityViewModel::class)
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainActivityViewModel::class)
     abstract fun bindMainActivityVM(vm: MainActivityViewModel): ViewModel
 }

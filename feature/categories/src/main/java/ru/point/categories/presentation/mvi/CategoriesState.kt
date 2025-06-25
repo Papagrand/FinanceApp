@@ -6,5 +6,5 @@ data class CategoriesState(
     val isLoading: Boolean = false,
     val list: List<Category> = emptyList(),
     val error: String? = null,
-    val query: String = ""
+    val query: String = "",
 )

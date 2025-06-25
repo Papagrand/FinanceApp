@@ -57,7 +57,7 @@ import ru.point.network.client.RetrofitProvider
 @Composable
 fun CategoryScreen(
     navigator: Navigator,
-    onAddClick: () -> Unit = {}
+    onAddClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -91,43 +91,46 @@ fun CategoryScreen(
         title = stringResource(R.string.my_categories),
         action = null,
         actionState = ActionState.Hidden,
-        fabState = FabState.Hidden
+        fabState = FabState.Hidden,
     ) { innerPadding ->
 
         NoInternetBanner(tracker = tracker)
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             var query by remember { mutableStateOf("") }
             CategorySearch(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .background(MaterialTheme.colorScheme.outline),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .background(MaterialTheme.colorScheme.outline),
                 value = text.value,
                 onValueChange = { new ->
                     query = new
                     viewModel.dispatch(CategoriesIntent.Search(new))
                 },
-                placeHolderResId = R.string.search_placeholder
+                placeHolderResId = R.string.search_placeholder,
             )
 
             HorizontalDivider(
                 modifier = Modifier,
                 color = MaterialTheme.colorScheme.surfaceDim,
-                thickness = 1.dp
+                thickness = 1.dp,
             )
 
             when {
                 state.isLoading -> {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 32.dp),
-                        contentAlignment = Alignment.TopCenter
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(top = 32.dp),
+                        contentAlignment = Alignment.TopCenter,
                     ) {
                         CircularProgressIndicator()
                     }
@@ -143,22 +146,22 @@ fun CategoryScreen(
 
                 else -> {
                     LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
+                        modifier =
+                            Modifier
+                                .fillMaxSize(),
                     ) {
                         items(state.list) { selection ->
                             CategoryRow(
                                 modifier = Modifier,
-                                selection
+                                selection,
                             )
                             HorizontalDivider(
                                 modifier = Modifier,
                                 color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp
+                                thickness = 1.dp,
                             )
                         }
                     }
-
                 }
             }
         }

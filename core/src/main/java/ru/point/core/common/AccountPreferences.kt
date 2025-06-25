@@ -14,8 +14,9 @@ class AccountPreferences(private val context: Context) {
         private val ACCOUNT_ID_KEY = intPreferencesKey("account_id")
     }
 
-    val accountIdFlow: Flow<Int?> = context.dataStore.data
-        .map { prefs -> prefs[ACCOUNT_ID_KEY] }
+    val accountIdFlow: Flow<Int?> =
+        context.dataStore.data
+            .map { prefs -> prefs[ACCOUNT_ID_KEY] }
 
     suspend fun saveAccountId(id: Int) {
         context.dataStore.edit { prefs ->

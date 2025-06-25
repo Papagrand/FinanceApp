@@ -1,4 +1,4 @@
-package ru.point.income.presentation.ui.composable_functions
+package ru.point.income.presentation.ui.composableFunctions
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,32 +22,33 @@ import ru.point.income.R
 fun IncomeRow(
     modifier: Modifier,
     income: Transaction,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) = BaseListItem(
     rowHeight = 70.dp,
     onClick = onClick,
-    modifier = modifier
-        .fillMaxWidth()
-        .clickable(onClick = { })
-        .padding(horizontal = 16.dp),
+    modifier =
+        modifier
+            .fillMaxWidth()
+            .clickable(onClick = { })
+            .padding(horizontal = 16.dp),
     content = {
         Text(
             text = income.categoryName,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
     },
     trail = {
         Text(
             text = "${income.amount.toPrettyNumber()} ${income.currency.toCurrencySymbol()}",
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.right_arrow),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
-    }
+    },
 )

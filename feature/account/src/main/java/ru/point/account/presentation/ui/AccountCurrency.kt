@@ -32,36 +32,38 @@ internal fun Currency(
     Surface(
         tonalElevation = 1.dp,
         color = MaterialTheme.colorScheme.secondaryContainer,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier =
+            Modifier
+                .fillMaxWidth(),
     ) {
         BaseListItem(
             onClick = onClick,
-            modifier = modifier
-                .fillMaxWidth()
-                .clickable(onClick = { })
-                .padding(horizontal = 16.dp),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = { })
+                    .padding(horizontal = 16.dp),
             rowHeight = 56.dp,
             content = {
                 Text(
                     text = stringResource(R.string.currency),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             },
             trail = {
                 Text(
                     "₽",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.right_arrow),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
-            }
+            },
         )
     }
 }

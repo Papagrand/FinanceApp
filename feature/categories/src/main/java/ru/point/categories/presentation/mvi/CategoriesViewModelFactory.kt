@@ -15,7 +15,7 @@ import ru.point.core.common.AccountPreferences
 
 class CategoriesViewModelFactory(
     private val useCase: ObserveCategoriesUseCase,
-    private val prefs: AccountPreferences
+    private val prefs: AccountPreferences,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CategoriesViewModel::class.java)) {

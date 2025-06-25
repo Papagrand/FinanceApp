@@ -29,7 +29,7 @@ fun CategorySearch(
             Text(
                 text = stringResource(placeHolderResId),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
         singleLine = true,
@@ -37,7 +37,7 @@ fun CategorySearch(
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
         shape = RectangleShape,

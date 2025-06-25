@@ -1,4 +1,4 @@
-package ru.point.network.swagger_models
+package ru.point.network.swaggerModels
 
 data class TransactionResponse(
     val id: Int,
@@ -8,5 +8,5 @@ data class TransactionResponse(
     val transactionDate: String,
     val comment: String?,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
 )

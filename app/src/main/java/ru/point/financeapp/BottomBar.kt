@@ -1,7 +1,11 @@
 package ru.point.financeapp
 
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -12,13 +16,14 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 fun BottomBar(
     items: List<BottomNavigationItem>,
     currentDestination: NavDestination?,
-    onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit,
 ) {
     NavigationBar(Modifier) {
         items.forEach { item ->
-            val selected = currentDestination
-                ?.hierarchy
-                ?.any { it.route == item.route } == true
+            val selected =
+                currentDestination
+                    ?.hierarchy
+                    ?.any { it.route == item.route } == true
 
             NavigationBarItem(
                 selected = selected,
@@ -27,14 +32,15 @@ fun BottomBar(
                 label = {
                     Text(
                         text = item.title,
-                        fontWeight = if (selected) FontWeight.W600 else FontWeight.W500
+                        fontWeight = if (selected) FontWeight.W600 else FontWeight.W500,
                     )
                 },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
             )
         }
     }

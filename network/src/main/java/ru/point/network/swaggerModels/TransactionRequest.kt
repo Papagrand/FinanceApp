@@ -1,12 +1,9 @@
-package ru.point.network.swagger_models
+package ru.point.network.swaggerModels
 
-data class Transaction(
-    val id: Int,
+data class TransactionRequest(
     val accountId: Int,
     val categoryId: Int,
     val amount: String,
     val transactionDate: String,
     val comment: String?,
-    val createdAt: String,
-    val updatedAt: String
 )

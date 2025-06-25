@@ -20,42 +20,40 @@ import ru.point.navigation.Navigator
 import ru.point.settings.R
 import ru.point.settings.domain.SettingsUi
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
-    navigator: Navigator,
-) {
+fun SettingsScreen(navigator: Navigator) {
     val settings = remember { demoSettings() }
 
     BaseScaffold(
         title = stringResource(R.string.settings),
         action = null,
         actionState = ActionState.Hidden,
-        fabState = FabState.Hidden
-    )  { innerPadding ->
+        fabState = FabState.Hidden,
+    ) { innerPadding ->
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-
-            LazyColumn(
-                modifier = Modifier
+            modifier =
+                Modifier
                     .fillMaxSize()
+                    .padding(innerPadding),
+        ) {
+            LazyColumn(
+                modifier =
+                    Modifier
+                        .fillMaxSize(),
             ) {
                 items(settings) { setting ->
                     SettingsRow(
                         title = setting.title,
                         isTheme = setting.isTheme,
                         onClick = { /* навигация */ },
-                        modifier = Modifier
+                        modifier = Modifier,
                     )
                     HorizontalDivider(
                         modifier = Modifier,
                         color = MaterialTheme.colorScheme.surfaceDim,
-                        thickness = 1.dp
+                        thickness = 1.dp,
                     )
                 }
             }
@@ -63,13 +61,14 @@ fun SettingsScreen(
     }
 }
 
-private fun demoSettings(): List<SettingsUi> = listOf(
-    SettingsUi(title = "Тёмная тема", true),
-    SettingsUi(title = "Основной цвет"),
-    SettingsUi(title = "Звуки"),
-    SettingsUi(title = "Хаптики"),
-    SettingsUi(title = "Код пароль"),
-    SettingsUi(title = "Cинхронизация"),
-    SettingsUi(title = "Язык"),
-    SettingsUi(title = "О программе")
-)
+private fun demoSettings(): List<SettingsUi> =
+    listOf(
+        SettingsUi(title = "Тёмная тема", true),
+        SettingsUi(title = "Основной цвет"),
+        SettingsUi(title = "Звуки"),
+        SettingsUi(title = "Хаптики"),
+        SettingsUi(title = "Код пароль"),
+        SettingsUi(title = "Cинхронизация"),
+        SettingsUi(title = "Язык"),
+        SettingsUi(title = "О программе"),
+    )

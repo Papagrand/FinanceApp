@@ -1,4 +1,4 @@
-package ru.point.expenses.presentation.ui.composable_functions
+package ru.point.expenses.presentation.ui.composableFunctions
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,86 +21,87 @@ import ru.point.core.utils.toPrettyNumber
 import ru.point.domain.model.TransactionPlaceHolder
 import ru.point.expenses.presentation.mvi.expenses.ExpensesState
 
-
 @Composable
 fun ExpensesColumn(
     innerPadding: PaddingValues,
     state: ExpensesState,
-    placeholder: TransactionPlaceHolder
-){
+    placeholder: TransactionPlaceHolder,
+) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
     ) {
         when {
-            state.isLoading -> Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(top = 32.dp),
-                contentAlignment = Alignment.TopCenter
-            ) { CircularProgressIndicator() }
+            state.isLoading ->
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(top = 32.dp),
+                    contentAlignment = Alignment.TopCenter,
+                ) { CircularProgressIndicator() }
 
             state.error != null -> {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-
-                    ) {
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
+                ) {
                     TotalExpensesToday(
                         modifier = Modifier,
-                        total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}"
+                        total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}",
                     )
                     HorizontalDivider(
                         modifier = Modifier,
                         color = MaterialTheme.colorScheme.surfaceDim,
-                        thickness = 1.dp
+                        thickness = 1.dp,
                     )
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                         text = "${state.error}",
                     )
                 }
-
             }
 
             else -> {
                 if (state.list.isNotEmpty()) {
                     TotalExpensesToday(
                         modifier = Modifier,
-                        total = "${state.total.toString().toPrettyNumber()} ${state.list[0].currency.toCurrencySymbol()}"
+                        total = "${state.total.toString().toPrettyNumber()} ${state.list[0].currency.toCurrencySymbol()}",
                     )
                 } else {
                     TotalExpensesToday(
                         modifier = Modifier,
-                        total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}"
+                        total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}",
                     )
                 }
                 HorizontalDivider(
                     modifier = Modifier,
                     color = MaterialTheme.colorScheme.surfaceDim,
-                    thickness = 1.dp
+                    thickness = 1.dp,
                 )
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
                 ) {
                     items(state.list) { expense ->
                         ExpenseRow(
                             modifier = Modifier,
-                            expense
+                            expense,
                         )
                         HorizontalDivider(
                             modifier = Modifier,
                             color = MaterialTheme.colorScheme.surfaceDim,
-                            thickness = 1.dp
+                            thickness = 1.dp,
                         )
                     }
                 }
             }
         }
-
     }
 }

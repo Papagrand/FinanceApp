@@ -1,4 +1,4 @@
-package ru.point.network.swagger_models
+package ru.point.network.swaggerModels
 
 data class AccountResponse(
     val id: Int,
@@ -8,5 +8,5 @@ data class AccountResponse(
     val incomeStats: StateItem,
     val expenseStats: StateItem,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
 )

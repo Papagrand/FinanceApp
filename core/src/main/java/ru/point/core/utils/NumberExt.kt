@@ -7,14 +7,13 @@ import java.util.Locale
 fun String.toPrettyNumber(): String {
     val value = toBigDecimalOrNull() ?: return this
 
-    val symbols = DecimalFormatSymbols(Locale("ru", "RU")).apply {
-        groupingSeparator = '\u202F'
-    }
+    val symbols =
+        DecimalFormatSymbols(Locale("ru", "RU")).apply {
+            groupingSeparator = '\u202F'
+        }
 
     val pattern = "#,##0.##"
     return DecimalFormat(pattern, symbols).format(value)
 }
 
-
-fun String.toCurrencySymbol(): String =
-    CurrencyParse.from(this)?.symbol ?: this
+fun String.toCurrencySymbol(): String = CurrencyParse.from(this)?.symbol ?: this

@@ -3,8 +3,6 @@ package ru.point.categories.presentation.mvi
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,9 +30,8 @@ import ru.point.core.error.AppError
 
 class CategoriesViewModel(
     private val observeCategoriesUseCase: ObserveCategoriesUseCase,
-    private val prefs: AccountPreferences
+    private val prefs: AccountPreferences,
 ) : ViewModel() {
-
     private val bgJob = SupervisorJob()
 
     private val intents = MutableSharedFlow<CategoriesIntent>(extraBufferCapacity = 1)
@@ -62,13 +59,14 @@ class CategoriesViewModel(
             intents.collectLatest { intent ->
                 when (intent) {
                     CategoriesIntent.Load,
-                    CategoriesIntent.Retry -> {
+                    CategoriesIntent.Retry,
+                    -> {
                         _accountId.value
                             ?.let { performLoad(it) }
                             ?: _effect.emit(
                                 CategoriesEffect.ShowSnackbar(
-                                    "Account ID ещё не инициализирован"
-                                )
+                                    "Account ID ещё не инициализирован",
+                                ),
                             )
                     }
                     is CategoriesIntent.Search -> {
@@ -107,25 +105,26 @@ class CategoriesViewModel(
                             it.copy(
                                 isLoading = false,
                                 list = result.data,
-                                error = null
+                                error = null,
                             )
                         }
                     }
 
                     is Result.Error -> {
                         Log.e("WhyCause", result.cause.toString())
-                        val msg = when (val cause = result.cause) {
-                            AppError.BadRequest -> "Неверный формат данных"
-                            AppError.Unauthorized -> "Неавторизованный доступ"
-                            AppError.NoInternet -> "Нет подключения к интернету"
-                            is AppError.ServerError -> "Сервер временно недоступен"
-                            is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                            else -> "Неизвестная ошибка"
-                        }
+                        val msg =
+                            when (val cause = result.cause) {
+                                AppError.BadRequest -> "Неверный формат данных"
+                                AppError.Unauthorized -> "Неавторизованный доступ"
+                                AppError.NoInternet -> "Нет подключения к интернету"
+                                is AppError.ServerError -> "Сервер временно недоступен"
+                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
+                                else -> "Неизвестная ошибка"
+                            }
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                error = msg
+                                error = msg,
                             )
                         }
                         _effect.emit(CategoriesEffect.ShowSnackbar("Ошибка: $msg"))

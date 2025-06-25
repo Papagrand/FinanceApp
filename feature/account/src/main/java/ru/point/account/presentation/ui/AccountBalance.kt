@@ -44,54 +44,53 @@ internal fun Balance(
     Surface(
         tonalElevation = 1.dp,
         color = MaterialTheme.colorScheme.secondaryContainer,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier =
+            Modifier
+                .fillMaxWidth(),
     ) {
         BaseListItem(
             rowHeight = 56.dp,
             onClick = onClick,
-            modifier = modifier
-                .fillMaxWidth()
-                .clickable(onClick = { })
-                .padding(horizontal = 16.dp),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = { })
+                    .padding(horizontal = 16.dp),
             lead = {
-
                 Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.background),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = "💰",
-                        style = MaterialTheme.typography.bodyLarge
-
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
             },
-
             content = {
                 Text(
                     text = stringResource(R.string.balance),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             },
-
             trail = {
                 Text(
                     text = "${account.balance.toPrettyNumber()} ${account.currency.toCurrencySymbol()}",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.right_arrow),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
-            }
+            },
         )
     }
 }

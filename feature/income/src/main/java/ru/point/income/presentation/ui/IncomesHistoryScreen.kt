@@ -42,7 +42,7 @@ import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryEffect
 import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryIntent
 import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryViewModel
 import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryViewModelFactory
-import ru.point.income.presentation.ui.composable_functions.IncomesHistoryRow
+import ru.point.income.presentation.ui.composableFunctions.IncomesHistoryRow
 import ru.point.navigation.Navigator
 import ru.point.network.client.RetrofitProvider
 import java.time.LocalDate
@@ -54,7 +54,7 @@ import java.util.Locale
 @Composable
 fun IncomesHistoryScreen(
     navigator: Navigator,
-    onAddClick: () -> Unit = {}
+    onAddClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -70,17 +70,19 @@ fun IncomesHistoryScreen(
 
     val tracker = remember { NetworkHolder.tracker }
 
-    val monthYear = LocalDate.now()
-        .format(DateTimeFormatter.ofPattern("LLLL yyyy", Locale("ru")))
-        .replaceFirstChar { it.uppercase() }
+    val monthYear =
+        LocalDate.now()
+            .format(DateTimeFormatter.ofPattern("LLLL yyyy", Locale("ru")))
+            .replaceFirstChar { it.uppercase() }
 
-    val nowWithTime = LocalDateTime.now()
-        .format(
-            DateTimeFormatter.ofPattern(
-                "dd.MM.yyyy HH:mm",
-                Locale("ru")
+    val nowWithTime =
+        LocalDateTime.now()
+            .format(
+                DateTimeFormatter.ofPattern(
+                    "dd.MM.yyyy HH:mm",
+                    Locale("ru"),
+                ),
             )
-        )
 
     LaunchedEffect(Unit) {
         viewModel.dispatch(IncomesHistoryIntent.Load)
@@ -91,11 +93,12 @@ fun IncomesHistoryScreen(
 
     BaseScaffold(
         title = stringResource(R.string.my_history),
-        action = TopBarAction(
-            iconRes = R.drawable.analys,
-            contentDescription = "Анализ",
-            onClick = {}
-        ),
+        action =
+            TopBarAction(
+                iconRes = R.drawable.analys,
+                contentDescription = "Анализ",
+                onClick = {},
+            ),
         actionState = ActionState.Shown,
         backState = BackState.Shown,
         backAction = BackAction(onClick = navigator::popBackStack),
@@ -105,13 +108,14 @@ fun IncomesHistoryScreen(
         NoInternetBanner(tracker = tracker)
 
         when {
-            state.isLoading -> Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(top = 32.dp),
-                contentAlignment = Alignment.TopCenter
-            ) { CircularProgressIndicator() }
+            state.isLoading ->
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(top = 32.dp),
+                    contentAlignment = Alignment.TopCenter,
+                ) { CircularProgressIndicator() }
 
             state.error != null -> {
                 BaseHistoryTopColumnPlaceholder(innerPadding, state.error)
@@ -120,52 +124,54 @@ fun IncomesHistoryScreen(
             else -> {
                 if (state.list.isNotEmpty()) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
                     ) {
                         BaseHistoryTopElement(
                             modifier = Modifier,
                             contentText = "Начало",
-                            trailText = monthYear
+                            trailText = monthYear,
                         )
                         HorizontalDivider(
                             modifier = Modifier,
                             color = MaterialTheme.colorScheme.surfaceDim,
-                            thickness = 1.dp
+                            thickness = 1.dp,
                         )
                         BaseHistoryTopElement(
                             modifier = Modifier,
                             contentText = "Конец",
-                            trailText = nowWithTime
+                            trailText = nowWithTime,
                         )
                         HorizontalDivider(
                             modifier = Modifier,
                             color = MaterialTheme.colorScheme.surfaceDim,
-                            thickness = 1.dp
+                            thickness = 1.dp,
                         )
                         BaseHistoryTopElement(
                             modifier = Modifier,
                             contentText = "Сумма",
                             trailText = "${
                                 state.total.toString().toPrettyNumber()
-                            } ${state.list[0].currency.toCurrencySymbol()}"
+                            } ${state.list[0].currency.toCurrencySymbol()}",
                         )
 
                         LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier =
+                                Modifier
+                                    .fillMaxSize(),
                         ) {
                             items(state.list) { incomeHistoryItem ->
                                 IncomesHistoryRow(
                                     modifier = Modifier,
-                                    incomeHistoryItem
+                                    incomeHistoryItem,
                                 )
 
                                 HorizontalDivider(
                                     modifier = Modifier,
                                     color = MaterialTheme.colorScheme.surfaceDim,
-                                    thickness = 1.dp
+                                    thickness = 1.dp,
                                 )
                             }
                         }

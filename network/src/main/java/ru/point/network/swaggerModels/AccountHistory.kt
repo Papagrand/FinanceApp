@@ -1,4 +1,4 @@
-package ru.point.network.swagger_models
+package ru.point.network.swaggerModels
 
 data class AccountHistory(
     val id: Int,
@@ -7,10 +7,10 @@ data class AccountHistory(
     val previousState: AccountState,
     val newState: AccountState,
     val changeTimestamp: String,
-    val createdAt: String
+    val createdAt: String,
 )
 
 enum class ChangeTypes {
     CREATION,
-    MODIFICATION
+    MODIFICATION,
 }

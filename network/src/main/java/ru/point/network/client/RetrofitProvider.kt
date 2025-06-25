@@ -8,7 +8,6 @@ import retrofit2.Retrofit
 import ru.point.core.utils.NetworkTracker
 
 object RetrofitProvider {
-
     val json = Json { ignoreUnknownKeys = true }
     val contentType = "application/json".toMediaType()
 
@@ -16,15 +15,17 @@ object RetrofitProvider {
     val instance get() = _instance
 
     fun init(tracker: NetworkTracker) {
-        val okHttp = OkHttpClient.Builder()
-            .addInterceptor(ApiKeyInterceptor())
-            .addInterceptor(RetryInterceptor(tracker))
-            .build()
+        val okHttp =
+            OkHttpClient.Builder()
+                .addInterceptor(ApiKeyInterceptor())
+                .addInterceptor(RetryInterceptor(tracker))
+                .build()
 
-        _instance = Retrofit.Builder()
-            .baseUrl("https://shmr-finance.ru/")
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .client(okHttp)
-            .build()
+        _instance =
+            Retrofit.Builder()
+                .baseUrl("https://shmr-finance.ru/")
+                .addConverterFactory(json.asConverterFactory(contentType))
+                .client(okHttp)
+                .build()
     }
 }

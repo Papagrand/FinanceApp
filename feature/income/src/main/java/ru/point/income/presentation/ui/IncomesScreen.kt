@@ -41,8 +41,8 @@ import ru.point.income.presentation.mvi.incomes.IncomesEffect
 import ru.point.income.presentation.mvi.incomes.IncomesIntent
 import ru.point.income.presentation.mvi.incomes.IncomesViewModel
 import ru.point.income.presentation.mvi.incomes.IncomesViewModelFactory
-import ru.point.income.presentation.ui.composable_functions.IncomeRow
-import ru.point.income.presentation.ui.composable_functions.TotalIncomesToday
+import ru.point.income.presentation.ui.composableFunctions.IncomeRow
+import ru.point.income.presentation.ui.composableFunctions.TotalIncomesToday
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
 import ru.point.network.client.RetrofitProvider
@@ -51,7 +51,7 @@ import ru.point.network.client.RetrofitProvider
 @Composable
 fun IncomeScreen(
     navigator: Navigator,
-    onAddClick: () -> Unit = {}
+    onAddClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val prefs = remember { AccountPreferences(context) }
@@ -75,81 +75,84 @@ fun IncomeScreen(
 
     BaseScaffold(
         title = stringResource(R.string.income_today),
-        action = TopBarAction(
-            iconRes = R.drawable.history,
-            contentDescription = "История",
-            onClick = {
-                navigator.navigate(Route.IncomesHistory)
-            }
-        ),
+        action =
+            TopBarAction(
+                iconRes = R.drawable.history,
+                contentDescription = "История",
+                onClick = {
+                    navigator.navigate(Route.IncomesHistory)
+                },
+            ),
         actionState = ActionState.Shown,
         fabState = FabState.Shown,
         onFabClick = onAddClick,
-        snackbarHostState = snackbarHostState
-    )
-    { innerPadding ->
+        snackbarHostState = snackbarHostState,
+    ) { innerPadding ->
         NoInternetBanner(tracker = tracker)
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             when {
-                state.isLoading -> Box(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(top = 32.dp),
-                    contentAlignment = Alignment.TopCenter
-                ) { CircularProgressIndicator() }
+                state.isLoading ->
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(top = 32.dp),
+                        contentAlignment = Alignment.TopCenter,
+                    ) { CircularProgressIndicator() }
 
                 state.error != null -> {
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-
-                        ) {
+                        modifier =
+                            Modifier
+                                .fillMaxSize(),
+                    ) {
                         TotalIncomesToday(
                             modifier = Modifier,
-                            total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}"
+                            total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}",
                         )
                         HorizontalDivider(
                             modifier = Modifier,
                             color = MaterialTheme.colorScheme.surfaceDim,
-                            thickness = 1.dp
+                            thickness = 1.dp,
                         )
                         Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
                             text = "${state.error}",
                         )
                     }
-
                 }
 
                 else -> {
                     if (state.list.isNotEmpty()) {
                         TotalIncomesToday(
                             modifier = Modifier,
-                            total = "${state.total.toString().toPrettyNumber()} ${state.list[0].currency.toCurrencySymbol()}"
+                            total = "${state.total.toString().toPrettyNumber()} ${state.list[0].currency.toCurrencySymbol()}",
                         )
                     } else {
                         TotalIncomesToday(
                             modifier = Modifier,
-                            total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}"
+                            total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}",
                         )
                     }
 
                     HorizontalDivider(
                         modifier = Modifier,
                         color = MaterialTheme.colorScheme.surfaceDim,
-                        thickness = 1.dp
+                        thickness = 1.dp,
                     )
 
                     LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
+                        modifier =
+                            Modifier
+                                .fillMaxSize(),
                     ) {
                         items(state.list) { income ->
                             IncomeRow(
@@ -159,22 +162,21 @@ fun IncomeScreen(
                             HorizontalDivider(
                                 modifier = Modifier,
                                 color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp
+                                thickness = 1.dp,
                             )
                         }
                     }
-
                 }
             }
         }
     }
 }
 
-
 private fun incomesPlaceholder(): TransactionPlaceHolder {
-    val placeholder = TransactionPlaceHolder(
-        amount = "0",
-        currency = "RUB"
-    )
+    val placeholder =
+        TransactionPlaceHolder(
+            amount = "0",
+            currency = "RUB",
+        )
     return placeholder
 }

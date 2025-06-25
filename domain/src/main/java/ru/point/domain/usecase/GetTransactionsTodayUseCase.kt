@@ -2,10 +2,10 @@ package ru.point.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.point.domain.model.Transaction
-import ru.point.domain.repository.TransactionRepository
 import ru.point.core.common.Result
 import ru.point.domain.model.TodayTransactions
+import ru.point.domain.model.Transaction
+import ru.point.domain.repository.TransactionRepository
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
@@ -27,14 +27,16 @@ class GetExpensesTodayUseCase(private val repo: TransactionRepository) {
         repo.observeToday(id)
             .map { result ->
                 when (result) {
-                    is Result.Success -> Result.Success(
-                        TodayTransactions(
-                            list = result.data.filter { !it.isIncome },
-                            total = result.data
-                                .filter { !it.isIncome }
-                                .sumAmounts()
+                    is Result.Success ->
+                        Result.Success(
+                            TodayTransactions(
+                                list = result.data.filter { !it.isIncome },
+                                total =
+                                    result.data
+                                        .filter { !it.isIncome }
+                                        .sumAmounts(),
+                            ),
                         )
-                    )
 
                     is Result.Loading -> Result.Loading
                     is Result.Error -> Result.Error(result.cause)
@@ -47,14 +49,16 @@ class GetIncomesTodayUseCase(private val repo: TransactionRepository) {
         repo.observeToday(id)
             .map { result ->
                 when (result) {
-                    is Result.Success -> Result.Success(
-                        TodayTransactions(
-                            list = result.data.filter { it.isIncome },
-                            total = result.data
-                                .filter { it.isIncome }
-                                .sumAmounts()
+                    is Result.Success ->
+                        Result.Success(
+                            TodayTransactions(
+                                list = result.data.filter { it.isIncome },
+                                total =
+                                    result.data
+                                        .filter { it.isIncome }
+                                        .sumAmounts(),
+                            ),
                         )
-                    )
 
                     is Result.Loading -> Result.Loading
                     is Result.Error -> Result.Error(result.cause)
@@ -74,7 +78,7 @@ class GetIncomesTodayUseCase(private val repo: TransactionRepository) {
 
 class GetTransactionHistoryUseCase(
     private val repo: TransactionRepository,
-    private val isIncome: Boolean
+    private val isIncome: Boolean,
 ) {
     operator fun invoke(accountId: Int): Flow<Result<TodayTransactions>> {
         val today = LocalDate.now()
@@ -86,24 +90,25 @@ class GetTransactionHistoryUseCase(
             .map { result ->
                 when (result) {
                     is Result.Success -> {
-                        val expenses = result.data
-                            .filter {
-                                if(isIncome){
-                                    it.isIncome
-                                }else{
-                                    !it.isIncome
+                        val expenses =
+                            result.data
+                                .filter {
+                                    if (isIncome) {
+                                        it.isIncome
+                                    } else {
+                                        !it.isIncome
+                                    }
                                 }
-                            }
-                            .sortedByDescending { dto ->
-                                val instant = Instant.parse(dto.dateTime)
-                                LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-                            }
+                                .sortedByDescending { dto ->
+                                    val instant = Instant.parse(dto.dateTime)
+                                    LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+                                }
 
                         Result.Success(
                             TodayTransactions(
                                 list = expenses,
-                                total = expenses.sumAmounts()
-                            )
+                                total = expenses.sumAmounts(),
+                            ),
                         )
                     }
 
@@ -114,5 +119,4 @@ class GetTransactionHistoryUseCase(
     }
 }
 
-fun List<Transaction>.sumAmounts(): BigDecimal =
-    fold(BigDecimal.ZERO) { acc, tx -> acc + tx.amount.toBigDecimal() }
+fun List<Transaction>.sumAmounts(): BigDecimal = fold(BigDecimal.ZERO) { acc, tx -> acc + tx.amount.toBigDecimal() }

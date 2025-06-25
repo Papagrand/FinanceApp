@@ -3,15 +3,14 @@ package ru.point.financeapp.di
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
-import ru.point.network.client.RetrofitProvider
 import retrofit2.Retrofit
 import ru.point.account.data.api.AccountService
 import ru.point.core.utils.NetworkTracker
+import ru.point.network.client.RetrofitProvider
+import javax.inject.Singleton
 
 @Module
 object NetworkModule {
-
     @Provides
     @Singleton
     fun provideNetworkTracker(context: Context): NetworkTracker {

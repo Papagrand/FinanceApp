@@ -12,5 +12,5 @@ data class Transaction(
     val isIncome: Boolean,
     val dateTime: String,
     val comment: String,
-    val totalAmount: String
+    val totalAmount: String,
 )

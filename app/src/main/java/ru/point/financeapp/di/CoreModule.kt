@@ -8,9 +8,7 @@ import javax.inject.Singleton
 
 @Module
 object CoreModule {
-
     @Provides
     @Singleton
-    fun provideAccountPreferences(context: Context): AccountPreferences =
-        AccountPreferences(context)
+    fun provideAccountPreferences(context: Context): AccountPreferences = AccountPreferences(context)
 }
