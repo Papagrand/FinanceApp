@@ -11,6 +11,17 @@ import ru.point.data.api.TransactionService
 import ru.point.network.client.RetrofitProvider
 import javax.inject.Singleton
 
+/**
+ * NetworkModule
+ *
+ * Предоставляет:
+ *  - NetworkTracker — подписка на изменения сети;
+ *  - Retrofit — настроенный клиент для REST API (инициализируется через RetrofitProvider);
+ *  - AccountService — API для работы с аккаунтами;
+ *  - CategoryService — API для работы с категориями;
+ *  - TransactionService — API для работы с транзакциями.
+ */
+
 @Module
 object NetworkModule {
     @Provides

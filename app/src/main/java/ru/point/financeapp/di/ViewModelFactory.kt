@@ -5,6 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 import javax.inject.Provider
 
+/**
+ * ViewModelFactory
+ * Фабрика для создания всех ViewModel через мультибиндинг.
+ *
+ * Собирает мапу провайдеров ViewModel, и при запросе возвращает нужный экземпляр по классу.
+ */
+
 class ViewModelFactory @Inject constructor(
     private val creators: Map<
         @JvmSuppressWildcards Class<out ViewModel>,

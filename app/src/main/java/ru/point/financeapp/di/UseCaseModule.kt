@@ -12,6 +12,17 @@ import ru.point.domain.usecase.GetIncomesTodayUseCase
 import ru.point.domain.usecase.GetTransactionHistoryUseCase
 import javax.inject.Singleton
 
+/**
+ * Модуль бизнес-логики (Use Case).
+ *
+ * Провайдет единичные экземпляры:
+ *  - GetAllAccountsUseCase — получение списка аккаунтов;
+ *  - ObserveCategoriesUseCase — подписка на категории;
+ *  - GetExpensesTodayUseCase — получение расходов за текущий день;
+ *  - GetIncomesTodayUseCase — получение доходов за текущий день;
+ *  - GetTransactionHistoryUseCase — получение истории транзакций.
+ */
+
 @Module
 object UseCaseModule {
     @Provides

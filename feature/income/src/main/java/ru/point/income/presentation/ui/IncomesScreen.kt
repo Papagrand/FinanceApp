@@ -42,6 +42,17 @@ import ru.point.income.presentation.ui.composableFunctions.TotalIncomesToday
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
 
+/**
+ * IncomeScreen
+ *
+ * Ответственность:
+ * - отображение экрана с доходами за сегодня: шапка, кнопка истории, список транзакций или индикатор загрузки/ошибки;
+ * - отправка MVI-интентов (Load, Retry) и обработка эффектов (показывать Snackbar);
+ * - навигация к истории доходов и реакция на нажатие FAB;
+ * - показ баннера при отсутствии соединения.
+ *
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IncomeScreen(

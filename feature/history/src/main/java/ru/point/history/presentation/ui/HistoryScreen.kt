@@ -45,6 +45,17 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * HistoryScreen
+ *
+ * Ответственность:
+ * - отображение экрана истории с доходами или расходами: шапка, кнопка анализа, данные или индикатор загрузки/ошибки;
+ * - отправка MVI-интентов (Load, Retry) и обработка эффектов (показывать Snackbar);
+ * - навигация к истории доходов и реакция на нажатие FAB;
+ * - показ баннера при отсутствии соединения.
+ *
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(

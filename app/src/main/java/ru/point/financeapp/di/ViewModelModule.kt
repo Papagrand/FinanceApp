@@ -12,6 +12,16 @@ import ru.point.financeapp.MainActivityViewModel
 import ru.point.history.presentation.mvi.HistoryViewModel
 import ru.point.income.presentation.mvi.incomes.IncomesViewModel
 
+/**
+ * ViewModelModule
+ *
+ * Подключает:
+ *  - ViewModelFactory как ViewModelProvider.Factory
+ *  - В каждый ключ Map<Class<ViewModel>, Provider<ViewModel>> пробрасывает конкретные ViewModel:
+ *    AccountViewModel, CategoriesViewModel, HistoryViewModel,
+ *    ExpensesViewModel, IncomesViewModel, MainActivityViewModel.
+ */
+
 @Module
 abstract class ViewModelModule {
     @Binds

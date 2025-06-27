@@ -1,5 +1,13 @@
 package ru.point.financeapp.ui.navigation
 
+/**
+ * NavRoute
+ * Чистый набор экранов приложения в виде sealed-класса.
+ *
+ * Каждая константа хранит строку route для NavHost.
+ * bottomDestinations используется для BottomNavigationBar.
+ */
+
 sealed class NavRoute(val route: String) {
     data object Expenses : NavRoute("expenses")
 

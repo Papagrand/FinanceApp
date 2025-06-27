@@ -10,6 +10,17 @@ import ru.point.data.repositoryImpl.TransactionRepositoryImpl
 import ru.point.domain.repository.TransactionRepository
 import javax.inject.Singleton
 
+/**
+ * RepositoryModule
+ *
+ * Соединяет интерфейсы:
+ *  - AccountRepository <-> AccountRepositoryImpl
+ *  - CategoryRepository <-> CategoryRepositoryImpl
+ *  - TransactionRepository <-> TransactionRepositoryImpl
+ *
+ * Все репозитории зарегистрированы как @Singleton.
+ */
+
 @Module
 interface RepositoryModule {
     @Binds

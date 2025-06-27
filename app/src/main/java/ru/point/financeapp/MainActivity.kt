@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -17,6 +16,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.compose.HomeWork1Theme
 import ru.point.core.di.LocalViewModelFactory
 import javax.inject.Inject
+
+/**
+ * MainActivity
+ * Главная Activity-прослойка, хост всего Compose.
+ *
+ *  - Инжектит ViewModelFactory Dagger’ом;
+ *  - Устанавливает флаг SplashScreen до dataCollected;
+ *  - Прокидывает CompositionLocal с ViewModelFactory;
+ *  - Отрисовывает BottomBar и NavGraph внутри Scaffold.
+ */
 
 class MainActivity : ComponentActivity() {
     @Inject

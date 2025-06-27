@@ -16,6 +16,14 @@ import ru.point.history.presentation.ui.HistoryScreen
 import ru.point.income.presentation.ui.IncomeScreen
 import ru.point.settings.presentation.SettingsScreen
 
+/**
+ * NavGraph
+ * Определяет набор навигационных маршрутов и их связи.
+ *
+ * Главный NavHost со startDestination = "expenses_graph", два вложенных графа для расходов и доходов, а также
+ * экраны аккаунта, категорий и настроек.
+ */
+
 @Composable
 fun NavGraph(navController: NavHostController) {
     val navigator = remember { NavigatorImpl(navController) }
