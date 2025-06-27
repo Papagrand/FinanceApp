@@ -109,8 +109,7 @@ fun Route.toNavRoute(): NavRoute =
         Route.Account -> NavRoute.Account
         Route.Category -> NavRoute.Category
         Route.Expenses -> NavRoute.Expenses
-        Route.ExpensesHistory -> NavRoute.ExpensesHistory
+        Route.History -> NavRoute.History
         Route.Income -> NavRoute.Income
-        Route.IncomesHistory -> NavRoute.IncomesHistory
         Route.Settings -> NavRoute.Settings
     }

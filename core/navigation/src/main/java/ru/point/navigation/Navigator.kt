@@ -3,9 +3,7 @@ package ru.point.navigation
 sealed interface Route {
     data object Expenses : Route
 
-    data object ExpensesHistory : Route
-
-    data object IncomesHistory : Route
+    data object History : Route
 
     data object Income : Route
 

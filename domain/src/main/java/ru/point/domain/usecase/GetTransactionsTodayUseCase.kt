@@ -78,9 +78,11 @@ class GetIncomesTodayUseCase(private val repo: TransactionRepository) {
 
 class GetTransactionHistoryUseCase(
     private val repo: TransactionRepository,
-    private val isIncome: Boolean,
 ) {
-    operator fun invoke(accountId: Int): Flow<Result<TodayTransactions>> {
+    operator fun invoke(
+        accountId: Int,
+        isIncome: Boolean,
+    ): Flow<Result<TodayTransactions>> {
         val today = LocalDate.now()
         val startOfMonth = today.withDayOfMonth(1)
         val isoStart = startOfMonth.format(DateTimeFormatter.ISO_DATE)

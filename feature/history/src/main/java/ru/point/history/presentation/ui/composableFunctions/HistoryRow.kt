@@ -1,4 +1,4 @@
-package ru.point.expenses.presentation.ui.composableFunctions
+package ru.point.history.presentation.ui.composableFunctions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,16 +26,16 @@ import ru.point.core.ui.BaseListItem
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.core.utils.toPrettyNumber
 import ru.point.domain.model.Transaction
-import ru.point.expenses.R
+import ru.point.history.R
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun ExpensesHistoryRow(
+fun HistoryRow(
     modifier: Modifier,
-    expenseHistoryItem: Transaction,
+    historyItem: Transaction,
     onClick: () -> Unit = {},
 ) = BaseListItem(
     rowHeight = 70.dp,
@@ -47,8 +47,8 @@ fun ExpensesHistoryRow(
             .padding(horizontal = 16.dp),
     lead = {
         val initials =
-            remember(expenseHistoryItem.categoryName) { initialsOf(expenseHistoryItem.categoryName) }
-        val iconText = expenseHistoryItem.emoji ?: initials
+            remember(historyItem.categoryName) { initialsOf(historyItem.categoryName) }
+        val iconText = historyItem.emoji ?: initials
 
         Box(
             modifier =
@@ -61,7 +61,7 @@ fun ExpensesHistoryRow(
             Text(
                 text = iconText,
                 style =
-                    if (expenseHistoryItem.emoji != null) {
+                    if (historyItem.emoji != null) {
                         MaterialTheme.typography.bodyLarge
                     } else {
                         TextStyle(
@@ -77,27 +77,27 @@ fun ExpensesHistoryRow(
     },
     content = {
         Text(
-            text = expenseHistoryItem.categoryName,
+            text = historyItem.categoryName,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        if (expenseHistoryItem.comment != "") {
+        if (historyItem.comment != "") {
             Text(
-                text = expenseHistoryItem.comment,
+                text = historyItem.comment,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     },
     trail = {
-        val instant = Instant.parse(expenseHistoryItem.dateTime)
+        val instant = Instant.parse(historyItem.dateTime)
 
         val dateTime =
             instant
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime()
 
-        val expenseTime =
+        val transactionTime =
             dateTime.format(
                 DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm", Locale("ru")),
             )
@@ -106,12 +106,12 @@ fun ExpensesHistoryRow(
             horizontalAlignment = Alignment.End,
         ) {
             Text(
-                text = "${expenseHistoryItem.amount.toPrettyNumber()} ${expenseHistoryItem.currency.toCurrencySymbol()}",
+                text = "${historyItem.amount.toPrettyNumber()} ${historyItem.currency.toCurrencySymbol()}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = expenseTime,
+                text = transactionTime,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )

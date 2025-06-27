@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("kapt")
@@ -7,26 +7,20 @@ plugins {
 }
 
 android {
-    namespace = "ru.point.financeapp"
+    namespace = "ru.point.history"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "ru.point.homework1"
         minSdk = 34
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -36,25 +30,18 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
 }
 
 dependencies {
-    implementation(project(":data"))
-    implementation(project(":domain"))
     implementation(project(":core"))
     implementation(project(":core:navigation"))
     implementation(project(":network"))
-    implementation(project(":feature:account"))
-    implementation(project(":feature:expenses"))
-    implementation(project(":feature:history"))
-    implementation(project(":feature:income"))
-    implementation(project(":feature:categories"))
-    implementation(project(":feature:settings"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
 
+    implementation(libs.okhttp.core)
+    implementation(libs.okhttp.logging)
+    implementation(libs.kotlinx.coroutines.core)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
@@ -63,8 +50,6 @@ dependencies {
     kapt("com.google.dagger:dagger-compiler:2.56")
     implementation("javax.inject:javax.inject:1")
 
-    implementation("androidx.datastore:datastore-preferences:1.1.6")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

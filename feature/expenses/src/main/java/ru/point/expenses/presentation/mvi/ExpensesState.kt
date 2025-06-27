@@ -1,9 +1,9 @@
-package ru.point.income.presentation.mvi.incomesHistory
+package ru.point.expenses.presentation.mvi
 
 import ru.point.domain.model.Transaction
 import java.math.BigDecimal
 
-data class IncomesHistoryState(
+data class ExpensesState(
     val isLoading: Boolean = false,
     val list: List<Transaction> = emptyList(),
     val total: BigDecimal = BigDecimal.ZERO,

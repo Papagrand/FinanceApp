@@ -3,9 +3,7 @@ package ru.point.financeapp.ui.navigation
 sealed class NavRoute(val route: String) {
     data object Expenses : NavRoute("expenses")
 
-    data object ExpensesHistory : NavRoute("expenses_history")
-
-    data object IncomesHistory : NavRoute("incomes_history")
+    data object History : NavRoute("history")
 
     data object Income : NavRoute("income")
 

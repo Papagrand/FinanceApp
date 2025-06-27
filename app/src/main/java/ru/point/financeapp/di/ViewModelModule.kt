@@ -7,11 +7,10 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import ru.point.account.presentation.mvi.AccountViewModel
 import ru.point.categories.presentation.mvi.CategoriesViewModel
-import ru.point.expenses.presentation.mvi.expenses.ExpensesViewModel
-import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModel
+import ru.point.expenses.presentation.mvi.ExpensesViewModel
 import ru.point.financeapp.MainActivityViewModel
+import ru.point.history.presentation.mvi.HistoryViewModel
 import ru.point.income.presentation.mvi.incomes.IncomesViewModel
-import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -30,8 +29,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ExpensesHistoryViewModel::class)
-    abstract fun bindExpensesHistoryVM(vm: ExpensesHistoryViewModel): ViewModel
+    @ViewModelKey(HistoryViewModel::class)
+    abstract fun bindHistoryVM(vm: HistoryViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -42,11 +41,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(IncomesViewModel::class)
     abstract fun bindIncomesVM(vm: IncomesViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(IncomesHistoryViewModel::class)
-    abstract fun bindIncomesHistoryVM(vm: IncomesHistoryViewModel): ViewModel
 
     @Binds
     @IntoMap

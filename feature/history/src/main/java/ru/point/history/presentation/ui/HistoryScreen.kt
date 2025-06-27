@@ -1,4 +1,4 @@
-package ru.point.expenses.presentation.ui
+package ru.point.history.presentation.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,35 +34,25 @@ import ru.point.core.ui.TopBarAction
 import ru.point.core.utils.NetworkHolder
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.core.utils.toPrettyNumber
-import ru.point.expenses.R
-import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryEffect
-import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryIntent
-import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModel
-import ru.point.expenses.presentation.ui.composableFunctions.ExpensesHistoryRow
+import ru.point.history.R
+import ru.point.history.presentation.mvi.HistoryEffect
+import ru.point.history.presentation.mvi.HistoryIntent
+import ru.point.history.presentation.mvi.HistoryViewModel
+import ru.point.history.presentation.ui.composableFunctions.HistoryRow
 import ru.point.navigation.Navigator
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-/**
- * ExpensesHistoryScreen
- *
- * Ответственность:
- * - отображение истории расходов за текущий период: шапка с датами и суммой, список транзакций или состояния загрузки/ошибки;
- * - отправка MVI-интента Load и обработка эффектов (показ Snackbar);
- * - навигация назад и реакция на нажатие кнопки анализа;
- * - показ баннера об отсутствии подключения.
- *
- */
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpensesHistoryScreen(
+fun HistoryScreen(
     navigator: Navigator,
+    isIncome: Boolean,
     onAddClick: () -> Unit = {},
 ) {
-    val viewModel: ExpensesHistoryViewModel = viewModel(factory = LocalViewModelFactory.current)
+    val viewModel: HistoryViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -83,10 +73,10 @@ fun ExpensesHistoryScreen(
                 ),
             )
 
-    LaunchedEffect(Unit) {
-        viewModel.dispatch(ExpensesHistoryIntent.Load)
+    LaunchedEffect(isIncome) {
+        viewModel.dispatch(HistoryIntent.Load, isIncome)
         viewModel.effect.collect { eff ->
-            if (eff is ExpensesHistoryEffect.ShowSnackbar) snackbarHostState.showSnackbar(eff.message)
+            if (eff is HistoryEffect.ShowSnackbar) snackbarHostState.showSnackbar(eff.message)
         }
     }
 
@@ -102,7 +92,6 @@ fun ExpensesHistoryScreen(
         backState = BackState.Shown,
         backAction = BackAction(onClick = navigator::popBackStack),
         fabState = FabState.Hidden,
-        snackbarHostState = snackbarHostState,
     ) { innerPadding ->
 
         NoInternetBanner(tracker = tracker)
@@ -162,10 +151,10 @@ fun ExpensesHistoryScreen(
                                 Modifier
                                     .fillMaxSize(),
                         ) {
-                            items(state.list) { expenseHistoryItem ->
-                                ExpensesHistoryRow(
+                            items(state.list) { historyItem ->
+                                HistoryRow(
                                     modifier = Modifier,
-                                    expenseHistoryItem,
+                                    historyItem,
                                 )
 
                                 HorizontalDivider(

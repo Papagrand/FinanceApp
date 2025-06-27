@@ -70,7 +70,7 @@ fun IncomeScreen(
                 iconRes = R.drawable.history,
                 contentDescription = "История",
                 onClick = {
-                    navigator.navigate(Route.IncomesHistory)
+                    navigator.navigate(Route.History)
                 },
             ),
         actionState = ActionState.Shown,

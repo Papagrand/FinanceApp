@@ -1,4 +1,4 @@
-package ru.point.expenses.presentation.mvi.expensesHistory
+package ru.point.history.presentation.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,34 +14,23 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
-import ru.point.core.di.ExpenseHistory
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetTransactionHistoryUseCase
 import javax.inject.Inject
 
-/**
- * ExpensesHistoryViewModel
- *
- * Ответственность:
- * - управление MVI-потоком интентов (Load, Retry) через SharedFlow;
- * - загрузка списка расходов за выбранный период и вычисление общей суммы;
- * - обновление состояния экрана (isLoading, list, total, error) в StateFlow;
- * - эмиссия побочных эффектов (ShowSnackbar) при ошибках;
- * - отслеживание текущего accountId из AccountPreferences.
- *
- */
-
-class ExpensesHistoryViewModel @Inject constructor(
-    @ExpenseHistory private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
+class HistoryViewModel @Inject constructor(
+    private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
     private val prefs: AccountPreferences,
 ) : ViewModel() {
-    private val intents = MutableSharedFlow<ExpensesHistoryIntent>(extraBufferCapacity = 1)
+    private var isIncomeFlag: Boolean = false
 
-    private val _state = MutableStateFlow(ExpensesHistoryState())
-    val state: StateFlow<ExpensesHistoryState> = _state.asStateFlow()
+    private val intents = MutableSharedFlow<HistoryIntent>(extraBufferCapacity = 1)
 
-    private val _effect = MutableSharedFlow<ExpensesHistoryEffect>()
-    val effect: SharedFlow<ExpensesHistoryEffect> = _effect.asSharedFlow()
+    private val _state = MutableStateFlow(HistoryState())
+    val state: StateFlow<HistoryState> = _state.asStateFlow()
+
+    private val _effect = MutableSharedFlow<HistoryEffect>()
+    val effect: SharedFlow<HistoryEffect> = _effect.asSharedFlow()
 
     private val _accountId = MutableStateFlow<Int?>(null)
     val accountId: StateFlow<Int?> = _accountId
@@ -52,20 +41,20 @@ class ExpensesHistoryViewModel @Inject constructor(
                 .filterNotNull()
                 .collectLatest { id ->
                     _accountId.value = id
-                    load(id)
+                    load(id, isIncomeFlag)
                 }
         }
 
         viewModelScope.launch {
             intents.collectLatest { intent ->
                 when (intent) {
-                    is ExpensesHistoryIntent.Load,
-                    is ExpensesHistoryIntent.Retry,
+                    is HistoryIntent.Load,
+                    is HistoryIntent.Retry,
                     -> {
                         _accountId.value
-                            ?.let { load(it) }
+                            ?.let { load(it, isIncomeFlag) }
                             ?: _effect.emit(
-                                ExpensesHistoryEffect.ShowSnackbar(
+                                HistoryEffect.ShowSnackbar(
                                     "Account ID ещё не инициализирован",
                                 ),
                             )
@@ -75,13 +64,20 @@ class ExpensesHistoryViewModel @Inject constructor(
         }
     }
 
-    fun dispatch(intent: ExpensesHistoryIntent) {
+    fun dispatch(
+        intent: HistoryIntent,
+        isIncome: Boolean,
+    ) {
+        isIncomeFlag = isIncome
         intents.tryEmit(intent)
     }
 
-    private fun load(accountId: Int) {
+    private fun load(
+        accountId: Int,
+        isIncome: Boolean,
+    ) {
         viewModelScope.launch {
-            getTransactionHistoryUseCase(accountId).collect { result ->
+            getTransactionHistoryUseCase(accountId, isIncome).collect { result ->
                 when (result) {
                     is Result.Loading -> _state.update { it.copy(isLoading = true, error = null) }
                     is Result.Success ->
@@ -105,7 +101,7 @@ class ExpensesHistoryViewModel @Inject constructor(
                                 else -> "Неизвестная ошибка"
                             }
                         _state.update { it.copy(isLoading = false, error = msg) }
-                        _effect.emit(ExpensesHistoryEffect.ShowSnackbar("Ошибка: $msg"))
+                        _effect.emit(HistoryEffect.ShowSnackbar("Ошибка: $msg"))
                     }
                 }
             }

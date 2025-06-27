@@ -18,9 +18,9 @@ import ru.point.core.ui.TopBarAction
 import ru.point.core.utils.NetworkHolder
 import ru.point.domain.model.TransactionPlaceHolder
 import ru.point.expenses.R
-import ru.point.expenses.presentation.mvi.expenses.ExpensesEffect
-import ru.point.expenses.presentation.mvi.expenses.ExpensesIntent
-import ru.point.expenses.presentation.mvi.expenses.ExpensesViewModel
+import ru.point.expenses.presentation.mvi.ExpensesEffect
+import ru.point.expenses.presentation.mvi.ExpensesIntent
+import ru.point.expenses.presentation.mvi.ExpensesViewModel
 import ru.point.expenses.presentation.ui.composableFunctions.ExpensesColumn
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
@@ -67,7 +67,7 @@ fun ExpensesScreen(
                 iconRes = R.drawable.history,
                 contentDescription = "История",
                 onClick = {
-                    navigator.navigate(Route.ExpensesHistory)
+                    navigator.navigate(Route.History)
                 },
             ),
         actionState = ActionState.Shown,

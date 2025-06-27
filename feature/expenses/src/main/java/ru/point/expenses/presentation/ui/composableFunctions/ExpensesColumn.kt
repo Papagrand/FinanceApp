@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.core.utils.toPrettyNumber
 import ru.point.domain.model.TransactionPlaceHolder
-import ru.point.expenses.presentation.mvi.expenses.ExpensesState
+import ru.point.expenses.presentation.mvi.ExpensesState
 
 @Composable
 fun ExpensesColumn(

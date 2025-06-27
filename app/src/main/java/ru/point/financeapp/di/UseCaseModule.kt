@@ -6,8 +6,6 @@ import ru.point.account.domain.repository.AccountRepository
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.categories.domain.repository.CategoryRepository
 import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
-import ru.point.core.di.ExpenseHistory
-import ru.point.core.di.IncomeHistory
 import ru.point.domain.repository.TransactionRepository
 import ru.point.domain.usecase.GetExpensesTodayUseCase
 import ru.point.domain.usecase.GetIncomesTodayUseCase
@@ -32,11 +30,7 @@ object UseCaseModule {
     @Singleton
     fun provideGetIncomesTodayUseCase(repo: TransactionRepository): GetIncomesTodayUseCase = GetIncomesTodayUseCase(repo)
 
-    @Provides @Singleton
-    @IncomeHistory
-    fun provideIncomesUseCase(repo: TransactionRepository): GetTransactionHistoryUseCase = GetTransactionHistoryUseCase(repo, true)
-
-    @Provides @Singleton
-    @ExpenseHistory
-    fun provideExpensesUseCase(repo: TransactionRepository): GetTransactionHistoryUseCase = GetTransactionHistoryUseCase(repo, false)
+    @Provides
+    @Singleton
+    fun provideTransactionUseCase(repo: TransactionRepository): GetTransactionHistoryUseCase = GetTransactionHistoryUseCase(repo)
 }

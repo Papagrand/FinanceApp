@@ -10,11 +10,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import ru.point.account.presentation.ui.AccountScreen
 import ru.point.categories.presentation.ui.CategoryScreen
-import ru.point.expenses.presentation.ui.ExpensesHistoryScreen
 import ru.point.expenses.presentation.ui.ExpensesScreen
 import ru.point.financeapp.NavigatorImpl
+import ru.point.history.presentation.ui.HistoryScreen
 import ru.point.income.presentation.ui.IncomeScreen
-import ru.point.income.presentation.ui.IncomesHistoryScreen
 import ru.point.settings.presentation.SettingsScreen
 
 @Composable
@@ -36,13 +35,16 @@ fun NavGraph(navController: NavHostController) {
             }
 
             composable(
-                NavRoute.ExpensesHistory.route,
+                NavRoute.History.route,
                 enterTransition = { EnterTransition.None },
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None },
                 exitTransition = { ExitTransition.None },
             ) {
-                ExpensesHistoryScreen(navigator = navigator)
+                HistoryScreen(
+                    navigator = navigator,
+                    isIncome = false,
+                )
             }
         }
 
@@ -60,13 +62,16 @@ fun NavGraph(navController: NavHostController) {
                 IncomeScreen(navigator = navigator)
             }
             composable(
-                NavRoute.IncomesHistory.route,
+                NavRoute.History.route,
                 enterTransition = { EnterTransition.None },
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None },
                 exitTransition = { ExitTransition.None },
             ) {
-                IncomesHistoryScreen(navigator = navigator)
+                HistoryScreen(
+                    navigator = navigator,
+                    isIncome = true,
+                )
             }
         }
 
