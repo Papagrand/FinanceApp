@@ -5,10 +5,11 @@ import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
 import ru.point.account.data.api.AccountService
+import ru.point.categories.data.api.CategoryService
 import ru.point.core.utils.NetworkTracker
+import ru.point.data.api.TransactionService
 import ru.point.network.client.RetrofitProvider
 import javax.inject.Singleton
-import ru.point.categories.data.api.CategoryService
 
 @Module
 object NetworkModule {
@@ -35,5 +36,11 @@ object NetworkModule {
     @Singleton
     fun provideCategoryService(retrofit: Retrofit): CategoryService {
         return retrofit.create(CategoryService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTransactionService(retrofit: Retrofit): TransactionService {
+        return retrofit.create(TransactionService::class.java)
     }
 }

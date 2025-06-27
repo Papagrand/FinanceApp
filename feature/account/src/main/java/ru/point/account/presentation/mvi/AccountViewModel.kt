@@ -25,8 +25,6 @@ import javax.inject.Inject
  * - загрузка данных аккаунтов через GetAllAccountsUseCase;
  * - обновление StateFlow состояния (isLoading, accountData, error);
  * - эмиссия эффектов (показ Snackbar) через SharedFlow.
- *
- * @param getAllAccountsUseCase юзкейс для получения списка аккаунтов
  */
 
 class AccountViewModel @Inject constructor(

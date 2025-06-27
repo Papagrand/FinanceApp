@@ -18,11 +18,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.point.core.common.AccountPreferences
+import ru.point.core.di.LocalViewModelFactory
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BackAction
 import ru.point.core.ui.BackState
@@ -35,16 +34,12 @@ import ru.point.core.ui.TopBarAction
 import ru.point.core.utils.NetworkHolder
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.core.utils.toPrettyNumber
-import ru.point.data.repositoryImpl.TransactionRepositoryImpl
-import ru.point.domain.usecase.GetTransactionHistoryUseCase
 import ru.point.expenses.R
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryEffect
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryIntent
 import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModel
-import ru.point.expenses.presentation.mvi.expensesHistory.ExpensesHistoryViewModelFactory
 import ru.point.expenses.presentation.ui.composableFunctions.ExpensesHistoryRow
 import ru.point.navigation.Navigator
-import ru.point.network.client.RetrofitProvider
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -67,14 +62,7 @@ fun ExpensesHistoryScreen(
     navigator: Navigator,
     onAddClick: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-
-    val prefs = remember { AccountPreferences(context) }
-
-    val repo = TransactionRepositoryImpl(RetrofitProvider.instance)
-    val useCase = GetTransactionHistoryUseCase(repo, false)
-    val factory = remember { ExpensesHistoryViewModelFactory(useCase, prefs) }
-    val viewModel: ExpensesHistoryViewModel = viewModel(factory = factory)
+    val viewModel: ExpensesHistoryViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }

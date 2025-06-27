@@ -2,7 +2,6 @@ package ru.point.expenses.presentation.mvi.expensesHistory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -15,8 +14,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
+import ru.point.core.di.ExpenseHistory
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetTransactionHistoryUseCase
+import javax.inject.Inject
 
 /**
  * ExpensesHistoryViewModel
@@ -30,12 +31,10 @@ import ru.point.domain.usecase.GetTransactionHistoryUseCase
  *
  */
 
-class ExpensesHistoryViewModel(
-    private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
+class ExpensesHistoryViewModel @Inject constructor(
+    @ExpenseHistory private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
     private val prefs: AccountPreferences,
 ) : ViewModel() {
-    private val bgJob = SupervisorJob()
-
     private val intents = MutableSharedFlow<ExpensesHistoryIntent>(extraBufferCapacity = 1)
 
     private val _state = MutableStateFlow(ExpensesHistoryState())
@@ -74,11 +73,6 @@ class ExpensesHistoryViewModel(
                 }
             }
         }
-    }
-
-    override fun onCleared() {
-        bgJob.cancel()
-        super.onCleared()
     }
 
     fun dispatch(intent: ExpensesHistoryIntent) {

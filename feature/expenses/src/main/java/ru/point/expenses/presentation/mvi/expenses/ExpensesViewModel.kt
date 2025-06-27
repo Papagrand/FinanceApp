@@ -2,7 +2,6 @@ package ru.point.expenses.presentation.mvi.expenses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,6 +16,7 @@ import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetExpensesTodayUseCase
+import javax.inject.Inject
 
 /**
  * ExpensesViewModel
@@ -29,12 +29,10 @@ import ru.point.domain.usecase.GetExpensesTodayUseCase
  *
  */
 
-class ExpensesViewModel(
+class ExpensesViewModel @Inject constructor(
     private val getExpensesTodayUseCase: GetExpensesTodayUseCase,
     private val prefs: AccountPreferences,
 ) : ViewModel() {
-    private val bgJob = SupervisorJob()
-
     private val intents = MutableSharedFlow<ExpensesIntent>(extraBufferCapacity = 1)
 
     private val _state = MutableStateFlow(ExpensesState())
@@ -73,11 +71,6 @@ class ExpensesViewModel(
                 }
             }
         }
-    }
-
-    override fun onCleared() {
-        bgJob.cancel()
-        super.onCleared()
     }
 
     fun dispatch(intent: ExpensesIntent) {

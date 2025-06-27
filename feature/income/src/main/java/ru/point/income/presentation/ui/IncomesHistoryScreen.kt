@@ -18,11 +18,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.point.core.common.AccountPreferences
+import ru.point.core.di.LocalViewModelFactory
 import ru.point.core.ui.ActionState
 import ru.point.core.ui.BackAction
 import ru.point.core.ui.BackState
@@ -35,16 +34,12 @@ import ru.point.core.ui.TopBarAction
 import ru.point.core.utils.NetworkHolder
 import ru.point.core.utils.toCurrencySymbol
 import ru.point.core.utils.toPrettyNumber
-import ru.point.data.repositoryImpl.TransactionRepositoryImpl
-import ru.point.domain.usecase.GetTransactionHistoryUseCase
 import ru.point.income.R
 import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryEffect
 import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryIntent
 import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryViewModel
-import ru.point.income.presentation.mvi.incomesHistory.IncomesHistoryViewModelFactory
 import ru.point.income.presentation.ui.composableFunctions.IncomesHistoryRow
 import ru.point.navigation.Navigator
-import ru.point.network.client.RetrofitProvider
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -56,14 +51,7 @@ fun IncomesHistoryScreen(
     navigator: Navigator,
     onAddClick: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-
-    val prefs = remember { AccountPreferences(context) }
-
-    val repo = TransactionRepositoryImpl(RetrofitProvider.instance)
-    val useCase = GetTransactionHistoryUseCase(repo, true)
-    val factory = remember { IncomesHistoryViewModelFactory(useCase, prefs) }
-    val viewModel: IncomesHistoryViewModel = viewModel(factory = factory)
+    val viewModel: IncomesHistoryViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }

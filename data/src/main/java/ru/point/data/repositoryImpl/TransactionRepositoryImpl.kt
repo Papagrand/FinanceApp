@@ -2,15 +2,14 @@ package ru.point.data.repositoryImpl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import retrofit2.Retrofit
 import ru.point.core.common.Result
 import ru.point.data.api.TransactionService
 import ru.point.domain.model.Transaction
 import ru.point.domain.repository.TransactionRepository
-import ru.point.network.client.RetrofitProvider
 import ru.point.network.flow.safeApiFlow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 /**
  * TransactionRepositoryImpl
@@ -22,11 +21,9 @@ import java.time.format.DateTimeFormatter
  *
  */
 
-class TransactionRepositoryImpl(
-    retrofit: Retrofit = RetrofitProvider.instance,
+class TransactionRepositoryImpl @Inject constructor(
+    private val api: TransactionService,
 ) : TransactionRepository {
-    private val api = retrofit.create(TransactionService::class.java)
-
     override fun observeToday(accountId: Int): Flow<Result<List<Transaction>>> {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 

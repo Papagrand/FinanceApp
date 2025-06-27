@@ -2,9 +2,6 @@ package ru.point.income.presentation.mvi.incomes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,14 +16,12 @@ import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetIncomesTodayUseCase
+import javax.inject.Inject
 
-class IncomesViewModel(
+class IncomesViewModel @Inject constructor(
     private val getIncomesTodayUseCase: GetIncomesTodayUseCase,
     private val prefs: AccountPreferences,
 ) : ViewModel() {
-    private val bgJob = SupervisorJob()
-    private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
-
     private val intents = MutableSharedFlow<IncomesIntent>(extraBufferCapacity = 1)
 
     private val _state = MutableStateFlow(IncomesState())
@@ -65,11 +60,6 @@ class IncomesViewModel(
                 }
             }
         }
-    }
-
-    override fun onCleared() {
-        bgJob.cancel()
-        super.onCleared()
     }
 
     fun dispatch(intent: IncomesIntent) {

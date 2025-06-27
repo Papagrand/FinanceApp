@@ -2,9 +2,6 @@ package ru.point.income.presentation.mvi.incomesHistory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,16 +14,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
+import ru.point.core.di.IncomeHistory
 import ru.point.core.error.AppError
 import ru.point.domain.usecase.GetTransactionHistoryUseCase
+import javax.inject.Inject
 
-class IncomesHistoryViewModel(
-    private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
+class IncomesHistoryViewModel @Inject constructor(
+    @IncomeHistory private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
     private val prefs: AccountPreferences,
 ) : ViewModel() {
-    private val bgJob = SupervisorJob()
-    private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
-
     private val intents = MutableSharedFlow<IncomesHistoryIntent>(extraBufferCapacity = 1)
 
     private val _state = MutableStateFlow(IncomesHistoryState())
@@ -65,11 +61,6 @@ class IncomesHistoryViewModel(
                 }
             }
         }
-    }
-
-    override fun onCleared() {
-        bgJob.cancel()
-        super.onCleared()
     }
 
     fun dispatch(intent: IncomesHistoryIntent) {
