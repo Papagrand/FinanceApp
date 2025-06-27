@@ -9,7 +9,6 @@ import ru.point.domain.repository.TransactionRepository
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -77,46 +76,53 @@ class GetIncomesTodayUseCase(private val repo: TransactionRepository) {
  */
 
 class GetTransactionHistoryUseCase(
-    private val repo: TransactionRepository,
+    private val repo: TransactionRepository
 ) {
+
     operator fun invoke(
         accountId: Int,
-        isIncome: Boolean,
+        isIncome: Boolean
     ): Flow<Result<TodayTransactions>> {
+        val (isoStart, isoEnd) = computeDateRange()
+        return repo.observePeriod(accountId, isoStart, isoEnd)
+            .map { result -> mapToTodayTransactions(result, isIncome) }
+    }
+
+    private fun computeDateRange(): Pair<String, String> {
         val today = LocalDate.now()
         val startOfMonth = today.withDayOfMonth(1)
         val isoStart = startOfMonth.format(DateTimeFormatter.ISO_DATE)
         val isoEnd = today.format(DateTimeFormatter.ISO_DATE)
+        return isoStart to isoEnd
+    }
 
-        return repo.observePeriod(accountId, isoStart, isoEnd)
-            .map { result ->
-                when (result) {
-                    is Result.Success -> {
-                        val expenses =
-                            result.data
-                                .filter {
-                                    if (isIncome) {
-                                        it.isIncome
-                                    } else {
-                                        !it.isIncome
-                                    }
-                                }
-                                .sortedByDescending { dto ->
-                                    val instant = Instant.parse(dto.dateTime)
-                                    LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-                                }
+    private fun mapToTodayTransactions(
+        result: Result<List<Transaction>>,
+        isIncome: Boolean
+    ): Result<TodayTransactions> = when (result) {
+        is Result.Loading -> Result.Loading
+        is Result.Error -> Result.Error(result.cause)
+        is Result.Success -> {
+            val filtered = filterAndSort(result.data, isIncome)
+            Result.Success(
+                TodayTransactions(
+                    list = filtered,
+                    total = filtered.sumAmounts()
+                )
+            )
+        }
+    }
 
-                        Result.Success(
-                            TodayTransactions(
-                                list = expenses,
-                                total = expenses.sumAmounts(),
-                            ),
-                        )
-                    }
-
-                    is Result.Loading -> Result.Loading
-                    is Result.Error -> Result.Error(result.cause)
-                }
+    private fun filterAndSort(
+        list: List<Transaction>,
+        isIncome: Boolean
+    ): List<Transaction> {
+        return list
+            .filter { it.isIncome == isIncome }
+            .sortedByDescending { dto ->
+                Instant.parse(dto.dateTime)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
             }
     }
 }
