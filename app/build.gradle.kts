@@ -18,7 +18,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -26,7 +25,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -44,22 +43,27 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":data"))
+    implementation(project(":domain"))
     implementation(project(":core"))
     implementation(project(":core:navigation"))
     implementation(project(":network"))
     implementation(project(":feature:account"))
     implementation(project(":feature:expenses"))
+    implementation(project(":feature:history"))
     implementation(project(":feature:income"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:settings"))
-
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 
-    implementation ("androidx.datastore:datastore-preferences:1.1.6")
+    implementation("com.google.dagger:dagger:2.56")
+    kapt("com.google.dagger:dagger-compiler:2.56")
+    implementation("javax.inject:javax.inject:1")
+
+    implementation("androidx.datastore:datastore-preferences:1.1.6")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -71,7 +75,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.1")
     implementation("com.google.android.gms:play-services-base:18.2.0")
-    implementation ("androidx.navigation:navigation-compose:2.8.0")
+    implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

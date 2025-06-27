@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -20,13 +19,14 @@ fun BaseListItem(
     rowHeight: Dp = 70.dp,
     lead: @Composable RowScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit = {},
-    trail: @Composable RowScope.() -> Unit = {}
+    trail: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
-        modifier = modifier
-            .height(rowHeight),
+        modifier =
+            modifier
+                .height(rowHeight),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         lead()
 
@@ -35,10 +35,9 @@ fun BaseListItem(
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             trail()
         }
-
     }
 }

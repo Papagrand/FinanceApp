@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/feature/account" />
             <option value="$PROJECT_DIR$/feature/categories" />
             <option value="$PROJECT_DIR$/feature/expenses" />
+            <option value="$PROJECT_DIR$/feature/history" />
             <option value="$PROJECT_DIR$/feature/income" />
             <option value="$PROJECT_DIR$/feature/settings" />
             <option value="$PROJECT_DIR$/network" />

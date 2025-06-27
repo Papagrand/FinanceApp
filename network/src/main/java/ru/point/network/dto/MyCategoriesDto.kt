@@ -11,7 +11,7 @@ data class MyCategoriesDto(
     val incomeStats: List<CategoryStatDto>,
     val expenseStats: List<CategoryStatDto>,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
 )
 
 @Serializable
@@ -19,7 +19,7 @@ data class CategoryStatDto(
     val categoryId: Int,
     val categoryName: String,
     val emoji: String,
-    val amount: String
+    val amount: String,
 )
 
 @Serializable
@@ -27,5 +27,5 @@ data class CategoryDto(
     val id: Int,
     val name: String,
     val emoji: String,
-    val isIncome: Boolean
+    val isIncome: Boolean,
 )

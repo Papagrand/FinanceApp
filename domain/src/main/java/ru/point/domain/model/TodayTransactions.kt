@@ -4,5 +4,5 @@ import java.math.BigDecimal
 
 data class TodayTransactions(
     val list: List<Transaction>,
-    val total: BigDecimal
+    val total: BigDecimal,
 )

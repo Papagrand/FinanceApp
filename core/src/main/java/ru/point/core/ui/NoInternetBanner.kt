@@ -8,10 +8,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.point.core.utils.NetworkTracker
-import androidx.compose.runtime.getValue
 
 @Composable
 fun NoInternetBanner(tracker: NetworkTracker) {
@@ -20,12 +20,12 @@ fun NoInternetBanner(tracker: NetworkTracker) {
     AnimatedVisibility(visible = !online) {
         Surface(
             color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                text = "Нет подключения к интернету!",
+                text = "Нет подключения к интернету",
                 color = MaterialTheme.colorScheme.onError,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
             )
         }
     }

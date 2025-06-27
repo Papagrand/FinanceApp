@@ -3,9 +3,6 @@ package ru.point.categories.presentation.mvi
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -20,15 +17,21 @@ import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
 import ru.point.core.common.AccountPreferences
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
+import javax.inject.Inject
 
-class CategoriesViewModel(
+/**
+ * CategoriesViewModel
+ *
+ * Ответственность:
+ * - получение и фильтрация списка категорий через ObserveCategoriesUseCase;
+ * - управление MVI-потоком: приём интентов (Load, Retry, Search), обновление состояния и эмиссия эффектов (Snackbar);
+ *
+ */
+
+class CategoriesViewModel @Inject constructor(
     private val observeCategoriesUseCase: ObserveCategoriesUseCase,
-    private val prefs: AccountPreferences
+    private val prefs: AccountPreferences,
 ) : ViewModel() {
-
-    private val bgJob = SupervisorJob()
-    private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
-
     private val intents = MutableSharedFlow<CategoriesIntent>(extraBufferCapacity = 1)
 
     private val _state = MutableStateFlow(CategoriesState())
@@ -38,7 +41,6 @@ class CategoriesViewModel(
     val effect: SharedFlow<CategoriesEffect> = _effect.asSharedFlow()
 
     private val _accountId = MutableStateFlow<Int?>(null)
-    val accountId: StateFlow<Int?> = _accountId
 
     init {
         viewModelScope.launch {
@@ -54,15 +56,17 @@ class CategoriesViewModel(
             intents.collectLatest { intent ->
                 when (intent) {
                     CategoriesIntent.Load,
-                    CategoriesIntent.Retry -> {
+                    CategoriesIntent.Retry,
+                    -> {
                         _accountId.value
                             ?.let { performLoad(it) }
                             ?: _effect.emit(
                                 CategoriesEffect.ShowSnackbar(
-                                    "Account ID ещё не инициализирован"
-                                )
+                                    "Account ID ещё не инициализирован",
+                                ),
                             )
                     }
+
                     is CategoriesIntent.Search -> {
                         _state.update { it.copy(query = intent.query) }
                         _accountId.value
@@ -73,11 +77,6 @@ class CategoriesViewModel(
         }
 
         dispatch(CategoriesIntent.Load)
-    }
-
-    override fun onCleared() {
-        bgJob.cancel()
-        super.onCleared()
     }
 
     fun dispatch(intent: CategoriesIntent) {
@@ -99,25 +98,26 @@ class CategoriesViewModel(
                             it.copy(
                                 isLoading = false,
                                 list = result.data,
-                                error = null
+                                error = null,
                             )
                         }
                     }
 
                     is Result.Error -> {
                         Log.e("WhyCause", result.cause.toString())
-                        val msg = when (val cause = result.cause) {
-                            AppError.BadRequest -> "Неверный формат данных"
-                            AppError.Unauthorized -> "Неавторизованный доступ"
-                            AppError.NoInternet -> "Нет подключения к интернету"
-                            is AppError.ServerError -> "Сервер временно недоступен"
-                            is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                            else -> "Неизвестная ошибка"
-                        }
+                        val msg =
+                            when (val cause = result.cause) {
+                                AppError.BadRequest -> "Неверный формат данных"
+                                AppError.Unauthorized -> "Неавторизованный доступ"
+                                AppError.NoInternet -> "Нет подключения к интернету"
+                                is AppError.ServerError -> "Сервер временно недоступен"
+                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
+                                else -> "Неизвестная ошибка"
+                            }
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                error = msg
+                                error = msg,
                             )
                         }
                         _effect.emit(CategoriesEffect.ShowSnackbar("Ошибка: $msg"))

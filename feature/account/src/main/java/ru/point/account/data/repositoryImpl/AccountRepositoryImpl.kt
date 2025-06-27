@@ -2,20 +2,28 @@ package ru.point.account.data.repositoryImpl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import retrofit2.Retrofit
 import ru.point.account.data.api.AccountService
 import ru.point.account.domain.model.Account
 import ru.point.account.domain.repository.AccountRepository
-import ru.point.core.common.Result.*
 import ru.point.core.common.Result
-import ru.point.network.client.RetrofitProvider
+import ru.point.core.common.Result.Error
+import ru.point.core.common.Result.Loading
+import ru.point.core.common.Result.Success
 import ru.point.network.flow.safeApiFlow
+import javax.inject.Inject
 
-class AccountRepositoryImpl(
-    retrofit: Retrofit = RetrofitProvider.instance
+/**
+ * AccountRepositoryImpl
+ *
+ * Ответственность:
+ * - обращаться к REST API через Retrofit для получения данных аккаунта;
+ * - преобразовывать DTO в доменную модель Account;
+ * - оборачивать результаты в поток Flow<Result<Account>> через safeApiFlow.
+ */
+
+class AccountRepositoryImpl @Inject constructor(
+    private val api: AccountService,
 ) : AccountRepository {
-
-    private val api = retrofit.create(AccountService::class.java)
     override fun observe(): Flow<Result<Account>> =
         safeApiFlow { api.getAccounts() }
             .map { result ->
@@ -23,9 +31,7 @@ class AccountRepositoryImpl(
                     is Loading -> Loading
                     is Error -> Error(result.cause)
                     is Success -> {
-                        val list = result.data
-                        val dto = list.firstOrNull()
-                            ?: throw NoSuchElementException("No account returned")
+                        val dto = result.data.first()
                         Success(
                             Account(
                                 id = dto.id,
@@ -34,8 +40,8 @@ class AccountRepositoryImpl(
                                 balance = dto.balance,
                                 currency = dto.currency,
                                 createdAt = dto.createdAt,
-                                updatedAt = dto.updatedAt
-                            )
+                                updatedAt = dto.updatedAt,
+                            ),
                         )
                     }
                 }

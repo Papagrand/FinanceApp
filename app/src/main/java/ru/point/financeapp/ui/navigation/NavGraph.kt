@@ -9,13 +9,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import ru.point.account.presentation.ui.AccountScreen
-import ru.point.expenses.presentation.ui.ExpensesScreen
-import ru.point.income.presentation.ui.IncomeScreen
 import ru.point.categories.presentation.ui.CategoryScreen
-import ru.point.expenses.presentation.ui.ExpensesHistoryScreen
+import ru.point.expenses.presentation.ui.ExpensesScreen
 import ru.point.financeapp.NavigatorImpl
-import ru.point.income.presentation.ui.IncomesHistoryScreen
+import ru.point.history.presentation.ui.HistoryScreen
+import ru.point.income.presentation.ui.IncomeScreen
 import ru.point.settings.presentation.SettingsScreen
+
+/**
+ * NavGraph
+ * Определяет набор навигационных маршрутов и их связи.
+ *
+ * Главный NavHost со startDestination = "expenses_graph", два вложенных графа для расходов и доходов, а также
+ * экраны аккаунта, категорий и настроек.
+ */
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -23,7 +30,7 @@ fun NavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = "expenses_graph") {
         navigation(
             startDestination = NavRoute.Expenses.route,
-            route = "expenses_graph"
+            route = "expenses_graph",
         ) {
             composable(
                 NavRoute.Expenses.route,
@@ -36,21 +43,23 @@ fun NavGraph(navController: NavHostController) {
             }
 
             composable(
-                NavRoute.ExpensesHistory.route,
+                NavRoute.History.route,
                 enterTransition = { EnterTransition.None },
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None },
                 exitTransition = { ExitTransition.None },
             ) {
-                ExpensesHistoryScreen(navigator = navigator)
+                HistoryScreen(
+                    navigator = navigator,
+                    isIncome = false,
+                )
             }
         }
 
         navigation(
             startDestination = NavRoute.Income.route,
-            route = "incomes_graph"
+            route = "incomes_graph",
         ) {
-
             composable(
                 NavRoute.Income.route,
                 enterTransition = { EnterTransition.None },
@@ -61,13 +70,16 @@ fun NavGraph(navController: NavHostController) {
                 IncomeScreen(navigator = navigator)
             }
             composable(
-                NavRoute.IncomesHistory.route,
+                NavRoute.History.route,
                 enterTransition = { EnterTransition.None },
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None },
                 exitTransition = { ExitTransition.None },
             ) {
-                IncomesHistoryScreen(navigator = navigator)
+                HistoryScreen(
+                    navigator = navigator,
+                    isIncome = true,
+                )
             }
         }
 

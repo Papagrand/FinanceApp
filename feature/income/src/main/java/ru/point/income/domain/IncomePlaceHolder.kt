@@ -1,8 +1,8 @@
 package ru.point.income.domain
 
-data class IncomePlaceHolder (
+data class IncomePlaceHolder(
     val id: String,
     val title: String,
     val amount: String,
-    val currency: String
+    val currency: String,
 )

@@ -29,7 +29,7 @@ import ru.point.core.R
 data class TopBarAction(
     @DrawableRes val iconRes: Int,
     val contentDescription: String,
-    val onClick: () -> Unit
+    val onClick: () -> Unit,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +45,7 @@ fun BaseScaffold(
     fabState: FabState = FabState.Hidden,
     onFabClick: () -> Unit = {},
     containerColor: Color = MaterialTheme.colorScheme.background,
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -60,7 +60,7 @@ fun BaseScaffold(
                                 Icon(
                                     painter = painterResource(act.iconRes),
                                     contentDescription = act.contentDescription,
-                                    tint = MaterialTheme.colorScheme.onSurface
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         }
@@ -73,16 +73,17 @@ fun BaseScaffold(
                                 Icon(
                                     painter = painterResource(act.iconRes),
                                     contentDescription = act.contentDescription,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
                         }
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface
-                )
+                colors =
+                    TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
             )
         },
         contentWindowInsets = WindowInsets(0.dp),
@@ -93,7 +94,7 @@ fun BaseScaffold(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                    shape = CircleShape
+                    shape = CircleShape,
                 ) { Icon(Icons.Default.Add, contentDescription = null) }
             }
         },
@@ -102,27 +103,30 @@ fun BaseScaffold(
             snackbarHostState
                 ?.let { SnackbarHost(hostState = it) }
         },
-        content = content
+        content = content,
     )
 }
 
 sealed interface FabState {
     object Shown : FabState
+
     object Hidden : FabState
 }
 
 sealed interface ActionState {
     object Shown : ActionState
+
     object Hidden : ActionState
 }
 
 sealed interface BackState {
-    object Shown  : BackState
+    object Shown : BackState
+
     object Hidden : BackState
 }
 
 data class BackAction(
     @DrawableRes val iconRes: Int = R.drawable.backstack,
     val contentDescription: String = "Назад",
-    val onClick: () -> Unit
+    val onClick: () -> Unit,
 )

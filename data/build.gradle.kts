@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    kotlin("kapt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -19,7 +21,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -38,13 +40,16 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":network"))
 
-
     implementation(libs.okhttp.core)
     implementation(libs.okhttp.logging)
     implementation(libs.kotlinx.coroutines.core)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+
+    implementation("com.google.dagger:dagger:2.56")
+    kapt("com.google.dagger:dagger-compiler:2.56")
+    implementation("javax.inject:javax.inject:1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -56,7 +61,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.1")
     implementation("com.google.android.gms:play-services-base:18.2.0")
-    implementation ("androidx.navigation:navigation-compose:2.8.0")
+    implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

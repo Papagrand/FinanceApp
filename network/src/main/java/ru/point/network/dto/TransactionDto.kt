@@ -11,7 +11,7 @@ data class TransactionDto(
     val transactionDate: String,
     val comment: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
 )
 
 @Serializable
@@ -19,5 +19,5 @@ data class AccountRefDto(
     val id: Int,
     val name: String,
     val balance: String,
-    val currency: String
+    val currency: String,
 )

@@ -3,9 +3,6 @@ package ru.point.account.presentation.mvi
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,14 +15,21 @@ import kotlinx.coroutines.launch
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.core.common.Result
 import ru.point.core.error.AppError
+import javax.inject.Inject
 
-class AccountViewModel(
-    private val getAllAccountsUseCase: GetAllAccountsUseCase
+/**
+ * AccountViewModel
+ *
+ * Ответственность:
+ * - управление потоком MVI-интентов (Load/Retry) через SharedFlow;
+ * - загрузка данных аккаунтов через GetAllAccountsUseCase;
+ * - обновление StateFlow состояния (isLoading, accountData, error);
+ * - эмиссия эффектов (показ Snackbar) через SharedFlow.
+ */
+
+class AccountViewModel @Inject constructor(
+    private val getAllAccountsUseCase: GetAllAccountsUseCase,
 ) : ViewModel() {
-
-    private val bgJob = SupervisorJob()
-    private val ioScope = CoroutineScope(Dispatchers.IO + bgJob)
-
     private val intents = MutableSharedFlow<AccountIntent>(extraBufferCapacity = 1)
 
     private val _state = MutableStateFlow(AccountState())
@@ -39,18 +43,12 @@ class AccountViewModel(
             intents.collectLatest { intent ->
                 when (intent) {
                     AccountIntent.Load,
-                    AccountIntent.Retry -> loadAccounts()
-
+                    AccountIntent.Retry,
+                    -> loadAccounts()
                 }
             }
         }
-
         dispatch(AccountIntent.Load)
-    }
-
-    override fun onCleared() {
-        bgJob.cancel()
-        super.onCleared()
     }
 
     fun dispatch(intent: AccountIntent) {
@@ -72,25 +70,26 @@ class AccountViewModel(
                             it.copy(
                                 isLoading = false,
                                 accountData = result.data,
-                                error = null
+                                error = null,
                             )
                         }
                     }
 
                     is Result.Error -> {
                         Log.e("WhyERROR", result.cause.toString())
-                        val msg = when (val cause = result.cause) {
-                            AppError.BadRequest -> "Неверный формат данных"
-                            AppError.Unauthorized -> "Неавторизованный доступ"
-                            AppError.NoInternet -> "Нет подключения к интернету"
-                            is AppError.ServerError -> "Сервер временно недоступен"
-                            is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                            else -> "Неизвестная ошибка"
-                        }
+                        val msg =
+                            when (val cause = result.cause) {
+                                AppError.BadRequest -> "Неверный формат данных"
+                                AppError.Unauthorized -> "Неавторизованный доступ"
+                                AppError.NoInternet -> "Нет подключения к интернету"
+                                is AppError.ServerError -> "Сервер временно недоступен"
+                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
+                                else -> "Неизвестная ошибка"
+                            }
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                error = msg
+                                error = msg,
                             )
                         }
                         _effect.emit(AccountEffect.ShowSnackbar("Ошибка: $msg"))
@@ -99,5 +98,4 @@ class AccountViewModel(
             }
         }
     }
-
 }

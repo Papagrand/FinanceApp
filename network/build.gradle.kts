@@ -17,12 +17,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        val properties=Properties()
+        val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
-        buildConfigField ("String","API_KEY","\"${properties.getProperty("API_KEY")}\"")
-        buildConfigField("String","ACCOUNT_ID","\"${properties.getProperty("ACCOUNT_ID")}\"")
-
-
+        buildConfigField("String", "API_KEY", "\"${properties.getProperty("API_KEY")}\"")
+        buildConfigField("String", "ACCOUNT_ID", "\"${properties.getProperty("ACCOUNT_ID")}\"")
     }
 
     buildTypes {
@@ -30,7 +28,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -42,8 +40,8 @@ android {
         jvmTarget = "11"
     }
 
-    buildFeatures{
-        viewBinding=true
+    buildFeatures {
+        viewBinding = true
         buildConfig = true
     }
 }
@@ -51,7 +49,6 @@ android {
 dependencies {
 
     implementation(project(":core"))
-
 
     implementation(libs.okhttp.core)
     implementation(libs.okhttp.logging)
@@ -61,7 +58,6 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.retrofit)
     implementation(libs.jakewharton.retrofit)
-
 
     kapt(libs.androidx.room.compiler)
 

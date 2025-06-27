@@ -6,5 +6,5 @@ data class AccountState(
     val isLoading: Boolean = false,
     val accountData: Account? = null,
     val error: String? = null,
-    val query: String = ""
+    val query: String = "",
 )

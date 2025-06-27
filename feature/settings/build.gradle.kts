@@ -20,7 +20,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -38,6 +38,10 @@ dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":network"))
 
+    implementation("com.google.dagger:dagger:2.56")
+    kapt("com.google.dagger:dagger-compiler:2.56")
+    implementation("javax.inject:javax.inject:1")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -48,7 +52,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.1")
     implementation("com.google.android.gms:play-services-base:18.2.0")
-    implementation ("androidx.navigation:navigation-compose:2.8.0")
+    implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
