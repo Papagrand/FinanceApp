@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import ru.point.core.ui.BaseListItem
 import ru.point.settings.R
+import ru.point.ui.composables.BaseListItem
 
 @Composable
 fun SettingsRow(

@@ -7,14 +7,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import ru.point.account.data.repositoryImpl.AccountRepositoryImpl
-import ru.point.core.common.AccountPreferences
-import ru.point.core.common.Result
-import ru.point.core.error.AppError
-import ru.point.core.utils.NetworkHolder
 import ru.point.financeapp.di.AppComponent
 import ru.point.financeapp.di.DaggerAppComponent
-import ru.point.financeapp.events.SnackbarEvents
+import ru.point.impl.repository.AccountRepositoryImpl
+import ru.point.utils.common.AccountPreferences
+import ru.point.utils.common.Result
+import ru.point.utils.events.SnackbarEvents
+import ru.point.utils.model.AppError
+import ru.point.utils.network.NetworkHolder
 import javax.inject.Inject
 
 class App : Application() {

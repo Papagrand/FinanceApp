@@ -10,11 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
 import com.example.compose.HomeWork1Theme
-import ru.point.core.di.LocalViewModelFactory
+import ru.point.ui.di.LocalViewModelFactory
 import javax.inject.Inject
 
 /**
@@ -59,9 +58,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-data class BottomNavigationItem(
-    val title: String,
-    val icon: ImageVector,
-    val route: String,
-)

@@ -2,14 +2,14 @@ package ru.point.financeapp.di
 
 import dagger.Module
 import dagger.Provides
-import ru.point.account.domain.repository.AccountRepository
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
-import ru.point.categories.domain.repository.CategoryRepository
+import ru.point.api.repository.AccountRepository
+import ru.point.api.repository.CategoryRepository
+import ru.point.api.repository.TransactionRepository
 import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
-import ru.point.domain.repository.TransactionRepository
-import ru.point.domain.usecase.GetExpensesTodayUseCase
-import ru.point.domain.usecase.GetIncomesTodayUseCase
-import ru.point.domain.usecase.GetTransactionHistoryUseCase
+import ru.point.transactions.expenses.domain.usecase.GetExpensesTodayUseCase
+import ru.point.transactions.history.domain.usecase.GetTransactionHistoryUseCase
+import ru.point.transactions.incomes.domain.usecase.GetIncomesTodayUseCase
 import javax.inject.Singleton
 
 /**

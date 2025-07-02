@@ -18,11 +18,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ru.point.financeapp.events.SnackbarEvents
-import ru.point.financeapp.ui.navigation.NavGraph
-import ru.point.financeapp.ui.navigation.NavRoute
+import ru.point.financeapp.navigation.NavGraph
+import ru.point.financeapp.navigation.NavRoute
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
+import ru.point.ui.BottomBar
+import ru.point.ui.BottomNavigationItem
+import ru.point.utils.events.SnackbarEvents
 
 @Composable
 fun MainActivityUI(viewModel: MainActivityViewModel) {

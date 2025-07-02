@@ -5,6 +5,8 @@ import dagger.BindsInstance
 import dagger.Component
 import ru.point.financeapp.App
 import ru.point.financeapp.MainActivity
+import ru.point.impl.di.NetworkModule
+import ru.point.impl.di.RepositoryModule
 import javax.inject.Singleton
 
 /**

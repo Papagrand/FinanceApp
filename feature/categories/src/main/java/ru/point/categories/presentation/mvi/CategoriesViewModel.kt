@@ -14,9 +14,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
-import ru.point.core.common.AccountPreferences
-import ru.point.core.common.Result
-import ru.point.core.error.AppError
+import ru.point.utils.common.AccountPreferences
+import ru.point.utils.common.Result
+import ru.point.utils.model.AppError
 import javax.inject.Inject
 
 /**

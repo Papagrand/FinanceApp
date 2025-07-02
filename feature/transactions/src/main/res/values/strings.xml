@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="total">Всего</string>
+    <string name="expenses_today">Расходы сегодня</string>
+    <string name="history_start">Начало</string>
+    <string name="my_history">Моя история</string>
+    <string name="income_today">Доходы сегодня</string>
+
+</resources>

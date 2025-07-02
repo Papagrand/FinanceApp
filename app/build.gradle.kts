@@ -43,21 +43,21 @@ android {
 }
 
 dependencies {
-    implementation(project(":data"))
-    implementation(project(":domain"))
     implementation(project(":core"))
     implementation(project(":core:navigation"))
-    implementation(project(":network"))
+    implementation(project(":core:data:api"))
+    implementation(project(":core:data:impl"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:utils"))
+
     implementation(project(":feature:account"))
-    implementation(project(":feature:expenses"))
-    implementation(project(":feature:history"))
-    implementation(project(":feature:income"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:transactions"))
 
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+    implementation(libs.retrofit)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
 
     implementation("com.google.dagger:dagger:2.56")
     kapt("com.google.dagger:dagger-compiler:2.56")
