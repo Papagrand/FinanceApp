@@ -35,9 +35,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":core:data:api"))
+    implementation(project(":core:utils"))
     implementation(project(":core:navigation"))
-    implementation(project(":network"))
+    implementation(project(":core:ui"))
 
     implementation(libs.okhttp.core)
     implementation(libs.okhttp.logging)

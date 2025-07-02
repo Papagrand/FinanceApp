@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import ru.point.account.presentation.mvi.AccountViewModel
+import ru.point.account.ui.mvi.AccountViewModel
 import ru.point.categories.presentation.mvi.CategoriesViewModel
-import ru.point.expenses.presentation.mvi.ExpensesViewModel
 import ru.point.financeapp.MainActivityViewModel
-import ru.point.history.presentation.mvi.HistoryViewModel
-import ru.point.income.presentation.mvi.incomes.IncomesViewModel
+import ru.point.transactions.expenses.ui.mvi.ExpensesViewModel
+import ru.point.transactions.history.ui.mvi.HistoryViewModel
+import ru.point.transactions.incomes.ui.mvi.IncomesViewModel
 
 /**
  * ViewModelModule

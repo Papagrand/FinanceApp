@@ -34,9 +34,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":core:data:api"))
+    implementation(project(":core:utils"))
     implementation(project(":core:navigation"))
-    implementation(project(":network"))
+    implementation(project(":core:ui"))
 
     implementation("com.google.dagger:dagger:2.56")
     kapt("com.google.dagger:dagger-compiler:2.56")

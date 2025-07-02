@@ -3,7 +3,7 @@ package ru.point.financeapp.di
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import ru.point.core.common.AccountPreferences
+import ru.point.utils.common.AccountPreferences
 import javax.inject.Singleton
 
 /**

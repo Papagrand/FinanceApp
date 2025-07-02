@@ -13,12 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import ru.point.core.ui.ActionState
-import ru.point.core.ui.BaseScaffold
-import ru.point.core.ui.FabState
 import ru.point.navigation.Navigator
 import ru.point.settings.R
 import ru.point.settings.domain.SettingsUi
+import ru.point.ui.composables.ActionState
+import ru.point.ui.composables.BaseScaffold
+import ru.point.ui.composables.FabState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

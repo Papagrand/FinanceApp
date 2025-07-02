@@ -32,13 +32,13 @@ import ru.point.categories.R
 import ru.point.categories.presentation.mvi.CategoriesEffect
 import ru.point.categories.presentation.mvi.CategoriesIntent
 import ru.point.categories.presentation.mvi.CategoriesViewModel
-import ru.point.core.di.LocalViewModelFactory
-import ru.point.core.ui.ActionState
-import ru.point.core.ui.BaseScaffold
-import ru.point.core.ui.FabState
-import ru.point.core.ui.NoInternetBanner
-import ru.point.core.utils.NetworkHolder
 import ru.point.navigation.Navigator
+import ru.point.ui.composables.ActionState
+import ru.point.ui.composables.BaseScaffold
+import ru.point.ui.composables.FabState
+import ru.point.ui.composables.NoInternetBanner
+import ru.point.ui.di.LocalViewModelFactory
+import ru.point.utils.network.NetworkHolder
 
 /**
  * CategoryScreen

@@ -18,8 +18,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.point.categories.domain.model.Category
-import ru.point.core.ui.BaseListItem
+import ru.point.api.model.CategoryDto
+import ru.point.ui.composables.BaseListItem
 
 /**
  * CategoryRow
@@ -31,7 +31,7 @@ import ru.point.core.ui.BaseListItem
 @Composable
 fun CategoryRow(
     modifier: Modifier,
-    category: Category,
+    category: CategoryDto,
     onClick: () -> Unit = {},
 ) = BaseListItem(
     rowHeight = 70.dp,
