@@ -63,10 +63,13 @@ fun IncomeScreen(
     val viewModel: IncomesViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val currency by viewModel.currency.collectAsStateWithLifecycle()
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     val tracker = remember { NetworkHolder.tracker }
-    val placeholder = incomesPlaceholder()
+    val placeholder = incomesPlaceholder(currency)
 
     LaunchedEffect(Unit) {
         viewModel.dispatch(IncomesIntent.Load)
@@ -174,11 +177,11 @@ fun IncomeScreen(
     }
 }
 
-private fun incomesPlaceholder(): TransactionPlaceHolder {
+private fun incomesPlaceholder(currency: String): TransactionPlaceHolder {
     val placeholder =
         TransactionPlaceHolder(
             amount = "0",
-            currency = "RUB",
+            currency = currency,
         )
     return placeholder
 }

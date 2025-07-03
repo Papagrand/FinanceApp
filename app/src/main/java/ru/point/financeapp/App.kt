@@ -60,6 +60,7 @@ class App : Application() {
                         is Result.Success -> {
                             val account = result.data
                             accountPrefs.saveAccountId(account.id)
+                            accountPrefs.saveCurrency(account.currency)
                         }
                     }
                 }

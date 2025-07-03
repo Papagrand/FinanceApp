@@ -3,6 +3,7 @@ package ru.point.financeapp.di
 import dagger.Module
 import dagger.Provides
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
+import ru.point.account.domain.usecase.UpdateAccountUseCase
 import ru.point.api.repository.AccountRepository
 import ru.point.api.repository.CategoryRepository
 import ru.point.api.repository.TransactionRepository
@@ -28,6 +29,10 @@ object UseCaseModule {
     @Provides
     @Singleton
     fun provideGetAllAccountsUseCase(repo: AccountRepository): GetAllAccountsUseCase = GetAllAccountsUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideUpdateAccountUseCase(repo: AccountRepository): UpdateAccountUseCase = UpdateAccountUseCase(repo)
 
     @Provides
     @Singleton

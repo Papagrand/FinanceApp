@@ -22,7 +22,7 @@ object RetrofitProvider {
 
         _instance =
             Retrofit.Builder()
-                .baseUrl("https://shmr-finance.ru/")
+                .baseUrl("https://shmr-finance.ru/api/v1/")
                 .addConverterFactory(json.asConverterFactory(contentType))
                 .client(okHttp)
                 .build()

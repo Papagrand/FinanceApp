@@ -21,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -89,16 +88,15 @@ fun CategoryScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            var query by remember { mutableStateOf("") }
             CategorySearch(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                         .background(MaterialTheme.colorScheme.outline),
-                value = text.value,
+                value = state.query,
                 onValueChange = { new ->
-                    query = new
+                    text.value = new
                     viewModel.dispatch(CategoriesIntent.Search(new))
                 },
                 placeHolderResId = R.string.search_placeholder,

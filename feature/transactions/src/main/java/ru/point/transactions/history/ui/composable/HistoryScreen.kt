@@ -67,6 +67,9 @@ fun HistoryScreen(
     val viewModel: HistoryViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val currency by viewModel.currency.collectAsStateWithLifecycle()
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     val tracker = remember { NetworkHolder.tracker }
@@ -119,7 +122,7 @@ fun HistoryScreen(
                 ) { CircularProgressIndicator() }
 
             state.error != null -> {
-                BaseHistoryTopColumnPlaceholder(innerPadding, state.error)
+                BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency, state.error)
             }
 
             else -> {
@@ -178,7 +181,7 @@ fun HistoryScreen(
                         }
                     }
                 } else {
-                    BaseHistoryTopColumnPlaceholder(innerPadding)
+                    BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency)
                 }
             }
         }

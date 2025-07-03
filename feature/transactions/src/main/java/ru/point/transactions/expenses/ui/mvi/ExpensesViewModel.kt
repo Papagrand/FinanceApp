@@ -42,9 +42,17 @@ class ExpensesViewModel @Inject constructor(
     val effect: SharedFlow<ExpensesEffect> = _effect.asSharedFlow()
 
     private val _accountId = MutableStateFlow<Int?>(null)
-    val accountId: StateFlow<Int?> = _accountId
+
+    private val _currency = MutableStateFlow("RUB")
+    val currency: StateFlow<String> = _currency.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            prefs.currencyFlow
+                .filterNotNull()
+                .collectLatest { _currency.value = it }
+        }
+
         viewModelScope.launch {
             prefs.accountIdFlow
                 .filterNotNull()

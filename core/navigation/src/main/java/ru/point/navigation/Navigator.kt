@@ -9,6 +9,8 @@ sealed interface Route {
 
     data object Account : Route
 
+    data object AccountEdit : Route
+
     data object Category : Route
 
     data object Settings : Route

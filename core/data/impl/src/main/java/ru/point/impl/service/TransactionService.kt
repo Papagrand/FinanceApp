@@ -13,7 +13,7 @@ import ru.point.impl.model.Transaction
  */
 
 interface TransactionService {
-    @GET("api/v1/transactions/account/{accountId}/period")
+    @GET("transactions/account/{accountId}/period")
     suspend fun getByAccountForPeriod(
         @Path("accountId") accountId: Int,
         @Query("startDate") start: String,
