@@ -1,6 +1,8 @@
-package ru.point.account.ui.composable
+package ru.point.account.ui.composable.account
 
+import androidx.compose.foundation.MarqueeSpacing
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.point.account.R
 import ru.point.api.model.AccountDto
@@ -76,6 +79,21 @@ internal fun Balance(
                     text = stringResource(R.string.balance),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                    text = account.name,
+                    maxLines = 1,
+                    overflow = TextOverflow.Visible,
+                    modifier =
+                        Modifier
+                            .basicMarquee(
+                                iterations = Int.MAX_VALUE,
+                                spacing = MarqueeSpacing(16.dp),
+                                velocity = 50.dp,
+                                repeatDelayMillis = 1000,
+                            ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
             trail = {

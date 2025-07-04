@@ -39,7 +39,6 @@ import ru.point.ui.composables.TopBarAction
 import ru.point.ui.di.LocalViewModelFactory
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber
-import ru.point.utils.network.NetworkHolder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -67,9 +66,10 @@ fun HistoryScreen(
     val viewModel: HistoryViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
 
-    val tracker = remember { NetworkHolder.tracker }
+    val currency by viewModel.currency.collectAsStateWithLifecycle()
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val monthYear =
         LocalDate.now()
@@ -106,7 +106,7 @@ fun HistoryScreen(
         fabState = FabState.Hidden,
     ) { innerPadding ->
 
-        NoInternetBanner(tracker = tracker)
+        NoInternetBanner(tracker = viewModel.tracker)
 
         when {
             state.isLoading ->
@@ -119,7 +119,7 @@ fun HistoryScreen(
                 ) { CircularProgressIndicator() }
 
             state.error != null -> {
-                BaseHistoryTopColumnPlaceholder(innerPadding, state.error)
+                BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency, state.error)
             }
 
             else -> {
@@ -178,7 +178,7 @@ fun HistoryScreen(
                         }
                     }
                 } else {
-                    BaseHistoryTopColumnPlaceholder(innerPadding)
+                    BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency)
                 }
             }
         }

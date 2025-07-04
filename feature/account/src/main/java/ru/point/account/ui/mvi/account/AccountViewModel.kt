@@ -1,4 +1,4 @@
-package ru.point.account.ui.mvi
+package ru.point.account.ui.mvi.account
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.utils.common.Result
 import ru.point.utils.model.AppError
+import ru.point.utils.network.NetworkTracker
 import javax.inject.Inject
 
 /**
@@ -29,6 +30,7 @@ import javax.inject.Inject
 
 class AccountViewModel @Inject constructor(
     private val getAllAccountsUseCase: GetAllAccountsUseCase,
+    internal val tracker: NetworkTracker,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<AccountIntent>(extraBufferCapacity = 1)
 

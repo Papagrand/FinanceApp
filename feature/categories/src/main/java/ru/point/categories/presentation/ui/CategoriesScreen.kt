@@ -21,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -38,7 +37,6 @@ import ru.point.ui.composables.BaseScaffold
 import ru.point.ui.composables.FabState
 import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.di.LocalViewModelFactory
-import ru.point.utils.network.NetworkHolder
 
 /**
  * CategoryScreen
@@ -60,8 +58,6 @@ fun CategoryScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val tracker = remember { NetworkHolder.tracker }
-
     LaunchedEffect(Unit) {
         viewModel.dispatch(CategoriesIntent.Load)
         viewModel.effect.collect { effect ->
@@ -81,7 +77,7 @@ fun CategoryScreen(
         fabState = FabState.Hidden,
     ) { innerPadding ->
 
-        NoInternetBanner(tracker = tracker)
+        NoInternetBanner(tracker = viewModel.tracker)
 
         Column(
             modifier =
@@ -89,16 +85,15 @@ fun CategoryScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            var query by remember { mutableStateOf("") }
             CategorySearch(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                         .background(MaterialTheme.colorScheme.outline),
-                value = text.value,
+                value = state.query,
                 onValueChange = { new ->
-                    query = new
+                    text.value = new
                     viewModel.dispatch(CategoriesIntent.Search(new))
                 },
                 placeHolderResId = R.string.search_placeholder,

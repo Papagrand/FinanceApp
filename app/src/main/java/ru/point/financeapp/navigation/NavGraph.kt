@@ -8,7 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import ru.point.account.ui.composable.AccountScreen
+import ru.point.account.ui.composable.account.AccountScreen
+import ru.point.account.ui.composable.accountEdit.AccountEditScreen
 import ru.point.categories.presentation.ui.CategoryScreen
 import ru.point.financeapp.NavigatorImpl
 import ru.point.settings.presentation.SettingsScreen
@@ -83,14 +84,30 @@ fun NavGraph(navController: NavHostController) {
             }
         }
 
-        composable(
-            NavRoute.Account.route,
-            enterTransition = { EnterTransition.None },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None },
-            exitTransition = { ExitTransition.None },
+        navigation(
+            startDestination = NavRoute.Account.route,
+            route = "account_graph",
         ) {
-            AccountScreen(navigator = navigator)
+            composable(
+                NavRoute.Account.route,
+                enterTransition = { EnterTransition.None },
+                popEnterTransition = { EnterTransition.None },
+                popExitTransition = { ExitTransition.None },
+                exitTransition = { ExitTransition.None },
+            ) {
+                AccountScreen(navigator = navigator)
+            }
+            composable(
+                NavRoute.AccountEdit.route,
+                enterTransition = { EnterTransition.None },
+                popEnterTransition = { EnterTransition.None },
+                popExitTransition = { ExitTransition.None },
+                exitTransition = { ExitTransition.None },
+            ) {
+                AccountEditScreen(
+                    navigator = navigator,
+                )
+            }
         }
 
         composable(

@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -27,10 +28,21 @@ import ru.point.ui.BottomNavigationItem
 import ru.point.utils.events.SnackbarEvents
 
 @Composable
-fun MainActivityUI(viewModel: MainActivityViewModel) {
+fun MainActivityUI() {
     val navController = rememberNavController()
     val currentDestination by navController.currentBackStackEntryAsState()
     val hierarchy = currentDestination?.destination
+
+    val rootRoutes =
+        setOf(
+            "expenses_graph",
+            "incomes_graph",
+            "account",
+            "category",
+            "settings",
+        )
+
+    val showBottomBar = hierarchy?.hierarchy?.any { it.route in rootRoutes } == true
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -72,17 +84,19 @@ fun MainActivityUI(viewModel: MainActivityViewModel) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
-            BottomBar(
-                items = items,
-                currentDestination = hierarchy,
-                onItemClick = { graphRoute ->
-                    navController.navigate(graphRoute) {
-                        popUpTo(graphRoute) { inclusive = false }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-            )
+            if (showBottomBar) {
+                BottomBar(
+                    items = items,
+                    currentDestination = hierarchy,
+                    onItemClick = { graphRoute ->
+                        navController.navigate(graphRoute) {
+                            popUpTo(graphRoute) { inclusive = false }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
         },
     ) { innerPadding ->
         Surface(
@@ -109,6 +123,7 @@ class NavigatorImpl(private val navController: NavHostController) : Navigator {
 fun Route.toNavRoute(): NavRoute =
     when (this) {
         Route.Account -> NavRoute.Account
+        Route.AccountEdit -> NavRoute.AccountEdit
         Route.Category -> NavRoute.Category
         Route.Expenses -> NavRoute.Expenses
         Route.History -> NavRoute.History

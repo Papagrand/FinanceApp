@@ -1,7 +1,7 @@
 package ru.point.transactions.history.ui.mvi
 
 sealed interface HistoryIntent {
-    object Load : HistoryIntent
+    data object Load : HistoryIntent
 
-    object Retry : HistoryIntent
+    data object Retry : HistoryIntent
 }

@@ -9,7 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.point.api.model.TransactionPlaceHolder
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
 import ru.point.transactions.R
@@ -23,7 +22,6 @@ import ru.point.ui.composables.FabState
 import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
 import ru.point.ui.di.LocalViewModelFactory
-import ru.point.utils.network.NetworkHolder
 
 /**
  * ExpensesScreen
@@ -45,11 +43,10 @@ fun ExpensesScreen(
     val viewModel: ExpensesViewModel = viewModel(factory = LocalViewModelFactory.current)
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val currency by viewModel.currency.collectAsStateWithLifecycle()
+
     val snackbarHostState = remember { SnackbarHostState() }
-
-    val tracker = remember { NetworkHolder.tracker }
-
-    val placeholder = expensesPlaceholder()
 
     LaunchedEffect(Unit) {
         viewModel.dispatch(ExpensesIntent.Load)
@@ -76,17 +73,8 @@ fun ExpensesScreen(
         snackbarHostState = snackbarHostState,
     ) { innerPadding ->
 
-        NoInternetBanner(tracker = tracker)
+        NoInternetBanner(tracker = viewModel.tracker)
 
-        ExpensesColumn(innerPadding, state, placeholder)
+        ExpensesColumn(innerPadding, state, currency)
     }
-}
-
-private fun expensesPlaceholder(): TransactionPlaceHolder {
-    val placeholder =
-        TransactionPlaceHolder(
-            amount = "0",
-            currency = "RUB",
-        )
-    return placeholder
 }

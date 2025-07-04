@@ -1,4 +1,4 @@
-package ru.point.account.ui.composable
+package ru.point.account.ui.composable.account
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,18 +23,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.account.R
-import ru.point.account.ui.mvi.AccountEffect
-import ru.point.account.ui.mvi.AccountIntent
-import ru.point.account.ui.mvi.AccountViewModel
+import ru.point.account.ui.mvi.account.AccountEffect
+import ru.point.account.ui.mvi.account.AccountIntent
+import ru.point.account.ui.mvi.account.AccountViewModel
 import ru.point.api.model.AccountDto
 import ru.point.navigation.Navigator
+import ru.point.navigation.Route
 import ru.point.ui.composables.ActionState
 import ru.point.ui.composables.BaseScaffold
 import ru.point.ui.composables.FabState
 import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
 import ru.point.ui.di.LocalViewModelFactory
-import ru.point.utils.network.NetworkHolder
+import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 
 /**
  * AccountScreen
@@ -57,8 +58,6 @@ fun AccountScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val tracker = remember { NetworkHolder.tracker }
-
     LaunchedEffect(Unit) {
         viewModel.dispatch(AccountIntent.Load)
         viewModel.effect.collect { effect ->
@@ -75,11 +74,12 @@ fun AccountScreen(
             TopBarAction(
                 iconRes = R.drawable.edit,
                 contentDescription = "Редактировать",
-                onClick = {},
+                onClick = {
+                    navigator.navigate(Route.AccountEdit)
+                },
             ),
         actionState = ActionState.Shown,
-        fabState = FabState.Shown,
-        onFabClick = onAddClick,
+        fabState = FabState.Hidden,
     ) { innerPadding ->
 
         when {
@@ -135,6 +135,18 @@ fun AccountScreen(
                                     .height(56.dp),
                             state.accountData!!,
                         )
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+                        Currency(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                            currency = state.accountData!!.currency.toCurrencySymbol(),
+                        )
                     } else {
                         Balance(
                             modifier =
@@ -143,23 +155,23 @@ fun AccountScreen(
                                     .height(56.dp),
                             accountPlaceholder(),
                         )
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+                        Currency(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                            currency = "$",
+                        )
                     }
-                    HorizontalDivider(
-                        modifier = Modifier,
-                        color = MaterialTheme.colorScheme.surfaceDim,
-                        thickness = 1.dp,
-                    )
-
-                    Currency(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(56.dp),
-                    )
                 }
             }
         }
-        NoInternetBanner(tracker = tracker)
+        NoInternetBanner(tracker = viewModel.tracker)
     }
 }
 

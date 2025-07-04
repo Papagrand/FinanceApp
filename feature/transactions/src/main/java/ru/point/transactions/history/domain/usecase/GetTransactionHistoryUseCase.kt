@@ -43,7 +43,7 @@ class GetTransactionHistoryUseCase(
                 val filtered = filterAndSort(result.data, isIncome)
                 Result.Success(
                     TodayTransactions(
-                        list = filtered,
+                        transactionsList = filtered,
                         total = filtered.sumAmounts(),
                     ),
                 )

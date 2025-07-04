@@ -1,7 +1,7 @@
 package ru.point.transactions.incomes.ui.mvi
 
 sealed interface IncomesIntent {
-    object Load : IncomesIntent
+    data object Load : IncomesIntent
 
-    object Retry : IncomesIntent
+    data object Retry : IncomesIntent
 }

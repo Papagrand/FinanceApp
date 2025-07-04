@@ -26,7 +26,7 @@ import kotlin.collections.isNotEmpty
 fun ExpensesColumn(
     innerPadding: PaddingValues,
     state: ExpensesState,
-    placeholder: TransactionPlaceHolder,
+    currency: String?,
 ) {
     Column(
         modifier =
@@ -34,6 +34,18 @@ fun ExpensesColumn(
                 .fillMaxSize()
                 .padding(innerPadding),
     ) {
+        if (currency == null) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = 32.dp),
+                contentAlignment = Alignment.TopCenter,
+            ) { CircularProgressIndicator() }
+            return
+        }
+
+        val placeholder = TransactionPlaceHolder("0", currency)
+
         when {
             state.isLoading ->
                 Box(

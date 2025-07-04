@@ -1,4 +1,4 @@
-package ru.point.account.ui.mvi
+package ru.point.account.ui.mvi.account
 
 import ru.point.api.model.AccountDto
 

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
 import com.example.compose.HomeWork1Theme
+import ru.point.financeapp.di.appComponent
 import ru.point.ui.di.LocalViewModelFactory
 import javax.inject.Inject
 
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        appComponent.inject(this)
+        applicationContext.appComponent.inject(this)
 
         installSplashScreen().setKeepOnScreenCondition {
             !viewModel.dataCollected.value
@@ -51,7 +52,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background,
                     ) {
-                        MainActivityUI(viewModel)
+                        MainActivityUI()
                     }
                 }
             }

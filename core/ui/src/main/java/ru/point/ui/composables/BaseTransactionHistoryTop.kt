@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.point.ui.R
+import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -22,6 +23,7 @@ import java.util.Locale
 @Composable
 fun BaseHistoryTopColumnPlaceholder(
     innerPadding: PaddingValues,
+    currency: String,
     error: String? = null,
 ) {
     val monthYear =
@@ -67,7 +69,7 @@ fun BaseHistoryTopColumnPlaceholder(
         BaseHistoryTopElement(
             modifier = Modifier,
             contentText = stringResource(R.string.amount_placeholder),
-            trailText = "0 ₽",
+            trailText = "0 ${currency.toCurrencySymbol()}",
         )
         if (error != null) {
             Text(

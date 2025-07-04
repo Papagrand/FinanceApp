@@ -2,7 +2,6 @@ package ru.point.impl.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.point.api.model.AccountDto
 
 @Serializable
 data class Account(
@@ -15,14 +14,9 @@ data class Account(
     @SerialName("updatedAt") val updatedAt: String,
 )
 
-internal val Account.asAccountDto
-    get() =
-        AccountDto(
-            id = id,
-            userId = userId,
-            name = name,
-            balance = balance,
-            currency = currency,
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-        )
+@Serializable
+data class AccountUpdateRequest(
+    @SerialName("name") val name: String,
+    @SerialName("balance") val balance: String,
+    @SerialName("currency") val currency: String,
+)

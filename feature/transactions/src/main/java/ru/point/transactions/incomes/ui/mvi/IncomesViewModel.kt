@@ -16,11 +16,13 @@ import ru.point.transactions.incomes.domain.usecase.GetIncomesTodayUseCase
 import ru.point.utils.common.AccountPreferences
 import ru.point.utils.common.Result
 import ru.point.utils.model.AppError
+import ru.point.utils.network.NetworkTracker
 import javax.inject.Inject
 
 class IncomesViewModel @Inject constructor(
     private val getIncomesTodayUseCase: GetIncomesTodayUseCase,
     private val prefs: AccountPreferences,
+    internal val tracker: NetworkTracker,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<IncomesIntent>(extraBufferCapacity = 1)
 
@@ -32,7 +34,16 @@ class IncomesViewModel @Inject constructor(
 
     private val _accountId = MutableStateFlow<Int?>(null)
 
+    private val _currency = MutableStateFlow<String?>(null)
+    val currency: StateFlow<String?> = _currency.asStateFlow()
+
     init {
+        viewModelScope.launch {
+            prefs.currencyFlow
+                .filterNotNull()
+                .collectLatest { _currency.value = it }
+        }
+
         viewModelScope.launch {
             prefs.accountIdFlow
                 .filterNotNull()
@@ -74,7 +85,7 @@ class IncomesViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                list = result.data.list,
+                                list = result.data.transactionsList,
                                 total = result.data.total,
                                 error = null,
                             )

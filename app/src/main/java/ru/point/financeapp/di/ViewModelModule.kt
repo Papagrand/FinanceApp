@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import ru.point.account.ui.mvi.AccountViewModel
+import ru.point.account.ui.mvi.account.AccountViewModel
+import ru.point.account.ui.mvi.accountEdit.AccountEditViewModel
 import ru.point.categories.presentation.mvi.CategoriesViewModel
 import ru.point.financeapp.MainActivityViewModel
 import ru.point.transactions.expenses.ui.mvi.ExpensesViewModel
@@ -31,6 +32,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AccountViewModel::class)
     abstract fun bindAccountVM(vm: AccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AccountEditViewModel::class)
+    abstract fun bindAccountEditVM(vm: AccountEditViewModel): ViewModel
 
     @Binds
     @IntoMap

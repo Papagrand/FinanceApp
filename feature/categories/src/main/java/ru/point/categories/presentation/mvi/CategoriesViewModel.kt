@@ -13,10 +13,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.point.api.model.CategoryDto
 import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
 import ru.point.utils.common.AccountPreferences
 import ru.point.utils.common.Result
 import ru.point.utils.model.AppError
+import ru.point.utils.network.NetworkTracker
 import javax.inject.Inject
 
 /**
@@ -31,6 +33,7 @@ import javax.inject.Inject
 class CategoriesViewModel @Inject constructor(
     private val observeCategoriesUseCase: ObserveCategoriesUseCase,
     private val prefs: AccountPreferences,
+    internal val tracker: NetworkTracker,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<CategoriesIntent>(extraBufferCapacity = 1)
 
@@ -69,8 +72,10 @@ class CategoriesViewModel @Inject constructor(
 
                     is CategoriesIntent.Search -> {
                         _state.update { it.copy(query = intent.query) }
-                        _accountId.value
-                            ?.let { performLoad(it) }
+
+                        val newFiltered = applyQuery(_state.value.rawList, intent.query)
+
+                        _state.update { it.copy(list = newFiltered) }
                     }
                 }
             }
@@ -94,10 +99,14 @@ class CategoriesViewModel @Inject constructor(
                     }
 
                     is Result.Success -> {
+                        val full = result.data
+                        val filtered = applyQuery(full, _state.value.query)
+
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                list = result.data,
+                                rawList = full,
+                                list = filtered,
                                 error = null,
                             )
                         }
@@ -125,5 +134,14 @@ class CategoriesViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun applyQuery(
+        list: List<CategoryDto>,
+        query: String,
+    ): List<CategoryDto> {
+        if (query.isBlank()) return list
+        val q = query.trim().lowercase()
+        return list.filter { it.categoryName.lowercase().contains(q) }
     }
 }

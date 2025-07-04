@@ -16,6 +16,7 @@ import ru.point.transactions.expenses.domain.usecase.GetExpensesTodayUseCase
 import ru.point.utils.common.AccountPreferences
 import ru.point.utils.common.Result
 import ru.point.utils.model.AppError
+import ru.point.utils.network.NetworkTracker
 import javax.inject.Inject
 
 /**
@@ -32,6 +33,7 @@ import javax.inject.Inject
 class ExpensesViewModel @Inject constructor(
     private val getExpensesTodayUseCase: GetExpensesTodayUseCase,
     private val prefs: AccountPreferences,
+    internal val tracker: NetworkTracker,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<ExpensesIntent>(extraBufferCapacity = 1)
 
@@ -42,9 +44,17 @@ class ExpensesViewModel @Inject constructor(
     val effect: SharedFlow<ExpensesEffect> = _effect.asSharedFlow()
 
     private val _accountId = MutableStateFlow<Int?>(null)
-    val accountId: StateFlow<Int?> = _accountId
+
+    private val _currency = MutableStateFlow<String?>(null)
+    val currency: StateFlow<String?> = _currency.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            prefs.currencyFlow
+                .filterNotNull()
+                .collectLatest { _currency.value = it }
+        }
+
         viewModelScope.launch {
             prefs.accountIdFlow
                 .filterNotNull()
@@ -86,7 +96,7 @@ class ExpensesViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                list = result.data.list,
+                                list = result.data.transactionsList,
                                 total = result.data.total,
                                 error = null,
                             )

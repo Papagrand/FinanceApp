@@ -1,4 +1,4 @@
-package ru.point.account.ui.composable
+package ru.point.account.ui.composable.account
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +27,7 @@ import ru.point.ui.composables.BaseListItem
 @Composable
 internal fun Currency(
     modifier: Modifier,
+    currency: String,
     onClick: () -> Unit = {},
 ) {
     Surface(
@@ -53,7 +54,7 @@ internal fun Currency(
             },
             trail = {
                 Text(
-                    "₽",
+                    text = currency,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
