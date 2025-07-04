@@ -32,8 +32,8 @@ class IncomesViewModel @Inject constructor(
 
     private val _accountId = MutableStateFlow<Int?>(null)
 
-    private val _currency = MutableStateFlow("RUB")
-    val currency: StateFlow<String> = _currency.asStateFlow()
+    private val _currency = MutableStateFlow<String?>(null)
+    val currency: StateFlow<String?> = _currency.asStateFlow()
 
     init {
         viewModelScope.launch {

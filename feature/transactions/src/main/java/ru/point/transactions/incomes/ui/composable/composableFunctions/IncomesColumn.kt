@@ -1,4 +1,4 @@
-package ru.point.transactions.expenses.ui.composable.composableFunctions
+package ru.point.transactions.incomes.ui.composable.composableFunctions
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,15 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.point.api.model.TransactionPlaceHolder
-import ru.point.transactions.expenses.ui.mvi.ExpensesState
+import ru.point.transactions.incomes.ui.mvi.IncomesState
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber
-import kotlin.collections.isNotEmpty
 
 @Composable
-fun ExpensesColumn(
+fun IncomesColumn(
     innerPadding: PaddingValues,
-    state: ExpensesState,
+    state: IncomesState,
     currency: String?,
 ) {
     Column(
@@ -62,7 +61,7 @@ fun ExpensesColumn(
                         Modifier
                             .fillMaxSize(),
                 ) {
-                    TotalExpensesToday(
+                    TotalIncomesToday(
                         modifier = Modifier,
                         total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}",
                     )
@@ -83,30 +82,34 @@ fun ExpensesColumn(
 
             else -> {
                 if (state.list.isNotEmpty()) {
-                    TotalExpensesToday(
+                    TotalIncomesToday(
                         modifier = Modifier,
-                        total = "${state.total.toString().toPrettyNumber()} ${state.list[0].currency.toCurrencySymbol()}",
+                        total = "${
+                            state.total.toString().toPrettyNumber()
+                        } ${state.list[0].currency.toCurrencySymbol()}",
                     )
                 } else {
-                    TotalExpensesToday(
+                    TotalIncomesToday(
                         modifier = Modifier,
                         total = "${placeholder.amount.toPrettyNumber()} ${placeholder.currency.toCurrencySymbol()}",
                     )
                 }
+
                 HorizontalDivider(
                     modifier = Modifier,
                     color = MaterialTheme.colorScheme.surfaceDim,
                     thickness = 1.dp,
                 )
+
                 LazyColumn(
                     modifier =
                         Modifier
                             .fillMaxSize(),
                 ) {
-                    items(state.list) { expense ->
-                        ExpenseRow(
+                    items(state.list) { income ->
+                        IncomeRow(
                             modifier = Modifier,
-                            expense,
+                            income,
                         )
                         HorizontalDivider(
                             modifier = Modifier,
