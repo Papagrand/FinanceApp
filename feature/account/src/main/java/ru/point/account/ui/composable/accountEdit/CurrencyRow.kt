@@ -94,7 +94,8 @@ fun CurrencyRow(
                     Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.error)
-                        .clickable { showSheet.value = false },
+                        .clickable { showSheet.value = false }
+                        .padding(horizontal = 16.dp),
                 lead = {
                     Icon(
                         painter = painterResource(R.drawable.cancel),

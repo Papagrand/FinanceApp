@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -23,6 +24,8 @@ import ru.point.ui.composables.SimpleListRow
 @Composable
 fun BalanceRow(
     balance: String,
+    isError: Boolean,
+    errorText: String?,
     onChange: (String) -> Unit,
 ) {
     SimpleListRow(
@@ -41,11 +44,29 @@ fun BalanceRow(
                 value = balance,
                 onValueChange = onChange,
                 singleLine = true,
+                isError = isError,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                supportingText =
+                    errorText?.let { txt ->
+                        {
+                            Text(
+                                text = txt,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                            )
+                        }
+                    },
                 textStyle =
                     MaterialTheme.typography.bodyLarge.copy(
                         textAlign = TextAlign.End,
                     ),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterVertically),
                 colors =
                     TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
@@ -53,6 +74,8 @@ fun BalanceRow(
                         disabledIndicatorColor = Color.Transparent,
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
+                        errorContainerColor = MaterialTheme.colorScheme.errorContainer,
+                        errorIndicatorColor = MaterialTheme.colorScheme.error,
                         focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     ),
@@ -74,6 +97,8 @@ fun BalanceRowPreview() {
         BalanceRow(
             balance = "35550.00",
             onChange = { text = it },
+            errorText = "null",
+            isError = true,
         )
     }
 }

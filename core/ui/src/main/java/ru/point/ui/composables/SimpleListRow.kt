@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SimpleListRow(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     rowHeight: Dp = 70.dp,
     lead: @Composable RowScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit = {},

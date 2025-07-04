@@ -25,7 +25,6 @@ import ru.point.ui.composables.FabState
 import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
 import ru.point.ui.di.LocalViewModelFactory
-import ru.point.utils.network.NetworkHolder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,8 +37,6 @@ fun AccountEditScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
-
-    val tracker = remember { NetworkHolder.tracker }
 
     LaunchedEffect(Unit) {
         viewModel.dispatch(AccountEditIntent.Load)
@@ -54,7 +51,7 @@ fun AccountEditScreen(
     }
 
     BaseScaffold(
-        title = stringResource(R.string.my_account),
+        title = stringResource(R.string.edit_account),
         action =
             TopBarAction(
                 iconRes = R.drawable.accept_edit,
@@ -92,6 +89,6 @@ fun AccountEditScreen(
                 )
             }
         }
-        NoInternetBanner(tracker = tracker)
+        NoInternetBanner(tracker = viewModel.tracker)
     }
 }

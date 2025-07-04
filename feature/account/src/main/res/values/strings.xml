@@ -4,6 +4,7 @@
     <string name="my_account">Мой счет</string>
     <string name="balance">Баланс</string>
     <string name="currency">Валюта</string>
+    <string name="edit_account">Редактирование счета</string>
 
 
 </resources>

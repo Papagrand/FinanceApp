@@ -7,6 +7,8 @@ data class AccountEditState(
     val accountData: AccountDto? = null,
     val name: String = "",
     val balance: String = "",
+    val balanceValid: Boolean = true,
+    val balanceError: String? = null,
     val currency: String = "",
     val isDirty: Boolean = false,
     val error: String? = null,

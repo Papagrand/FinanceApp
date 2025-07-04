@@ -34,13 +34,12 @@ fun ExpensesColumn(
                 .fillMaxSize()
                 .padding(innerPadding),
     ) {
-
         if (currency == null) {
             Box(
                 Modifier
                     .fillMaxSize()
                     .padding(top = 32.dp),
-                contentAlignment = Alignment.TopCenter
+                contentAlignment = Alignment.TopCenter,
             ) { CircularProgressIndicator() }
             return
         }

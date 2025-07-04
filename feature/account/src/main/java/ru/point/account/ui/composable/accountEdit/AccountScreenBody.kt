@@ -45,6 +45,8 @@ fun AccountEditScreenBody(
         )
         BalanceRow(
             balance = state.balance,
+            isError = !state.balanceValid,
+            errorText = state.balanceError,
             onChange = onBalanceChange,
         )
         HorizontalDivider(

@@ -18,6 +18,7 @@ import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
 import ru.point.utils.common.AccountPreferences
 import ru.point.utils.common.Result
 import ru.point.utils.model.AppError
+import ru.point.utils.network.NetworkTracker
 import javax.inject.Inject
 
 /**
@@ -32,6 +33,7 @@ import javax.inject.Inject
 class CategoriesViewModel @Inject constructor(
     private val observeCategoriesUseCase: ObserveCategoriesUseCase,
     private val prefs: AccountPreferences,
+    internal val tracker: NetworkTracker,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<CategoriesIntent>(extraBufferCapacity = 1)
 

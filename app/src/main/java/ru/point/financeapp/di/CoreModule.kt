@@ -3,6 +3,7 @@ package ru.point.financeapp.di
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import ru.point.impl.di.ApplicationContext
 import ru.point.utils.common.AccountPreferences
 import javax.inject.Singleton
 
@@ -18,5 +19,8 @@ import javax.inject.Singleton
 object CoreModule {
     @Provides
     @Singleton
-    fun provideAccountPreferences(context: Context): AccountPreferences = AccountPreferences(context)
+    fun provideAccountPreferences(
+        @ApplicationContext
+        context: Context,
+    ): AccountPreferences = AccountPreferences(context)
 }

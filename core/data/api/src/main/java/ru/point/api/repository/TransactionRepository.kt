@@ -12,8 +12,6 @@ import ru.point.utils.common.Result
  */
 
 interface TransactionRepository {
-    fun observeToday(accountId: Int): Flow<Result<List<TransactionDto>>>
-
     fun observePeriod(
         accountId: Int,
         startDateIso: String,

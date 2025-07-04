@@ -22,7 +22,6 @@ import ru.point.ui.composables.FabState
 import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
 import ru.point.ui.di.LocalViewModelFactory
-import ru.point.utils.network.NetworkHolder
 
 /**
  * ExpensesScreen
@@ -49,8 +48,6 @@ fun ExpensesScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val tracker = remember { NetworkHolder.tracker }
-
     LaunchedEffect(Unit) {
         viewModel.dispatch(ExpensesIntent.Load)
         viewModel.effect.collect { eff ->
@@ -76,7 +73,7 @@ fun ExpensesScreen(
         snackbarHostState = snackbarHostState,
     ) { innerPadding ->
 
-        NoInternetBanner(tracker = tracker)
+        NoInternetBanner(tracker = viewModel.tracker)
 
         ExpensesColumn(innerPadding, state, currency)
     }

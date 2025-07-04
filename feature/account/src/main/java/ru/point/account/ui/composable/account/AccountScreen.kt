@@ -36,7 +36,6 @@ import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
 import ru.point.ui.di.LocalViewModelFactory
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
-import ru.point.utils.network.NetworkHolder
 
 /**
  * AccountScreen
@@ -58,8 +57,6 @@ fun AccountScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
-
-    val tracker = remember { NetworkHolder.tracker }
 
     LaunchedEffect(Unit) {
         viewModel.dispatch(AccountIntent.Load)
@@ -174,7 +171,7 @@ fun AccountScreen(
                 }
             }
         }
-        NoInternetBanner(tracker = tracker)
+        NoInternetBanner(tracker = viewModel.tracker)
     }
 }
 

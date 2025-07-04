@@ -16,11 +16,13 @@ import ru.point.transactions.history.domain.usecase.GetTransactionHistoryUseCase
 import ru.point.utils.common.AccountPreferences
 import ru.point.utils.common.Result
 import ru.point.utils.model.AppError
+import ru.point.utils.network.NetworkTracker
 import javax.inject.Inject
 
 class HistoryViewModel @Inject constructor(
     private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
     private val prefs: AccountPreferences,
+    internal val tracker: NetworkTracker,
 ) : ViewModel() {
     private var isIncomeFlag: Boolean = false
 
@@ -92,7 +94,7 @@ class HistoryViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                list = result.data.list,
+                                list = result.data.transactionsList,
                                 total = result.data.total,
                                 error = null,
                             )

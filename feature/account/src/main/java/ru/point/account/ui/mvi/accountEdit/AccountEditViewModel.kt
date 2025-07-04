@@ -16,13 +16,16 @@ import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.account.domain.usecase.UpdateAccountUseCase
 import ru.point.utils.common.AccountPreferences
 import ru.point.utils.common.Result
+import ru.point.utils.extensionsAndParsers.validateBalance
 import ru.point.utils.model.AppError
+import ru.point.utils.network.NetworkTracker
 import javax.inject.Inject
 
 class AccountEditViewModel @Inject constructor(
     private val getAllAccountsUseCase: GetAllAccountsUseCase,
     private val updateAccountUseCase: UpdateAccountUseCase,
     private val prefs: AccountPreferences,
+    internal val tracker: NetworkTracker,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<AccountEditIntent>(extraBufferCapacity = 1)
 
@@ -111,11 +114,26 @@ class AccountEditViewModel @Inject constructor(
         }
     }
 
-    private fun changeBalance(newBalance: String) {
+    private fun changeBalance(input: String) {
+        val tooLong = input.length > 15
+
+        val normalized = if (tooLong) null else input.validateBalance()
+        val isValid = normalized != null
+
+        val errText =
+            when {
+                input.isBlank() -> "Введите сумму"
+                tooLong -> "Не более 13 символов до десятых"
+                !isValid -> "Формат: 12345.67"
+                else -> null
+            }
+
         _state.update { st ->
             st.copy(
-                balance = newBalance,
-                isDirty = newBalance != st.accountData?.balance,
+                balance = input,
+                balanceValid = isValid,
+                balanceError = errText,
+                isDirty = isValid && normalized != st.accountData?.balance,
             )
         }
     }
@@ -131,6 +149,10 @@ class AccountEditViewModel @Inject constructor(
 
     private fun saveChanges() {
         viewModelScope.launch {
+            if (!_state.value.balanceValid) {
+                _effect.emit(AccountEditEffect.ShowSnackbar("Неверный формат суммы"))
+                return@launch
+            }
             updateAccountUseCase(
                 id = _state.value.accountData!!.id,
                 name = _state.value.name,

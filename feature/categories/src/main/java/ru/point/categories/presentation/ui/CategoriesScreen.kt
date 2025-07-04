@@ -37,7 +37,6 @@ import ru.point.ui.composables.BaseScaffold
 import ru.point.ui.composables.FabState
 import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.di.LocalViewModelFactory
-import ru.point.utils.network.NetworkHolder
 
 /**
  * CategoryScreen
@@ -59,8 +58,6 @@ fun CategoryScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val tracker = remember { NetworkHolder.tracker }
-
     LaunchedEffect(Unit) {
         viewModel.dispatch(CategoriesIntent.Load)
         viewModel.effect.collect { effect ->
@@ -80,7 +77,7 @@ fun CategoryScreen(
         fabState = FabState.Hidden,
     ) { innerPadding ->
 
-        NoInternetBanner(tracker = tracker)
+        NoInternetBanner(tracker = viewModel.tracker)
 
         Column(
             modifier =

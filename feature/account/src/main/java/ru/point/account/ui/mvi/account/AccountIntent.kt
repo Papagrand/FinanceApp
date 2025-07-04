@@ -1,7 +1,7 @@
 package ru.point.account.ui.mvi.account
 
 sealed interface AccountIntent {
-    object Load : AccountIntent
+    data object Load : AccountIntent
 
-    object Retry : AccountIntent
+    data object Retry : AccountIntent
 }
