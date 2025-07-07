@@ -1,7 +1,5 @@
 package ru.point.financeapp.navigation
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -35,20 +33,12 @@ fun NavGraph(navController: NavHostController) {
         ) {
             composable(
                 NavRoute.Expenses.route,
-                enterTransition = { EnterTransition.None },
-                popEnterTransition = { EnterTransition.None },
-                popExitTransition = { ExitTransition.None },
-                exitTransition = { ExitTransition.None },
             ) {
                 ExpensesScreen(navigator = navigator)
             }
 
             composable(
                 NavRoute.History.route,
-                enterTransition = { EnterTransition.None },
-                popEnterTransition = { EnterTransition.None },
-                popExitTransition = { ExitTransition.None },
-                exitTransition = { ExitTransition.None },
             ) {
                 HistoryScreen(
                     navigator = navigator,
@@ -63,19 +53,11 @@ fun NavGraph(navController: NavHostController) {
         ) {
             composable(
                 NavRoute.Income.route,
-                enterTransition = { EnterTransition.None },
-                popEnterTransition = { EnterTransition.None },
-                popExitTransition = { ExitTransition.None },
-                exitTransition = { ExitTransition.None },
             ) {
                 IncomeScreen(navigator = navigator)
             }
             composable(
                 NavRoute.History.route,
-                enterTransition = { EnterTransition.None },
-                popEnterTransition = { EnterTransition.None },
-                popExitTransition = { ExitTransition.None },
-                exitTransition = { ExitTransition.None },
             ) {
                 HistoryScreen(
                     navigator = navigator,
@@ -90,19 +72,11 @@ fun NavGraph(navController: NavHostController) {
         ) {
             composable(
                 NavRoute.Account.route,
-                enterTransition = { EnterTransition.None },
-                popEnterTransition = { EnterTransition.None },
-                popExitTransition = { ExitTransition.None },
-                exitTransition = { ExitTransition.None },
             ) {
                 AccountScreen(navigator = navigator)
             }
             composable(
                 NavRoute.AccountEdit.route,
-                enterTransition = { EnterTransition.None },
-                popEnterTransition = { EnterTransition.None },
-                popExitTransition = { ExitTransition.None },
-                exitTransition = { ExitTransition.None },
             ) {
                 AccountEditScreen(
                     navigator = navigator,
@@ -112,20 +86,12 @@ fun NavGraph(navController: NavHostController) {
 
         composable(
             NavRoute.Category.route,
-            enterTransition = { EnterTransition.None },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None },
-            exitTransition = { ExitTransition.None },
         ) {
             CategoryScreen(navigator = navigator)
         }
 
         composable(
             NavRoute.Settings.route,
-            enterTransition = { EnterTransition.None },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None },
-            exitTransition = { ExitTransition.None },
         ) {
             SettingsScreen(navigator = navigator)
         }
