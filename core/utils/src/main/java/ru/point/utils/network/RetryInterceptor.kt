@@ -2,24 +2,20 @@ package ru.point.utils.network
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import ru.point.utils.model.NoInternetException
 
-class RetryInterceptor(
-    private val tracker: NetworkTracker,
-) : Interceptor {
+class RetryInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        lateinit var res: Response
         var tries = 0
-        while (tries++ < MAX_RETRIES) {
-            if (!tracker.awaitInternetBlocking(MAX_RETRIES * DELAY_MS)) {
-                throw NoInternetException()
-            }
+        var response = chain.proceed(chain.request())
 
-            res = chain.proceed(chain.request())
-            if (res.code != 500) break
+        while (response.code == 500 && tries < MAX_RETRIES) {
+            tries++
+            response.close()
             Thread.sleep(DELAY_MS)
+            response = chain.proceed(chain.request())
         }
-        return res
+
+        return response
     }
 
     companion object {

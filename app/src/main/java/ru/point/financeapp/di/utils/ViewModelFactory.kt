@@ -1,4 +1,4 @@
-package ru.point.financeapp.di
+package ru.point.financeapp.di.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -13,10 +13,7 @@ import javax.inject.Provider
  */
 
 class ViewModelFactory @Inject constructor(
-    private val creators: Map<
-        @JvmSuppressWildcards Class<out ViewModel>,
-        @JvmSuppressWildcards Provider<ViewModel>,
-        >,
+    private val creators: Map<@JvmSuppressWildcards Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val provider =

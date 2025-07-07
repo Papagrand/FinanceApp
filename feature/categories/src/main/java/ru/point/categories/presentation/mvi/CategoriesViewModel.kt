@@ -13,12 +13,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.point.api.flow.AccountPreferencesRepo
 import ru.point.api.model.CategoryDto
 import ru.point.categories.domain.usecase.ObserveCategoriesUseCase
-import ru.point.utils.common.AccountPreferences
 import ru.point.utils.common.Result
-import ru.point.utils.model.AppError
-import ru.point.utils.network.NetworkTracker
+import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
 
 /**
@@ -30,10 +29,9 @@ import javax.inject.Inject
  *
  */
 
-class CategoriesViewModel @Inject constructor(
+internal class CategoriesViewModel @Inject constructor(
     private val observeCategoriesUseCase: ObserveCategoriesUseCase,
-    private val prefs: AccountPreferences,
-    internal val tracker: NetworkTracker,
+    private val prefs: AccountPreferencesRepo,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<CategoriesIntent>(extraBufferCapacity = 1)
 
@@ -114,15 +112,7 @@ class CategoriesViewModel @Inject constructor(
 
                     is Result.Error -> {
                         Log.e("WhyCause", result.cause.toString())
-                        val msg =
-                            when (val cause = result.cause) {
-                                AppError.BadRequest -> "Неверный формат данных"
-                                AppError.Unauthorized -> "Неавторизованный доступ"
-                                AppError.NoInternet -> "Нет подключения к интернету"
-                                is AppError.ServerError -> "Сервер временно недоступен"
-                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                                else -> "Неизвестная ошибка"
-                            }
+                        val msg = result.cause.toUserMessage()
                         _state.update {
                             it.copy(
                                 isLoading = false,

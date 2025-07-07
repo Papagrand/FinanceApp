@@ -14,7 +14,7 @@ import ru.point.account.ui.mvi.accountEdit.AccountEditState
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 
 @Composable
-fun AccountEditScreenBody(
+internal fun AccountEditScreenBody(
     state: AccountEditState,
     onNameChange: (String) -> Unit,
     onBalanceChange: (String) -> Unit,

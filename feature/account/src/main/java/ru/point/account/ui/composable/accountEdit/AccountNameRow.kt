@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import ru.point.ui.composables.SimpleListRow
 
 @Composable
-fun AccountNameRow(
+internal fun AccountNameRow(
     value: String,
     onChange: (String) -> Unit,
 ) {

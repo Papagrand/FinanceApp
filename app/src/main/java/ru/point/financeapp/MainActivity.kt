@@ -11,11 +11,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.ViewModelProvider
 import com.example.compose.HomeWork1Theme
-import ru.point.financeapp.di.appComponent
-import ru.point.ui.di.LocalViewModelFactory
-import javax.inject.Inject
+import ru.point.ui.di.LocalInternetTracker
+import ru.point.utils.network.NetworkHolder.tracker
 
 /**
  * MainActivity
@@ -28,15 +26,10 @@ import javax.inject.Inject
  */
 
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val viewModel by viewModels<MainActivityViewModel> { viewModelFactory }
+    private val viewModel by viewModels<MainActivityViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        applicationContext.appComponent.inject(this)
 
         installSplashScreen().setKeepOnScreenCondition {
             !viewModel.dataCollected.value
@@ -45,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CompositionLocalProvider(
-                LocalViewModelFactory provides viewModelFactory,
+                LocalInternetTracker provides tracker,
             ) {
                 HomeWork1Theme {
                     Surface(

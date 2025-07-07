@@ -1,10 +1,11 @@
-package ru.point.financeapp.di
+package ru.point.financeapp.di.modules
 
 import android.content.Context
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import ru.point.impl.di.ApplicationContext
-import ru.point.utils.common.AccountPreferences
+import ru.point.api.flow.AccountPreferencesRepo
+import ru.point.impl.flow.AccountPreferencesImpl
 import javax.inject.Singleton
 
 /**
@@ -15,12 +16,15 @@ import javax.inject.Singleton
  *    чтобы ViewModel’и и юзкейсы могли читать/писать его через DI.
  */
 
-@Module
+@Module(includes = [PrefsModule::class])
 object CoreModule {
     @Provides
     @Singleton
-    fun provideAccountPreferences(
-        @ApplicationContext
-        context: Context,
-    ): AccountPreferences = AccountPreferences(context)
+    fun provideAccountPreferences(context: Context): AccountPreferencesImpl = AccountPreferencesImpl(context)
+}
+
+@Module
+interface PrefsModule {
+    @Binds
+    fun bindAccountPreferences(impl: AccountPreferencesImpl): AccountPreferencesRepo
 }

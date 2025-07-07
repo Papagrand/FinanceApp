@@ -1,20 +1,21 @@
-package ru.point.financeapp.di
+package ru.point.financeapp.di.component
 
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
+import ru.point.account.di.deps.AccountDeps
+import ru.point.categories.di.deps.CategoriesDeps
 import ru.point.financeapp.App
-import ru.point.financeapp.MainActivity
-import ru.point.impl.di.ApplicationContext
+import ru.point.financeapp.di.modules.CoreModule
 import ru.point.impl.di.NetworkModule
 import ru.point.impl.di.RepositoryModule
+import ru.point.transactions.di.TransactionDeps
 import javax.inject.Singleton
 
 /**
  * AppComponent — Корневой компонент Dagger, объединяющий все модули приложения:
  *  - NetworkModule — провайдер сетевых зависимостей (Retrofit, сервисы);
  *  - RepositoryModule — биндинг репозиториев к их интерфейсам;
- *  - UseCaseModule — провайдер бизнес-логики (use-case’ов);
  *  - ViewModelModule — multibinding ViewModel через ViewModelFactory;
  *  - CoreModule — провайдер основных утилитарных классов (AccountPreferences).
  *
@@ -26,22 +27,17 @@ import javax.inject.Singleton
     modules = [
         NetworkModule::class,
         RepositoryModule::class,
-        UseCaseModule::class,
-        ViewModelModule::class,
         CoreModule::class,
     ],
 )
-interface AppComponent {
+interface AppComponent : AccountDeps, CategoriesDeps, TransactionDeps {
     fun inject(app: App)
 
-    fun inject(activity: MainActivity)
+    @Component.Builder
+    interface Builder {
+        @BindsInstance
+        fun context(ctx: Context): Builder
 
-    @Component.Factory
-    interface Factory {
-        fun create(
-            @BindsInstance
-            @ApplicationContext
-            context: Context,
-        ): AppComponent
+        fun build(): AppComponent
     }
 }

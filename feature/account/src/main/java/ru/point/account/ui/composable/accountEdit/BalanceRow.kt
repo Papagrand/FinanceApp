@@ -8,21 +8,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.point.ui.composables.SimpleListRow
 
 @Composable
-fun BalanceRow(
+internal fun BalanceRow(
     balance: String,
     isError: Boolean,
     errorText: String?,
@@ -82,23 +77,4 @@ fun BalanceRow(
             )
         },
     )
-}
-
-@Preview(
-    name = "BalanceRow",
-    showBackground = true,
-    backgroundColor = 0xFFF0F0F0,
-)
-@Composable
-fun BalanceRowPreview() {
-    var text by remember { mutableStateOf("Баланс") }
-
-    MaterialTheme {
-        BalanceRow(
-            balance = "35550.00",
-            onChange = { text = it },
-            errorText = "null",
-            isError = true,
-        )
-    }
 }

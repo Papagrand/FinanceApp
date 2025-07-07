@@ -1,5 +1,5 @@
 package ru.point.categories.presentation.mvi
 
-sealed interface CategoriesEffect {
+internal sealed interface CategoriesEffect {
     data class ShowSnackbar(val message: String) : CategoriesEffect
 }

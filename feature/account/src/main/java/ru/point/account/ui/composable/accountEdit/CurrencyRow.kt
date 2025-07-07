@@ -28,7 +28,7 @@ import ru.point.ui.composables.SimpleListRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CurrencyRow(
+internal fun CurrencyRow(
     current: String,
     onSelect: (String) -> Unit,
     allCurrencies: List<CurrencyUi>,

@@ -1,6 +1,6 @@
 package ru.point.account.ui.mvi.accountEdit
 
-sealed interface AccountEditIntent {
+internal sealed interface AccountEditIntent {
     object Load : AccountEditIntent
 
     object Retry : AccountEditIntent

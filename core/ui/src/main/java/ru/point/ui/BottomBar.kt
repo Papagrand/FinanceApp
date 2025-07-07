@@ -8,7 +8,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 
@@ -32,7 +31,6 @@ fun BottomBar(
                 label = {
                     Text(
                         text = item.title,
-                        fontWeight = if (selected) FontWeight.W600 else FontWeight.W500,
                     )
                 },
                 colors =

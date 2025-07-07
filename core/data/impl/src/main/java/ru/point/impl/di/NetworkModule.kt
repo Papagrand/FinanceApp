@@ -1,6 +1,5 @@
 package ru.point.impl.di
 
-import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -12,7 +11,6 @@ import ru.point.impl.service.AccountService
 import ru.point.impl.service.CategoryService
 import ru.point.impl.service.TransactionService
 import ru.point.utils.network.ApiKeyInterceptor
-import ru.point.utils.network.NetworkTracker
 import ru.point.utils.network.RetryInterceptor
 import javax.inject.Singleton
 
@@ -31,22 +29,13 @@ import javax.inject.Singleton
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideNetworkTracker(
-        @ApplicationContext
-        context: Context,
-    ): NetworkTracker {
-        return NetworkTracker(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRetrofit(tracker: NetworkTracker): Retrofit {
+    fun provideRetrofit(): Retrofit {
         val json = Json { ignoreUnknownKeys = true }
         val contentType = "application/json".toMediaType()
         val okHttp =
             OkHttpClient.Builder()
                 .addInterceptor(ApiKeyInterceptor())
-                .addInterceptor(RetryInterceptor(tracker))
+                .addInterceptor(RetryInterceptor())
                 .build()
 
         return Retrofit.Builder()

@@ -10,14 +10,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ru.point.api.model.CategoryDto
 import ru.point.ui.composables.BaseListItem
 
@@ -29,7 +25,7 @@ import ru.point.ui.composables.BaseListItem
  */
 
 @Composable
-fun CategoryRow(
+internal fun CategoryRow(
     modifier: Modifier,
     category: CategoryDto,
     onClick: () -> Unit = {},
@@ -42,8 +38,7 @@ fun CategoryRow(
             .clickable(onClick = { })
             .padding(horizontal = 16.dp),
     lead = {
-        val initials = remember(category.categoryName) { initialsOf(category.categoryName) }
-        val iconText = category.emoji ?: initials
+        val iconText = category.emoji
 
         Box(
             modifier =
@@ -55,18 +50,7 @@ fun CategoryRow(
         ) {
             Text(
                 text = iconText,
-                style =
-                    if (category.emoji != null) {
-                        MaterialTheme.typography.bodyLarge
-                    } else {
-                        TextStyle(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            letterSpacing = 0.0.sp,
-                        )
-                    },
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
     },
