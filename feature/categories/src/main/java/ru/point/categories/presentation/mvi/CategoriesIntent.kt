@@ -1,6 +1,6 @@
 package ru.point.categories.presentation.mvi
 
-sealed interface CategoriesIntent {
+internal sealed interface CategoriesIntent {
     data object Load : CategoriesIntent
 
     data object Retry : CategoriesIntent

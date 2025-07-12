@@ -12,11 +12,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.point.api.flow.AccountPreferencesRepo
 import ru.point.transactions.expenses.domain.usecase.GetExpensesTodayUseCase
-import ru.point.utils.common.AccountPreferences
 import ru.point.utils.common.Result
-import ru.point.utils.model.AppError
-import ru.point.utils.network.NetworkTracker
+import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
 
 /**
@@ -30,10 +29,9 @@ import javax.inject.Inject
  *
  */
 
-class ExpensesViewModel @Inject constructor(
+internal class ExpensesViewModel @Inject constructor(
     private val getExpensesTodayUseCase: GetExpensesTodayUseCase,
-    private val prefs: AccountPreferences,
-    internal val tracker: NetworkTracker,
+    private val prefs: AccountPreferencesRepo,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<ExpensesIntent>(extraBufferCapacity = 1)
 
@@ -103,15 +101,7 @@ class ExpensesViewModel @Inject constructor(
                         }
 
                     is Result.Error -> {
-                        val msg =
-                            when (val cause = result.cause) {
-                                AppError.BadRequest -> "Неверный формат данных"
-                                AppError.Unauthorized -> "Неавторизованный доступ"
-                                AppError.NoInternet -> "Нет подключения к интернету"
-                                is AppError.ServerError -> "Сервер временно недоступен"
-                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                                else -> "Неизвестная ошибка"
-                            }
+                        val msg = result.cause.toUserMessage()
                         _state.update { it.copy(isLoading = false, error = msg) }
                         _effect.emit(ExpensesEffect.ShowSnackbar("Ошибка: $msg"))
                     }

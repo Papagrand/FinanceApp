@@ -2,6 +2,7 @@ package ru.point.impl.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import ru.point.api.model.AllCategoriesDto
 import ru.point.api.model.CategoryDto
 import ru.point.api.repository.CategoryRepository
 import ru.point.impl.flow.safeApiFlow
@@ -39,6 +40,29 @@ class CategoryRepositoryImpl @Inject constructor(
                                         categoryName = dto.categoryName,
                                         emoji = dto.emoji,
                                         amount = dto.amount,
+                                    )
+                                },
+                        )
+                }
+            }
+
+    override fun getAllCategories(isIncome: Boolean): Flow<Result<List<AllCategoriesDto>>> =
+        safeApiFlow {
+            api.getCategoriesByType(isIncome)
+        }
+            .map { result ->
+                when (result) {
+                    is Loading -> Loading
+                    is Error -> Error(result.cause)
+                    is Success ->
+                        Success(
+                            result.data
+                                .map { dto ->
+                                    AllCategoriesDto(
+                                        categoryId = dto.categoryId,
+                                        categoryName = dto.categoryName,
+                                        emoji = dto.emoji,
+                                        isIncome = dto.isIncome,
                                     )
                                 },
                         )

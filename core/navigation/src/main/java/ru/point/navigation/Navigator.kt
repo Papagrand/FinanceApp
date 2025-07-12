@@ -3,7 +3,12 @@ package ru.point.navigation
 sealed interface Route {
     data object Expenses : Route
 
-    data object History : Route
+    data class History(val isIncome: Boolean) : Route
+
+    data class AddOrEditTransaction(
+        val transactionId: Int? = null,
+        val isIncome: Boolean,
+    ) : Route
 
     data object Income : Route
 

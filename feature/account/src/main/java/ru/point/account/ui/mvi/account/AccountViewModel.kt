@@ -14,8 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.utils.common.Result
-import ru.point.utils.model.AppError
-import ru.point.utils.network.NetworkTracker
+import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
 
 /**
@@ -28,9 +27,8 @@ import javax.inject.Inject
  * - эмиссия эффектов (показ Snackbar) через SharedFlow.
  */
 
-class AccountViewModel @Inject constructor(
+internal class AccountViewModel @Inject constructor(
     private val getAllAccountsUseCase: GetAllAccountsUseCase,
-    internal val tracker: NetworkTracker,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<AccountIntent>(extraBufferCapacity = 1)
 
@@ -79,15 +77,7 @@ class AccountViewModel @Inject constructor(
 
                     is Result.Error -> {
                         Log.e("WhyERROR", result.cause.toString())
-                        val msg =
-                            when (val cause = result.cause) {
-                                AppError.BadRequest -> "Неверный формат данных"
-                                AppError.Unauthorized -> "Неавторизованный доступ"
-                                AppError.NoInternet -> "Нет подключения к интернету"
-                                is AppError.ServerError -> "Сервер временно недоступен"
-                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                                else -> "Неизвестная ошибка"
-                            }
+                        val msg = result.cause.toUserMessage()
                         _state.update {
                             it.copy(
                                 isLoading = false,

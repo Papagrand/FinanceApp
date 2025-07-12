@@ -14,18 +14,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.point.account.domain.usecase.GetAllAccountsUseCase
 import ru.point.account.domain.usecase.UpdateAccountUseCase
-import ru.point.utils.common.AccountPreferences
+import ru.point.api.flow.AccountPreferencesRepo
 import ru.point.utils.common.Result
 import ru.point.utils.extensionsAndParsers.validateBalance
-import ru.point.utils.model.AppError
-import ru.point.utils.network.NetworkTracker
+import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
 
-class AccountEditViewModel @Inject constructor(
+internal class AccountEditViewModel @Inject constructor(
     private val getAllAccountsUseCase: GetAllAccountsUseCase,
     private val updateAccountUseCase: UpdateAccountUseCase,
-    private val prefs: AccountPreferences,
-    internal val tracker: NetworkTracker,
+    private val prefs: AccountPreferencesRepo,
 ) : ViewModel() {
     private val intents = MutableSharedFlow<AccountEditIntent>(extraBufferCapacity = 1)
 
@@ -83,15 +81,7 @@ class AccountEditViewModel @Inject constructor(
 
                     is Result.Error -> {
                         Log.e("WhyERROR", result.cause.toString())
-                        val msg =
-                            when (val cause = result.cause) {
-                                AppError.BadRequest -> "Неверный формат данных"
-                                AppError.Unauthorized -> "Неавторизованный доступ"
-                                AppError.NoInternet -> "Нет подключения к интернету"
-                                is AppError.ServerError -> "Сервер временно недоступен"
-                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                                else -> "Неизвестная ошибка"
-                            }
+                        val msg = result.cause.toUserMessage()
                         _state.update {
                             it.copy(
                                 isLoading = false,
@@ -161,7 +151,6 @@ class AccountEditViewModel @Inject constructor(
             ).collect { result ->
                 when (result) {
                     is Result.Loading -> {
-                        _state.update { it.copy(isLoading = true, error = null) }
                     }
 
                     is Result.Success -> {
@@ -177,15 +166,7 @@ class AccountEditViewModel @Inject constructor(
                     }
 
                     is Result.Error -> {
-                        val msg =
-                            when (val cause = result.cause) {
-                                AppError.BadRequest -> "Неверный формат данных"
-                                AppError.Unauthorized -> "Не авторизованный доступ"
-                                AppError.NoInternet -> "Нет подключения к интернету"
-                                is AppError.ServerError -> "Сервер временно недоступен"
-                                is AppError.Http -> "HTTP ${cause.code}: ${cause.body ?: "Ошибка"}"
-                                else -> "Неизвестная ошибка"
-                            }
+                        val msg = result.cause.toUserMessage()
                         _state.update { it.copy(isLoading = false, error = msg) }
                         _effect.emit(AccountEditEffect.ShowSnackbar("Ошибка: $msg"))
                     }

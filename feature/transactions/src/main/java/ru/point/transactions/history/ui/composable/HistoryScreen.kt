@@ -1,5 +1,6 @@
 package ru.point.transactions.history.ui.composable
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,7 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.navigation.Navigator
+import ru.point.navigation.Route
 import ru.point.transactions.R
+import ru.point.transactions.di.TransactionDepsStore
+import ru.point.transactions.history.di.DaggerHistoryComponent
 import ru.point.transactions.history.ui.composable.composableFunctions.HistoryRow
 import ru.point.transactions.history.ui.mvi.HistoryEffect
 import ru.point.transactions.history.ui.mvi.HistoryIntent
@@ -36,7 +41,7 @@ import ru.point.ui.composables.BaseScaffold
 import ru.point.ui.composables.FabState
 import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
-import ru.point.ui.di.LocalViewModelFactory
+import ru.point.ui.di.LocalInternetTracker
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber
 import java.time.LocalDate
@@ -63,9 +68,19 @@ fun HistoryScreen(
     isIncome: Boolean,
     onAddClick: () -> Unit = {},
 ) {
-    val viewModel: HistoryViewModel = viewModel(factory = LocalViewModelFactory.current)
+    val historyComponent =
+        remember {
+            DaggerHistoryComponent
+                .builder()
+                .deps(transactionDeps = TransactionDepsStore.transactionDeps)
+                .build()
+        }
+
+    val viewModel = viewModel<HistoryViewModel>(factory = historyComponent.historyViewModelFactory)
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val isOnline by LocalInternetTracker.current.online.collectAsState()
 
     val currency by viewModel.currency.collectAsStateWithLifecycle()
 
@@ -106,79 +121,89 @@ fun HistoryScreen(
         fabState = FabState.Hidden,
     ) { innerPadding ->
 
-        NoInternetBanner(tracker = viewModel.tracker)
+        if (!isOnline) {
+            NoInternetBanner()
+        } else {
+            when {
+                state.isLoading ->
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(top = 32.dp),
+                        contentAlignment = Alignment.TopCenter,
+                    ) { CircularProgressIndicator() }
 
-        when {
-            state.isLoading ->
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(top = 32.dp),
-                    contentAlignment = Alignment.TopCenter,
-                ) { CircularProgressIndicator() }
+                state.error != null -> {
+                    BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency, state.error)
+                }
 
-            state.error != null -> {
-                BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency, state.error)
-            }
-
-            else -> {
-                if (state.list.isNotEmpty()) {
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                    ) {
-                        BaseHistoryTopElement(
-                            modifier = Modifier,
-                            contentText = "Начало",
-                            trailText = monthYear,
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier,
-                            color = MaterialTheme.colorScheme.surfaceDim,
-                            thickness = 1.dp,
-                        )
-                        BaseHistoryTopElement(
-                            modifier = Modifier,
-                            contentText = "Конец",
-                            trailText = nowWithTime,
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier,
-                            color = MaterialTheme.colorScheme.surfaceDim,
-                            thickness = 1.dp,
-                        )
-                        BaseHistoryTopElement(
-                            modifier = Modifier,
-                            contentText = "Сумма",
-                            trailText = "${
-                                state.total.toString().toPrettyNumber()
-                            } ${state.list[0].currency.toCurrencySymbol()}",
-                        )
-
-                        LazyColumn(
+                else -> {
+                    if (state.list.isNotEmpty()) {
+                        Column(
                             modifier =
                                 Modifier
-                                    .fillMaxSize(),
+                                    .fillMaxSize()
+                                    .padding(innerPadding),
                         ) {
-                            items(state.list) { historyItem ->
-                                HistoryRow(
-                                    modifier = Modifier,
-                                    historyItem,
-                                )
+                            BaseHistoryTopElement(
+                                modifier = Modifier,
+                                contentText = "Начало",
+                                trailText = monthYear,
+                            )
+                            HorizontalDivider(
+                                modifier = Modifier,
+                                color = MaterialTheme.colorScheme.surfaceDim,
+                                thickness = 1.dp,
+                            )
+                            BaseHistoryTopElement(
+                                modifier = Modifier,
+                                contentText = "Конец",
+                                trailText = nowWithTime,
+                            )
+                            HorizontalDivider(
+                                modifier = Modifier,
+                                color = MaterialTheme.colorScheme.surfaceDim,
+                                thickness = 1.dp,
+                            )
+                            BaseHistoryTopElement(
+                                modifier = Modifier,
+                                contentText = "Сумма",
+                                trailText = "${
+                                    state.total.toString().toPrettyNumber()
+                                } ${state.list[0].currency.toCurrencySymbol()}",
+                            )
 
-                                HorizontalDivider(
-                                    modifier = Modifier,
-                                    color = MaterialTheme.colorScheme.surfaceDim,
-                                    thickness = 1.dp,
-                                )
+                            LazyColumn(
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize(),
+                            ) {
+                                items(state.list) { historyItem ->
+                                    HistoryRow(
+                                        modifier =
+                                            Modifier.clickable {
+                                                navigator.navigate(
+                                                    Route.AddOrEditTransaction(
+                                                        transactionId = historyItem.id,
+                                                        isIncome = isIncome,
+                                                    ),
+                                                )
+                                            },
+                                        historyItem,
+                                    )
+
+                                    HorizontalDivider(
+                                        modifier = Modifier,
+                                        color = MaterialTheme.colorScheme.surfaceDim,
+                                        thickness = 1.dp,
+                                    )
+                                }
                             }
                         }
+                    } else {
+                        BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency)
                     }
-                } else {
-                    BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency)
                 }
             }
         }

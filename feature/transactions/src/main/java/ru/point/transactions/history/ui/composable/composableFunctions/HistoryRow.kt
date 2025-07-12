@@ -1,7 +1,6 @@
 package ru.point.transactions.history.ui.composable.composableFunctions
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,22 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import ru.point.api.model.TransactionDto
 import ru.point.transactions.R
 import ru.point.ui.composables.BaseListItem
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
-fun HistoryRow(
+internal fun HistoryRow(
     modifier: Modifier,
     historyItem: TransactionDto,
     onClick: () -> Unit = {},
@@ -43,12 +39,11 @@ fun HistoryRow(
     modifier =
         modifier
             .fillMaxWidth()
-            .clickable(onClick = { })
             .padding(horizontal = 16.dp),
     lead = {
         val initials =
             remember(historyItem.categoryName) { initialsOf(historyItem.categoryName) }
-        val iconText = historyItem.emoji ?: initials
+        val iconText = historyItem.emoji
 
         Box(
             modifier =
@@ -61,17 +56,7 @@ fun HistoryRow(
             Text(
                 text = iconText,
                 style =
-                    if (historyItem.emoji != null) {
-                        MaterialTheme.typography.bodyLarge
-                    } else {
-                        TextStyle(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            letterSpacing = 0.0.sp,
-                        )
-                    },
+                    MaterialTheme.typography.bodyLarge,
             )
         }
     },

@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -13,6 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.account.R
+import ru.point.account.di.component.DaggerAccountEditComponent
+import ru.point.account.di.deps.AccountDepsStore
 import ru.point.account.ui.mvi.accountEdit.AccountEditEffect
 import ru.point.account.ui.mvi.accountEdit.AccountEditIntent
 import ru.point.account.ui.mvi.accountEdit.AccountEditViewModel
@@ -24,7 +27,7 @@ import ru.point.ui.composables.BaseScaffold
 import ru.point.ui.composables.FabState
 import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
-import ru.point.ui.di.LocalViewModelFactory
+import ru.point.ui.di.LocalInternetTracker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,9 +35,19 @@ fun AccountEditScreen(
     navigator: Navigator,
     onAddClick: () -> Unit = {},
 ) {
-    val viewModel: AccountEditViewModel = viewModel(factory = LocalViewModelFactory.current)
+    val accountEditComponent =
+        remember {
+            DaggerAccountEditComponent
+                .builder()
+                .deps(accountDeps = AccountDepsStore.accountDeps)
+                .build()
+        }
+
+    val viewModel = viewModel<AccountEditViewModel>(factory = accountEditComponent.accountEditViewModelFactory)
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val isOnline by LocalInternetTracker.current.online.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -89,6 +102,8 @@ fun AccountEditScreen(
                 )
             }
         }
-        NoInternetBanner(tracker = viewModel.tracker)
+        if (!isOnline) {
+            NoInternetBanner()
+        }
     }
 }

@@ -48,7 +48,6 @@ dependencies {
     implementation(libs.retrofit.adapters.result)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.ui.graphics)
-    implementation("androidx.datastore:datastore-preferences:1.1.6")
     implementation(libs.retrofit)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

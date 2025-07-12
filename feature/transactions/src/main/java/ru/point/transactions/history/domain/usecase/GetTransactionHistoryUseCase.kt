@@ -11,8 +11,9 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class GetTransactionHistoryUseCase(
+internal class GetTransactionHistoryUseCase @Inject constructor(
     private val repo: TransactionRepository,
 ) {
     operator fun invoke(

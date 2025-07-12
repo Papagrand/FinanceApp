@@ -1,6 +1,5 @@
 package ru.point.categories.presentation.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +17,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.categories.R
+import ru.point.categories.di.component.DaggerCategoriesComponent
+import ru.point.categories.di.deps.CategoriesDepsStore
 import ru.point.categories.presentation.mvi.CategoriesEffect
 import ru.point.categories.presentation.mvi.CategoriesIntent
 import ru.point.categories.presentation.mvi.CategoriesViewModel
@@ -36,7 +38,7 @@ import ru.point.ui.composables.ActionState
 import ru.point.ui.composables.BaseScaffold
 import ru.point.ui.composables.FabState
 import ru.point.ui.composables.NoInternetBanner
-import ru.point.ui.di.LocalViewModelFactory
+import ru.point.ui.di.LocalInternetTracker
 
 /**
  * CategoryScreen
@@ -52,9 +54,19 @@ fun CategoryScreen(
     navigator: Navigator,
     onAddClick: () -> Unit = {},
 ) {
-    val viewModel: CategoriesViewModel = viewModel(factory = LocalViewModelFactory.current)
+    val categoriesComponent =
+        remember {
+            DaggerCategoriesComponent
+                .builder()
+                .deps(categoriesDeps = CategoriesDepsStore.categoriesDeps)
+                .build()
+        }
+
+    val viewModel = viewModel<CategoriesViewModel>(factory = categoriesComponent.categoriesViewModelFactory)
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val isOnline by LocalInternetTracker.current.online.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -77,7 +89,9 @@ fun CategoryScreen(
         fabState = FabState.Hidden,
     ) { innerPadding ->
 
-        NoInternetBanner(tracker = viewModel.tracker)
+        if (!isOnline) {
+            NoInternetBanner()
+        }
 
         Column(
             modifier =
@@ -123,7 +137,6 @@ fun CategoryScreen(
                         modifier = Modifier.fillMaxWidth(),
                         text = "${state.error}",
                     )
-                    Log.e("errorEx", state.error.toString())
                 }
 
                 else -> {
@@ -147,15 +160,5 @@ fun CategoryScreen(
                 }
             }
         }
-    }
-}
-
-fun initialsOf(title: String): String {
-    val words = title.trim().split("\\s+".toRegex())
-    val first = words.getOrNull(0)?.firstOrNull()?.uppercase() ?: ""
-    val second = words.getOrNull(1)?.firstOrNull()?.uppercase() ?: ""
-    return buildString {
-        append(first)
-        if (second.isNotEmpty()) append(second)
     }
 }

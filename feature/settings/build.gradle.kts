@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -40,7 +40,8 @@ dependencies {
     implementation(project(":core:ui"))
 
     implementation("com.google.dagger:dagger:2.56")
-    kapt("com.google.dagger:dagger-compiler:2.56")
+    ksp(libs.dagger.compiler)
+    ksp(libs.dagger.android.processor)
     implementation("javax.inject:javax.inject:1")
 
     implementation(libs.androidx.core.ktx)

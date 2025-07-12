@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategorySearch(
+internal fun CategorySearch(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,

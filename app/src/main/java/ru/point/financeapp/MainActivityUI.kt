@@ -20,7 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ru.point.financeapp.navigation.NavGraph
-import ru.point.financeapp.navigation.NavRoute
+import ru.point.navigation.NavRoute
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
 import ru.point.ui.BottomBar
@@ -112,7 +112,7 @@ fun MainActivityUI() {
 
 class NavigatorImpl(private val navController: NavHostController) : Navigator {
     override fun navigate(route: Route) {
-        navController.navigate(route.toNavRoute().route)
+        navController.navigate(route.toNavRoute())
     }
 
     override fun popBackStack() {
@@ -120,13 +120,18 @@ class NavigatorImpl(private val navController: NavHostController) : Navigator {
     }
 }
 
-fun Route.toNavRoute(): NavRoute =
+fun Route.toNavRoute(): String =
     when (this) {
-        Route.Account -> NavRoute.Account
-        Route.AccountEdit -> NavRoute.AccountEdit
-        Route.Category -> NavRoute.Category
-        Route.Expenses -> NavRoute.Expenses
-        Route.History -> NavRoute.History
-        Route.Income -> NavRoute.Income
-        Route.Settings -> NavRoute.Settings
+        Route.Account -> NavRoute.Account.route
+        Route.AccountEdit -> NavRoute.AccountEdit.route
+        Route.Category -> NavRoute.Category.route
+        Route.Expenses -> NavRoute.Expenses.route
+        Route.Income -> NavRoute.Income.route
+        Route.Settings -> NavRoute.Settings.route
+        is Route.History -> NavRoute.History.create(isIncome)
+        is Route.AddOrEditTransaction ->
+            NavRoute.AddOrEditTransaction.create(
+                transactionId = transactionId ?: -1,
+                isIncome = isIncome,
+            )
     }

@@ -22,3 +22,11 @@ data class CategoryStat(
     @SerialName("emoji") val emoji: String,
     @SerialName("amount") val amount: String,
 )
+
+@Serializable
+data class AllCategories(
+    @SerialName("id") val categoryId: Int,
+    @SerialName("name") val categoryName: String,
+    @SerialName("emoji") val emoji: String,
+    @SerialName("isIncome") val isIncome: Boolean,
+)

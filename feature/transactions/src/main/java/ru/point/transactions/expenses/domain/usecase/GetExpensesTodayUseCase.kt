@@ -7,8 +7,9 @@ import ru.point.api.repository.TransactionRepository
 import ru.point.utils.common.Result
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class GetExpensesTodayUseCase(
+internal class GetExpensesTodayUseCase @Inject constructor(
     private val repo: TransactionRepository,
 ) {
     operator fun invoke(accountId: Int): Flow<Result<TodayTransactions>> {

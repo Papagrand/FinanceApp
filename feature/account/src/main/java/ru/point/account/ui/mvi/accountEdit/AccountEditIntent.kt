@@ -1,13 +1,13 @@
 package ru.point.account.ui.mvi.accountEdit
 
-sealed interface AccountEditIntent {
-    object Load : AccountEditIntent
+internal sealed interface AccountEditIntent {
+    data object Load : AccountEditIntent
 
-    object Retry : AccountEditIntent
+    data object Retry : AccountEditIntent
 
-    object Save : AccountEditIntent
+    data object Save : AccountEditIntent
 
-    object Cancel : AccountEditIntent
+    data object Cancel : AccountEditIntent
 
     data class ChangeName(val newName: String) : AccountEditIntent
 

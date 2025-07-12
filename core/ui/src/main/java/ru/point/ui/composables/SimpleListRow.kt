@@ -1,5 +1,6 @@
 package ru.point.ui.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -16,12 +17,20 @@ import androidx.compose.ui.unit.dp
 fun SimpleListRow(
     modifier: Modifier,
     rowHeight: Dp = 70.dp,
+    onClick: (() -> Unit)? = null,
     lead: @Composable RowScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit = {},
     trail: @Composable RowScope.() -> Unit = {},
 ) {
+    val rowModifier =
+        if (onClick != null) {
+            modifier.height(rowHeight).clickable { onClick() }
+        } else {
+            modifier.height(rowHeight)
+        }
+
     Row(
-        modifier = modifier.height(rowHeight),
+        modifier = rowModifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
