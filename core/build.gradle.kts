@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -47,7 +47,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.6")
 
     implementation("com.google.dagger:dagger:2.56")
-    kapt("com.google.dagger:dagger-compiler:2.56")
+    ksp(libs.dagger.compiler)
+    ksp(libs.dagger.android.processor)
     implementation("javax.inject:javax.inject:1")
 
     implementation(libs.kotlinx.coroutines.core)

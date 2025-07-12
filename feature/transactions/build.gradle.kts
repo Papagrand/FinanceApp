@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -43,7 +43,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation("com.google.dagger:dagger:2.56")
-    kapt("com.google.dagger:dagger-compiler:2.56")
+    ksp(libs.dagger.compiler)
+    ksp(libs.dagger.android.processor)
     implementation("javax.inject:javax.inject:1")
 
     implementation(libs.androidx.core.ktx)
@@ -53,7 +54,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation("androidx.compose.material3:material3:1.4.0-alpha17")
     implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     testImplementation(libs.junit)

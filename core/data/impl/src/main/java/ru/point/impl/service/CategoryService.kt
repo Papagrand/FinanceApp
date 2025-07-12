@@ -2,6 +2,7 @@ package ru.point.impl.service
 
 import retrofit2.http.GET
 import retrofit2.http.Path
+import ru.point.impl.model.AllCategories
 import ru.point.impl.model.MyCategories
 
 interface CategoryService {
@@ -9,4 +10,9 @@ interface CategoryService {
     suspend fun getMyCategories(
         @Path("id") accountId: Int,
     ): MyCategories
+
+    @GET("categories/type/{isIncome}")
+    suspend fun getCategoriesByType(
+        @Path("isIncome") isIncome: Boolean,
+    ): List<AllCategories>
 }

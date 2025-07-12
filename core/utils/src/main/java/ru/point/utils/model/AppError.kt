@@ -1,6 +1,10 @@
 package ru.point.utils.model
 
 import retrofit2.HttpException
+import java.io.IOException
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 sealed class AppError {
     data class Http(val code: Int, val body: String?) : AppError()
@@ -31,6 +35,12 @@ fun Throwable.toAppError(): AppError =
             }
         }
 
+        is UnknownHostException,
+        is ConnectException,
+        is SocketTimeoutException,
+        is IOException,
+        -> AppError.UnknownHost
+
         else -> AppError.Unknown(this)
     }
 
@@ -41,6 +51,6 @@ fun AppError.toUserMessage() =
         AppError.NotFound -> "Данных не найдено"
         AppError.ServerError -> "Сервер временно недоступен, попробуйте позже"
         is AppError.Http -> "Ошибка ${this.code}: ${this.body}"
-        AppError.UnknownHost -> "Неверный адрес сервера"
+        AppError.UnknownHost -> "Отсутствует подключение к интернету"
         is AppError.Unknown -> "Что-то пошло не так: ${this.t.localizedMessage}"
     }

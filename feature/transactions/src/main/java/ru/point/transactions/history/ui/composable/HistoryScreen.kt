@@ -1,5 +1,6 @@
 package ru.point.transactions.history.ui.composable
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.navigation.Navigator
+import ru.point.navigation.Route
 import ru.point.transactions.R
 import ru.point.transactions.di.TransactionDepsStore
 import ru.point.transactions.history.di.DaggerHistoryComponent
@@ -179,7 +181,15 @@ fun HistoryScreen(
                             ) {
                                 items(state.list) { historyItem ->
                                     HistoryRow(
-                                        modifier = Modifier,
+                                        modifier =
+                                            Modifier.clickable {
+                                                navigator.navigate(
+                                                    Route.AddOrEditTransaction(
+                                                        transactionId = historyItem.id,
+                                                        isIncome = isIncome,
+                                                    ),
+                                                )
+                                            },
                                         historyItem,
                                     )
 

@@ -1,6 +1,5 @@
 package ru.point.transactions.incomes.ui.composable.composableFunctions
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,7 +18,7 @@ import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber
 
 @Composable
-fun IncomeRow(
+internal fun IncomeRow(
     modifier: Modifier,
     income: TransactionDto,
     onClick: () -> Unit = {},
@@ -29,7 +28,6 @@ fun IncomeRow(
     modifier =
         modifier
             .fillMaxWidth()
-            .clickable(onClick = { })
             .padding(horizontal = 16.dp),
     content = {
         Text(

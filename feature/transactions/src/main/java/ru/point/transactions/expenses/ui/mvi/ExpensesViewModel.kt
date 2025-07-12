@@ -29,7 +29,7 @@ import javax.inject.Inject
  *
  */
 
-class ExpensesViewModel @Inject constructor(
+internal class ExpensesViewModel @Inject constructor(
     private val getExpensesTodayUseCase: GetExpensesTodayUseCase,
     private val prefs: AccountPreferencesRepo,
 ) : ViewModel() {

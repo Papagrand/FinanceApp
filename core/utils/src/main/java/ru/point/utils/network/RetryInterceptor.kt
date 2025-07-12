@@ -2,24 +2,21 @@ package ru.point.utils.network
 
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.io.IOException
 
-class RetryInterceptor : Interceptor {
+class RetryInterceptor(
+    private val maxRetries: Int = 3,
+    private val delayMs: Long = 2_000,
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        var tries = 0
-        var response = chain.proceed(chain.request())
-
-        while (response.code == 500 && tries < MAX_RETRIES) {
-            tries++
-            response.close()
-            Thread.sleep(DELAY_MS)
-            response = chain.proceed(chain.request())
+        var tryCount = 0
+        while (true) {
+            try {
+                return chain.proceed(chain.request())
+            } catch (ioe: IOException) {
+                if (++tryCount > maxRetries) throw ioe
+                Thread.sleep(delayMs)
+            }
         }
-
-        return response
-    }
-
-    companion object {
-        private const val MAX_RETRIES: Int = 3
-        private const val DELAY_MS: Long = 2_000
     }
 }

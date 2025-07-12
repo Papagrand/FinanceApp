@@ -1,5 +1,6 @@
 package ru.point.transactions.expenses.ui.composable.composableFunctions
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,10 +24,11 @@ import ru.point.utils.extensionsAndParsers.toPrettyNumber
 import kotlin.collections.isNotEmpty
 
 @Composable
-fun ExpensesColumn(
+internal fun ExpensesColumn(
     innerPadding: PaddingValues,
     state: ExpensesState,
     currency: String?,
+    onItemClick: (Int) -> Unit,
 ) {
     Column(
         modifier =
@@ -104,7 +106,10 @@ fun ExpensesColumn(
                 ) {
                     items(state.list) { expense ->
                         ExpenseRow(
-                            modifier = Modifier,
+                            modifier =
+                                Modifier.clickable {
+                                    onItemClick(expense.id)
+                                },
                             expense,
                         )
                         HorizontalDivider(

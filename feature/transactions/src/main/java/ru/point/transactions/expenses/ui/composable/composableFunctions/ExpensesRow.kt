@@ -1,7 +1,6 @@
 package ru.point.transactions.expenses.ui.composable.composableFunctions
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,10 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ru.point.api.model.TransactionDto
 import ru.point.transactions.R
 import ru.point.ui.composables.BaseListItem
@@ -28,7 +24,7 @@ import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber
 
 @Composable
-fun ExpenseRow(
+internal fun ExpenseRow(
     modifier: Modifier,
     expense: TransactionDto,
     onClick: () -> Unit = {},
@@ -38,11 +34,10 @@ fun ExpenseRow(
     modifier =
         modifier
             .fillMaxWidth()
-            .clickable(onClick = { })
             .padding(horizontal = 16.dp),
     lead = {
         val initials = remember(expense.categoryName) { initialsOf(expense.categoryName) }
-        val iconText = expense.emoji ?: initials
+        val iconText = expense.emoji
 
         Box(
             modifier =
@@ -55,17 +50,7 @@ fun ExpenseRow(
             Text(
                 text = iconText,
                 style =
-                    if (expense.emoji != null) {
-                        MaterialTheme.typography.bodyLarge
-                    } else {
-                        TextStyle(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            letterSpacing = 0.0.sp,
-                        )
-                    },
+                    MaterialTheme.typography.bodyLarge,
             )
         }
     },

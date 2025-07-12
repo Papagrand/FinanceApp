@@ -5,6 +5,7 @@
     <string name="balance">Баланс</string>
     <string name="currency">Валюта</string>
     <string name="edit_account">Редактирование счета</string>
+    <string name="account_name">Название</string>
 
 
 </resources>

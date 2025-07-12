@@ -18,7 +18,7 @@ import ru.point.utils.common.Result
 import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
 
-class HistoryViewModel @Inject constructor(
+internal class HistoryViewModel @Inject constructor(
     private val getTransactionHistoryUseCase: GetTransactionHistoryUseCase,
     private val prefs: AccountPreferencesRepo,
 ) : ViewModel() {

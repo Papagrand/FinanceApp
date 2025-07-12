@@ -13,7 +13,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class GetTransactionHistoryUseCase @Inject constructor(
+internal class GetTransactionHistoryUseCase @Inject constructor(
     private val repo: TransactionRepository,
 ) {
     operator fun invoke(

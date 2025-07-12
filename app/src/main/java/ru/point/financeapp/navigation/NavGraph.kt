@@ -3,14 +3,18 @@ package ru.point.financeapp.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import ru.point.account.ui.composable.account.AccountScreen
 import ru.point.account.ui.composable.accountEdit.AccountEditScreen
 import ru.point.categories.presentation.ui.CategoryScreen
 import ru.point.financeapp.NavigatorImpl
+import ru.point.navigation.NavRoute
 import ru.point.settings.presentation.SettingsScreen
+import ru.point.transactions.addOrEditTransaction.ui.composable.AddOrEditTransactionScreen
 import ru.point.transactions.expenses.ui.composable.ExpensesScreen
 import ru.point.transactions.history.ui.composable.HistoryScreen
 import ru.point.transactions.incomes.ui.composable.IncomeScreen
@@ -39,11 +43,31 @@ fun NavGraph(navController: NavHostController) {
 
             composable(
                 NavRoute.History.route,
-            ) {
-                HistoryScreen(
-                    navigator = navigator,
-                    isIncome = false,
-                )
+                arguments =
+                    listOf(
+                        navArgument("isIncome") { type = NavType.BoolType },
+                    ),
+            ) { entry ->
+                val isIncome = entry.arguments!!.getBoolean("isIncome")
+
+                HistoryScreen(navigator, isIncome)
+            }
+
+            composable(
+                NavRoute.AddOrEditTransaction.route,
+                arguments =
+                    listOf(
+                        navArgument("transactionId") {
+                            type = NavType.IntType
+                            defaultValue = -1
+                        },
+                        navArgument("isIncome") { type = NavType.BoolType },
+                    ),
+            ) { backStackEntry ->
+                val transactionId = backStackEntry.arguments!!.getInt("transactionId")
+                val isIncome = backStackEntry.arguments!!.getBoolean("isIncome")
+
+                AddOrEditTransactionScreen(navigator, transactionId, isIncome)
             }
         }
 
@@ -56,13 +80,34 @@ fun NavGraph(navController: NavHostController) {
             ) {
                 IncomeScreen(navigator = navigator)
             }
+
             composable(
                 NavRoute.History.route,
-            ) {
-                HistoryScreen(
-                    navigator = navigator,
-                    isIncome = true,
-                )
+                arguments =
+                    listOf(
+                        navArgument("isIncome") { type = NavType.BoolType },
+                    ),
+            ) { entry ->
+                val isIncome = entry.arguments!!.getBoolean("isIncome")
+
+                HistoryScreen(navigator, isIncome)
+            }
+
+            composable(
+                NavRoute.AddOrEditTransaction.route,
+                arguments =
+                    listOf(
+                        navArgument("transactionId") {
+                            type = NavType.IntType
+                            defaultValue = -1
+                        },
+                        navArgument("isIncome") { type = NavType.BoolType },
+                    ),
+            ) { backStackEntry ->
+                val transactionId = backStackEntry.arguments!!.getInt("transactionId")
+                val isIncome = backStackEntry.arguments!!.getBoolean("isIncome")
+
+                AddOrEditTransactionScreen(navigator, transactionId, isIncome)
             }
         }
 

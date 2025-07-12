@@ -39,10 +39,7 @@ import ru.point.ui.di.LocalInternetTracker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpensesScreen(
-    navigator: Navigator,
-    onAddClick: () -> Unit = {},
-) {
+fun ExpensesScreen(navigator: Navigator) {
     val expensesComponent =
         remember {
             DaggerExpensesComponent
@@ -77,12 +74,18 @@ fun ExpensesScreen(
                 iconRes = R.drawable.history,
                 contentDescription = "История",
                 onClick = {
-                    navigator.navigate(Route.History)
+                    navigator.navigate(Route.History(isIncome = false))
                 },
             ),
         actionState = ActionState.Shown,
         fabState = FabState.Shown,
-        onFabClick = onAddClick,
+        onFabClick = {
+            navigator.navigate(
+                Route.AddOrEditTransaction(
+                    isIncome = false,
+                ),
+            )
+        },
         snackbarHostState = snackbarHostState,
     ) { innerPadding ->
 
@@ -90,6 +93,18 @@ fun ExpensesScreen(
             NoInternetBanner()
         }
 
-        ExpensesColumn(innerPadding, state, currency)
+        ExpensesColumn(
+            innerPadding,
+            state,
+            currency,
+            onItemClick = { transactionId ->
+                navigator.navigate(
+                    Route.AddOrEditTransaction(
+                        transactionId = transactionId,
+                        isIncome = false,
+                    ),
+                )
+            },
+        )
     }
 }

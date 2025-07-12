@@ -13,7 +13,7 @@ import ru.point.transactions.R
 import ru.point.ui.composables.BaseListItem
 
 @Composable
-fun TotalExpensesToday(
+internal fun TotalExpensesToday(
     modifier: Modifier,
     total: String,
 ) {

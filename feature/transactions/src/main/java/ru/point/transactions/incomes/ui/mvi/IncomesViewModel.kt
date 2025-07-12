@@ -18,7 +18,7 @@ import ru.point.utils.common.Result
 import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
 
-class IncomesViewModel @Inject constructor(
+internal class IncomesViewModel @Inject constructor(
     private val getIncomesTodayUseCase: GetIncomesTodayUseCase,
     private val prefs: AccountPreferencesRepo,
 ) : ViewModel() {

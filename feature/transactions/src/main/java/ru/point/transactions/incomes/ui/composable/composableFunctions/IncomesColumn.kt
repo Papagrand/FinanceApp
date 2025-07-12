@@ -1,5 +1,6 @@
 package ru.point.transactions.incomes.ui.composable.composableFunctions
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,10 +23,11 @@ import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber
 
 @Composable
-fun IncomesColumn(
+internal fun IncomesColumn(
     innerPadding: PaddingValues,
     state: IncomesState,
     currency: String?,
+    onItemClick: (Int) -> Unit,
 ) {
     Column(
         modifier =
@@ -107,7 +109,10 @@ fun IncomesColumn(
                 ) {
                     items(state.list) { income ->
                         IncomeRow(
-                            modifier = Modifier,
+                            modifier =
+                                Modifier.clickable {
+                                    onItemClick(income.id)
+                                },
                             income,
                         )
                         HorizontalDivider(

@@ -9,7 +9,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class GetExpensesTodayUseCase @Inject constructor(
+internal class GetExpensesTodayUseCase @Inject constructor(
     private val repo: TransactionRepository,
 ) {
     operator fun invoke(accountId: Int): Flow<Result<TodayTransactions>> {

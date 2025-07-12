@@ -1,6 +1,5 @@
 package ru.point.categories.presentation.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -138,7 +137,6 @@ fun CategoryScreen(
                         modifier = Modifier.fillMaxWidth(),
                         text = "${state.error}",
                     )
-                    Log.e("errorEx", state.error.toString())
                 }
 
                 else -> {

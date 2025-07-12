@@ -2,6 +2,8 @@ package ru.point.api.flow
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import ru.point.api.model.AllCategoriesDto
+import ru.point.api.model.CategoryDto
 import ru.point.api.model.TodayTransactions
 import ru.point.api.model.TransactionDto
 import ru.point.utils.common.Result
@@ -32,3 +34,11 @@ fun Flow<Result<List<TransactionDto>>>.toTodayTransactions(isIncome: Boolean): F
                 total = filtered.sumOf { it.amount.toBigDecimal() },
             )
         }
+
+fun AllCategoriesDto.toCategoryDto(): CategoryDto =
+    CategoryDto(
+        categoryId = categoryId,
+        categoryName = categoryName,
+        emoji = emoji,
+        amount = "",
+    )
