@@ -11,7 +11,7 @@ data class Transaction(
     @SerialName("category") val category: TransactionCategory,
     @SerialName("amount") val amount: String,
     @SerialName("transactionDate") val transactionDate: String,
-    @SerialName("comment") val comment: String,
+    @SerialName("comment") val comment: String? = null,
     @SerialName("createdAt") val createdAt: String,
     @SerialName("updatedAt") val updatedAt: String,
 )

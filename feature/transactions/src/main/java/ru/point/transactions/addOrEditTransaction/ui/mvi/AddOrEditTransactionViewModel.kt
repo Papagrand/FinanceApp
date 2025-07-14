@@ -50,6 +50,9 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
 
     private val _accountId = MutableStateFlow<Int?>(null)
 
+    private val _accountName = MutableStateFlow<String?>(null)
+    val accountName: StateFlow<String?> = _accountName
+
     init {
         viewModelScope.launch {
             val mode =
@@ -85,13 +88,20 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            prefs.accountNameFlow
+                .filterNotNull()
+                .collect { name ->
+                    _accountName.value = name
+                }
+        }
+
+        viewModelScope.launch {
             intents.collectLatest { intent ->
                 when (intent) {
                     is AddOrEditTransactionIntent.Load,
 
                     AddOrEditTransactionIntent.ClearError,
-                    ->
-                        _state.update { it.copy(error = null) }
+                    -> _state.update { it.copy(error = null) }
 
                     AddOrEditTransactionIntent.Retry -> retryLastRequest()
 

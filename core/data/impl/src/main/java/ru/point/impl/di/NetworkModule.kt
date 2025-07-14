@@ -13,6 +13,7 @@ import ru.point.impl.service.TransactionService
 import ru.point.utils.network.ApiKeyInterceptor
 import ru.point.utils.network.RetryInterceptor
 import javax.inject.Singleton
+import kotlinx.serialization.ExperimentalSerializationApi
 
 /**
  * NetworkModule
@@ -42,6 +43,7 @@ object NetworkModule {
                 .addInterceptor(RetryInterceptor())
                 .build()
 
+        @OptIn(ExperimentalSerializationApi::class)
         return Retrofit.Builder()
             .baseUrl("https://shmr-finance.ru/api/v1/")
             .addConverterFactory(json.asConverterFactory(contentType))
@@ -51,19 +53,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAccountService(retrofit: Retrofit): AccountService {
+    internal fun provideAccountService(retrofit: Retrofit): AccountService {
         return retrofit.create(AccountService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideCategoryService(retrofit: Retrofit): CategoryService {
+    internal fun provideCategoryService(retrofit: Retrofit): CategoryService {
         return retrofit.create(CategoryService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideTransactionService(retrofit: Retrofit): TransactionService {
+    internal fun provideTransactionService(retrofit: Retrofit): TransactionService {
         return retrofit.create(TransactionService::class.java)
     }
 }

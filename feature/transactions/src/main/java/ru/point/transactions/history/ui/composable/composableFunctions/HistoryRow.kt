@@ -41,8 +41,6 @@ internal fun HistoryRow(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
     lead = {
-        val initials =
-            remember(historyItem.categoryName) { initialsOf(historyItem.categoryName) }
         val iconText = historyItem.emoji
 
         Box(
@@ -66,9 +64,9 @@ internal fun HistoryRow(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        if (historyItem.comment != "") {
+        if (historyItem.comment != null) {
             Text(
-                text = historyItem.comment,
+                text = historyItem.comment!!,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -109,13 +107,3 @@ internal fun HistoryRow(
         )
     },
 )
-
-private fun initialsOf(title: String): String {
-    val words = title.trim().split("\\s+".toRegex())
-    val first = words.getOrNull(0)?.firstOrNull()?.uppercase() ?: ""
-    val second = words.getOrNull(1)?.firstOrNull()?.uppercase() ?: ""
-    return buildString {
-        append(first)
-        if (second.isNotEmpty()) append(second)
-    }
-}

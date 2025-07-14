@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionDatePicker(
+internal fun TransactionDatePicker(
     modifier: Modifier = Modifier,
     title: String,
     currentOrEmptyDate: String,

@@ -6,7 +6,7 @@ import ru.point.api.repository.TransactionRepository
 import ru.point.utils.common.Result
 import javax.inject.Inject
 
-class AddTransactionUseCase @Inject constructor(
+internal class AddTransactionUseCase @Inject constructor(
     private val repo: TransactionRepository,
 ) {
     operator fun invoke(

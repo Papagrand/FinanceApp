@@ -22,5 +22,5 @@ internal data class AddOrEditTransactionState(
     val date: String = "",
     val time: String = "",
     val datetime: String = "",
-    val comment: String = "",
+    val comment: String? = null,
 )

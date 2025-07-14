@@ -14,13 +14,13 @@ import ru.point.api.flow.AccountPreferencesRepo
 import ru.point.categories.di.deps.CategoriesDepsStore
 import ru.point.financeapp.di.component.AppComponent
 import ru.point.financeapp.di.component.DaggerAppComponent
-import ru.point.impl.repository.AccountRepositoryImpl
 import ru.point.transactions.di.TransactionDepsStore
 import ru.point.utils.common.Result
 import ru.point.utils.events.SnackbarEvents
 import ru.point.utils.model.toUserMessage
 import ru.point.utils.network.NetworkHolder
 import javax.inject.Inject
+import ru.point.api.repository.AccountRepository
 
 class App : Application() {
     lateinit var appComponent: AppComponent
@@ -31,23 +31,23 @@ class App : Application() {
     lateinit var accountPrefs: AccountPreferencesRepo
 
     @Inject
-    lateinit var accountRepo: AccountRepositoryImpl
+    lateinit var accountRepo: AccountRepository
 
     override fun onCreate() {
         super.onCreate()
 
         appComponent = DaggerAppComponent.builder().context(this).build()
 
-        AccountDepsStore.accountDeps = appComponent
-
-        CategoriesDepsStore.categoriesDeps = appComponent
-
-        TransactionDepsStore.transactionDeps = appComponent
+        initializeDeps()
 
         appComponent.inject(this)
 
         NetworkHolder.init(connectivityManager = getSystemService(ConnectivityManager::class.java))
 
+        launchAppScope()
+    }
+
+    private fun launchAppScope(){
         appScope.launch {
             val storedId = accountPrefs.accountIdFlow.firstOrNull()
             if (storedId != null) {
@@ -68,12 +68,23 @@ class App : Application() {
                         is Result.Success -> {
                             val account = result.data
                             accountPrefs.saveAccountId(account.id)
+                            accountPrefs.saveAccountName(account.name)
                             accountPrefs.saveCurrency(account.currency)
                         }
                     }
                 }
         }
     }
+
+    private fun initializeDeps(){
+
+        AccountDepsStore.accountDeps = appComponent
+
+        CategoriesDepsStore.categoriesDeps = appComponent
+
+        TransactionDepsStore.transactionDeps = appComponent
+    }
+
 }
 
 val Context.appComponent: AppComponent
@@ -82,3 +93,4 @@ val Context.appComponent: AppComponent
             is App -> appComponent
             else -> applicationContext.appComponent
         }
+

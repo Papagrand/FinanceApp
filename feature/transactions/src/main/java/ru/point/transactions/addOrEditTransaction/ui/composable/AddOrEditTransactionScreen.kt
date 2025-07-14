@@ -47,6 +47,8 @@ fun AddOrEditTransactionScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val accountName by viewModel.accountName.collectAsStateWithLifecycle()
+
     val isOnline by LocalInternetTracker.current.online.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -98,6 +100,7 @@ fun AddOrEditTransactionScreen(
         }
         AddOrEditElementsColumn(
             innerPadding = innerPadding,
+            accountName = accountName,
             onCommentChange = { viewModel.dispatch(AddOrEditTransactionIntent.CommentChanged(it)) },
             onDeleteClick = onDeleteClick,
             onIntent = viewModel::dispatch,

@@ -11,6 +11,6 @@ data class TransactionDto(
     val emoji: String,
     val isIncome: Boolean,
     val dateTime: String,
-    val comment: String,
+    val comment: String? = null,
     val totalAmount: String,
 )

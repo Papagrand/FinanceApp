@@ -26,7 +26,7 @@ import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionTimePicker(
+internal fun TransactionTimePicker(
     modifier: Modifier = Modifier,
     currentOrEmptyTime: String,
     onTimeChange: (parsedTime: String) -> Unit,

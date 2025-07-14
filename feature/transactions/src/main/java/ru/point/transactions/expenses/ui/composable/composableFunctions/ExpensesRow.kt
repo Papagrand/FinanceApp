@@ -36,7 +36,6 @@ internal fun ExpenseRow(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
     lead = {
-        val initials = remember(expense.categoryName) { initialsOf(expense.categoryName) }
         val iconText = expense.emoji
 
         Box(
@@ -60,9 +59,9 @@ internal fun ExpenseRow(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        if (expense.comment != "") {
+        if (expense.comment != null) {
             Text(
-                text = expense.comment,
+                text = expense.comment!!,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -82,13 +81,3 @@ internal fun ExpenseRow(
         )
     },
 )
-
-private fun initialsOf(title: String): String {
-    val words = title.trim().split("\\s+".toRegex())
-    val first = words.getOrNull(0)?.firstOrNull()?.uppercase() ?: ""
-    val second = words.getOrNull(1)?.firstOrNull()?.uppercase() ?: ""
-    return buildString {
-        append(first)
-        if (second.isNotEmpty()) append(second)
-    }
-}

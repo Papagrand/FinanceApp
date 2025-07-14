@@ -37,7 +37,7 @@ import ru.point.utils.extensionsAndParsers.sanitizeDecimalInput
 import ru.point.utils.extensionsAndParsers.validateBalance
 
 @Composable
-fun TransactionAmountDialog(
+internal fun TransactionAmountDialog(
     title: String,
     initialValue: String,
     keyBoardType: KeyboardType,

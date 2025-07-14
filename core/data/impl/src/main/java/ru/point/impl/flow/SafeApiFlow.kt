@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flowOn
 import ru.point.utils.common.Result
 import ru.point.utils.model.toAppError
 
-fun <T> safeApiFlow(apiCall: suspend () -> T): Flow<Result<T>> =
+internal fun <T> safeApiFlow(apiCall: suspend () -> T): Flow<Result<T>> =
     flow {
         emit(Result.Loading)
         try {

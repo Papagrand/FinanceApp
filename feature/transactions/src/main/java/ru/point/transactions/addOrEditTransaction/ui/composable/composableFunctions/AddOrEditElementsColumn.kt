@@ -41,7 +41,8 @@ import ru.point.utils.extensionsAndParsers.ScreenEnums
 @Composable
 internal fun AddOrEditElementsColumn(
     innerPadding: PaddingValues,
-    onCommentChange: (String) -> Unit,
+    accountName: String?,
+    onCommentChange: (String?) -> Unit,
     onDeleteClick: () -> Unit,
     onIntent: (AddOrEditTransactionIntent) -> Unit,
     state: AddOrEditTransactionState,
@@ -93,7 +94,13 @@ internal fun AddOrEditElementsColumn(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
             content = { Text("Счёт") },
-            trail = { Text(state.accountName) },
+            trail = {
+                if (state.accountName != "") {
+                    Text(state.accountName)
+                } else {
+                    Text(accountName ?: "")
+                }
+            },
         )
 
         HorizontalDivider(
@@ -177,10 +184,14 @@ internal fun AddOrEditElementsColumn(
             modifier = Modifier.fillMaxWidth(),
             content = {
                 TextField(
-                    value = localComment,
+                    value = localComment ?: "",
                     onValueChange = { new ->
                         localComment = new
-                        onCommentChange(new)
+                        if (new != "") {
+                            onCommentChange(new)
+                        } else {
+                            onCommentChange(null)
+                        }
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
