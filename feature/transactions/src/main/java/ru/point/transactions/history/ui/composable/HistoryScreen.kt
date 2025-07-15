@@ -66,7 +66,6 @@ import kotlin.collections.isNotEmpty
 fun HistoryScreen(
     navigator: Navigator,
     isIncome: Boolean,
-    onAddClick: () -> Unit = {},
 ) {
     val historyComponent =
         remember {
@@ -113,7 +112,9 @@ fun HistoryScreen(
             TopBarAction(
                 iconRes = R.drawable.analys,
                 contentDescription = "Анализ",
-                onClick = {},
+                onClick = {
+                    navigator.navigate(Route.AnalysisTransactions(isIncome = isIncome))
+                },
             ),
         actionState = ActionState.Shown,
         backState = BackState.Shown,

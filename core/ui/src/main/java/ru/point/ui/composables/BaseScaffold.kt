@@ -37,6 +37,7 @@ data class TopBarAction(
 fun BaseScaffold(
     title: String,
     modifier: Modifier = Modifier,
+    topAppBarColor: Color = MaterialTheme.colorScheme.primaryContainer,
     snackbarHostState: SnackbarHostState? = null,
     backAction: BackAction? = null,
     backState: BackState = BackState.Hidden,
@@ -81,7 +82,7 @@ fun BaseScaffold(
                 },
                 colors =
                     TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        containerColor = topAppBarColor,
                         titleContentColor = MaterialTheme.colorScheme.onSurface,
                     ),
             )

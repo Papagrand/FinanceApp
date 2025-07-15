@@ -129,6 +129,7 @@ fun Route.toNavRoute(): String =
         Route.Income -> NavRoute.Income.route
         Route.Settings -> NavRoute.Settings.route
         is Route.History -> NavRoute.History.create(isIncome)
+        is Route.AnalysisTransactions -> NavRoute.AnalysisTransactions.create(isIncome)
         is Route.AddOrEditTransaction ->
             NavRoute.AddOrEditTransaction.create(
                 transactionId = transactionId ?: -1,
