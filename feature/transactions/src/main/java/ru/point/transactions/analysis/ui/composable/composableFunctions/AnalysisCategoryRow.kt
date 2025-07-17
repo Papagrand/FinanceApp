@@ -66,7 +66,11 @@ internal fun AnalysisCategoryRow(
             horizontalAlignment = Alignment.End,
         ) {
             Text(
-                text = "${analysisCategoryItem.percentage}%",
+                text = if (analysisCategoryItem.percentage >= 0.1.toBigDecimal()){
+                    "${analysisCategoryItem.percentage}%"
+                }else{
+                    "<0.1%"
+                },
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )

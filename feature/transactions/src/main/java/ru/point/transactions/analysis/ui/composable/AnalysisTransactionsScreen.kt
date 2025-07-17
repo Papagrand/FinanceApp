@@ -1,7 +1,5 @@
 package ru.point.transactions.analysis.ui.composable
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +13,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,8 +29,8 @@ import ru.point.transactions.R
 import ru.point.transactions.analysis.di.DaggerAnalysisTransactionsComponent
 import ru.point.transactions.analysis.ui.composable.composableFunctions.AmountCard
 import ru.point.transactions.analysis.ui.composable.composableFunctions.AnalysisCategoryRow
+import ru.point.transactions.analysis.ui.composable.composableFunctions.AnalysisDatePicker
 import ru.point.transactions.analysis.ui.composable.composableFunctions.AnalysisDonutChart
-import ru.point.transactions.analysis.ui.composable.composableFunctions.MonthPickerCard
 import ru.point.transactions.analysis.ui.mvi.AnalysisTransactionsEffect
 import ru.point.transactions.analysis.ui.mvi.AnalysisTransactionsIntent
 import ru.point.transactions.analysis.ui.mvi.AnalysisTransactionsViewModel
@@ -124,18 +121,12 @@ fun AnalysisTransactionsScreen(
                                     .padding(innerPadding),
                         ) {
 
-                            MonthPickerCard(
-                                contentTextResId = R.string.period_start,
-                                date = state.startDate,
-                                modifier = Modifier
-                                    .height(56.dp)
-                                    .fillMaxWidth()
-                                    .clickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = ripple(),
-                                        onClick = { }
-                                    )
-                                    .padding(horizontal = 16.dp)
+                            AnalysisDatePicker(
+                                modifier = Modifier,
+                                startIso = state.startDate,
+                                endIso = state.endDate,
+                                onStartChanged = { viewModel.dispatch(AnalysisTransactionsIntent.StartDateChanged(it)) },
+                                onEndChanged = { viewModel.dispatch(AnalysisTransactionsIntent.EndDateChanged(it)) }
                             )
 
                             HorizontalDivider(
@@ -144,74 +135,65 @@ fun AnalysisTransactionsScreen(
                                 thickness = 1.dp,
                             )
 
-                            MonthPickerCard(
-                                contentTextResId = R.string.period_end,
-                                date = state.endDate,
-                                modifier = Modifier
-                                    .height(56.dp)
-                                    .fillMaxWidth()
-                                    .clickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = ripple(),
-                                        onClick = { }
-                                    )
-                                    .padding(horizontal = 16.dp)
-                            )
+                            if (state.categorySummaries.isNotEmpty()) {
+                                AmountCard(
+                                    amountValue = state.grandAmountSummary.toString().toPrettyNumber(),
+                                    currency = currency,
+                                    modifier = Modifier
+                                        .height(56.dp)
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp)
+                                )
 
-                            HorizontalDivider(
-                                modifier = Modifier,
-                                color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp,
-                            )
+                                HorizontalDivider(
+                                    modifier = Modifier,
+                                    color = MaterialTheme.colorScheme.surfaceDim,
+                                    thickness = 1.dp,
+                                )
 
-                            AmountCard(
-                                amountValue = state.grandAmountSummary.toString().toPrettyNumber(),
-                                currency = currency,
-                                modifier = Modifier
-                                    .height(56.dp)
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                            )
+                                AnalysisDonutChart(
+                                    summaries = state.categorySummaries,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp)
+                                )
 
-                            HorizontalDivider(
-                                modifier = Modifier,
-                                color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp,
-                            )
+                                HorizontalDivider(
+                                    modifier = Modifier,
+                                    color = MaterialTheme.colorScheme.surfaceDim,
+                                    thickness = 1.dp,
+                                )
 
-                            AnalysisDonutChart(
-                                summaries = state.categorySummaries,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp)
-                            )
+                                LazyColumn(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize(),
+                                ) {
+                                    items(state.categorySummaries) { analysisTransactionItem ->
+                                        AnalysisCategoryRow(
+                                            modifier = Modifier,
+                                            currency = currency,
+                                            analysisTransactionItem,
+                                        )
 
-                            HorizontalDivider(
-                                modifier = Modifier,
-                                color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp,
-                            )
-
-                            LazyColumn(
-                                modifier =
-                                    Modifier
-                                        .fillMaxSize(),
-                            ) {
-                                items(state.categorySummaries) { analysisTransactionItem ->
-                                    AnalysisCategoryRow(
-                                        modifier = Modifier,
-                                        currency = currency,
-                                        analysisTransactionItem,
-                                    )
-
-                                    HorizontalDivider(
-                                        modifier = Modifier,
-                                        color = MaterialTheme.colorScheme.surfaceDim,
-                                        thickness = 1.dp,
+                                        HorizontalDivider(
+                                            modifier = Modifier,
+                                            color = MaterialTheme.colorScheme.surfaceDim,
+                                            thickness = 1.dp,
+                                        )
+                                    }
+                                }
+                            } else {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.empty_analysis_data),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
-
                         }
 
                     }

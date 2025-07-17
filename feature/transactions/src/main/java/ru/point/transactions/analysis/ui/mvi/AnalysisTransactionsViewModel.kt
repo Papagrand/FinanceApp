@@ -18,6 +18,7 @@ import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import ru.point.transactions.analysis.domain.GetAnalysisTransactionsUseCase
+import ru.point.transactions.analysis.ui.mvi.AnalysisTransactionsEffect.*
 
 internal class AnalysisTransactionsViewModel @Inject constructor(
     private val isIncome: Boolean,
@@ -75,12 +76,33 @@ internal class AnalysisTransactionsViewModel @Inject constructor(
                             getSummaryCategories(id)
                         } else {
                             _effect.emit(
-                                AnalysisTransactionsEffect.ShowSnackbar(
+                                ShowSnackbar(
                                     "Account ID ещё не инициализирован"
                                 )
                             )
                         }
                     }
+                    is AnalysisTransactionsIntent.StartDateChanged -> {
+                        _state.update { it.copy(startDate = intent.startDate) }
+
+                        val accountId = _accountId
+                            .filterNotNull()
+                            .first()
+
+                        getSummaryCategories(accountId)
+
+                    }
+
+                    is AnalysisTransactionsIntent.EndDateChanged -> {
+                        _state.update { it.copy(endDate = intent.endDate) }
+
+                        val accountId = _accountId
+                            .filterNotNull()
+                            .first()
+
+                        getSummaryCategories(accountId)
+                    }
+
                 }
             }
         }
