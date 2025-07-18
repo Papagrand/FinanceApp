@@ -53,7 +53,6 @@ import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 @Composable
 fun AccountScreen(
     navigator: Navigator,
-    onAddClick: () -> Unit = {},
 ) {
     val accountComponent =
         remember {
@@ -94,31 +93,81 @@ fun AccountScreen(
         actionState = ActionState.Shown,
         fabState = FabState.Hidden,
     ) { innerPadding ->
-
-        if (!isOnline) {
-            NoInternetBanner()
-        } else {
-            when {
-                state.isLoading -> {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)
-                                .padding(top = 32.dp),
-                        contentAlignment = Alignment.TopCenter,
-                    ) {
-                        CircularProgressIndicator()
-                    }
+        when {
+            state.isLoading -> {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(top = 32.dp),
+                    contentAlignment = Alignment.TopCenter,
+                ) {
+                    CircularProgressIndicator()
                 }
+            }
 
-                state.error != null -> {
-                    Column(
+            state.error != null && isOnline -> {
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                ) {
+                    Balance(
                         modifier =
                             Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                    ) {
+                                .fillMaxWidth()
+                                .height(56.dp),
+                        accountPlaceholder(),
+                    )
+                    Text(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                        text = "${state.error}",
+                    )
+                }
+            }
+
+            else -> {
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                ) {
+                    if (!isOnline) {
+                        NoInternetBanner()
+
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+                    }
+                    if (state.accountData != null) {
+                        Balance(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                            state.accountData!!,
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+                        Currency(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                            currency = state.accountData!!.currency.toCurrencySymbol(),
+                        )
+                    } else {
                         Balance(
                             modifier =
                                 Modifier
@@ -126,69 +175,24 @@ fun AccountScreen(
                                     .height(56.dp),
                             accountPlaceholder(),
                         )
-                        Text(
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+                        Currency(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .padding(16.dp),
-                            text = "${state.error}",
+                                    .height(56.dp),
+                            currency = "$",
                         )
-                    }
-                }
-
-                else -> {
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                    ) {
-                        if (state.accountData != null) {
-                            Balance(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(56.dp),
-                                state.accountData!!,
-                            )
-                            HorizontalDivider(
-                                modifier = Modifier,
-                                color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp,
-                            )
-                            Currency(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(56.dp),
-                                currency = state.accountData!!.currency.toCurrencySymbol(),
-                            )
-                        } else {
-                            Balance(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(56.dp),
-                                accountPlaceholder(),
-                            )
-                            HorizontalDivider(
-                                modifier = Modifier,
-                                color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp,
-                            )
-                            Currency(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(56.dp),
-                                currency = "$",
-                            )
-                        }
                     }
                 }
             }
         }
     }
+
 }
 
 private fun accountPlaceholder(): AccountDto {

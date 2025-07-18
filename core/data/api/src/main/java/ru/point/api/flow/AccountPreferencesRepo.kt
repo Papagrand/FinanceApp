@@ -9,9 +9,13 @@ interface AccountPreferencesRepo {
 
     val currencyFlow: Flow<String?>
 
+    val lastUpdateFlow: Flow<String?>
+
     suspend fun saveAccountId(id: Int)
 
     suspend fun saveAccountName(name: String)
+
+    suspend fun updateLastSync(date: String)
 
     suspend fun saveCurrency(code: String)
 }

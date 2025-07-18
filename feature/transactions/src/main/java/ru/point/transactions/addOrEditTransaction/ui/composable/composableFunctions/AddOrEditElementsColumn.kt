@@ -32,16 +32,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.point.transactions.addOrEditTransaction.ui.mvi.AddOrEditTransactionIntent
 import ru.point.transactions.addOrEditTransaction.ui.mvi.AddOrEditTransactionState
+import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.SimpleListRow
 import ru.point.utils.extensionsAndParsers.ScreenEnums
 
 @Composable
 internal fun AddOrEditElementsColumn(
+    lastUpdate: String,
     innerPadding: PaddingValues,
     accountName: String?,
+    isOnline: Boolean,
     onCommentChange: (String?) -> Unit,
     onDeleteClick: () -> Unit,
     onIntent: (AddOrEditTransactionIntent) -> Unit,
@@ -59,6 +63,16 @@ internal fun AddOrEditElementsColumn(
                 .fillMaxSize()
                 .padding(innerPadding),
     ) {
+        if (!isOnline){
+            NoInternetBanner()
+
+            HorizontalDivider(
+                modifier = Modifier,
+                color = MaterialTheme.colorScheme.surfaceDim,
+                thickness = 1.dp,
+            )
+        }
+
         if (state.isLoading) {
             Box(
                 Modifier
@@ -70,7 +84,7 @@ internal fun AddOrEditElementsColumn(
             }
         }
 
-        if (state.error != null) {
+        if (state.error != null && isOnline) {
             AlertDialog(
                 onDismissRequest = { onIntent(AddOrEditTransactionIntent.ClearError) },
                 title = { Text("Упс, что-то пошло не так :(") },
@@ -247,6 +261,14 @@ internal fun AddOrEditElementsColumn(
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
+        }
+
+        Box(modifier = Modifier.fillMaxWidth().height(50.dp)){
+            Text(
+                modifier = Modifier.padding(vertical = 10.dp),
+                textAlign = TextAlign.Center,
+                text = lastUpdate
+            )
         }
     }
 }

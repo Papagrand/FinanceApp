@@ -92,57 +92,95 @@ fun AnalysisTransactionsScreen(
     ) { innerPadding ->
 
         when {
-            !isOnline -> NoInternetBanner()
-            else -> {
-                when {
-                    state.isLoading ->
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)
-                                .padding(top = 32.dp),
-                            contentAlignment = Alignment.TopCenter,
-                        ) { CircularProgressIndicator() }
+            state.isLoading ->
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(top = 32.dp),
+                    contentAlignment = Alignment.TopCenter,
+                ) { CircularProgressIndicator() }
 
-                    state.error != null -> {
-                        Text(
-                            text = "Не гол",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
+            state.error != null && isOnline -> {
+                Text(
+                    text = "Ошибка",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+
+            else -> {
+
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                ) {
+
+                    if (!isOnline){
+                        NoInternetBanner()
+
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
                         )
                     }
 
-                    else -> {
+                    AnalysisDatePicker(
+                        modifier = Modifier,
+                        startIso = state.startDate,
+                        endIso = state.endDate,
+                        onStartChanged = { viewModel.dispatch(AnalysisTransactionsIntent.StartDateChanged(it)) },
+                        onEndChanged = { viewModel.dispatch(AnalysisTransactionsIntent.EndDateChanged(it)) }
+                    )
 
-                        Column(
+                    HorizontalDivider(
+                        modifier = Modifier,
+                        color = MaterialTheme.colorScheme.surfaceDim,
+                        thickness = 1.dp,
+                    )
+
+                    if (state.categorySummaries.isNotEmpty()) {
+                        AmountCard(
+                            amountValue = state.grandAmountSummary.toString().toPrettyNumber(),
+                            currency = currency,
+                            modifier = Modifier
+                                .height(56.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+
+                        AnalysisDonutChart(
+                            summaries = state.categorySummaries,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+
+                        LazyColumn(
                             modifier =
                                 Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding),
+                                    .fillMaxSize(),
                         ) {
-
-                            AnalysisDatePicker(
-                                modifier = Modifier,
-                                startIso = state.startDate,
-                                endIso = state.endDate,
-                                onStartChanged = { viewModel.dispatch(AnalysisTransactionsIntent.StartDateChanged(it)) },
-                                onEndChanged = { viewModel.dispatch(AnalysisTransactionsIntent.EndDateChanged(it)) }
-                            )
-
-                            HorizontalDivider(
-                                modifier = Modifier,
-                                color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp,
-                            )
-
-                            if (state.categorySummaries.isNotEmpty()) {
-                                AmountCard(
-                                    amountValue = state.grandAmountSummary.toString().toPrettyNumber(),
+                            items(state.categorySummaries) { analysisTransactionItem ->
+                                AnalysisCategoryRow(
+                                    modifier = Modifier,
                                     currency = currency,
-                                    modifier = Modifier
-                                        .height(56.dp)
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp)
+                                    analysisTransactionItem,
                                 )
 
                                 HorizontalDivider(
@@ -150,58 +188,26 @@ fun AnalysisTransactionsScreen(
                                     color = MaterialTheme.colorScheme.surfaceDim,
                                     thickness = 1.dp,
                                 )
-
-                                AnalysisDonutChart(
-                                    summaries = state.categorySummaries,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp)
-                                )
-
-                                HorizontalDivider(
-                                    modifier = Modifier,
-                                    color = MaterialTheme.colorScheme.surfaceDim,
-                                    thickness = 1.dp,
-                                )
-
-                                LazyColumn(
-                                    modifier =
-                                        Modifier
-                                            .fillMaxSize(),
-                                ) {
-                                    items(state.categorySummaries) { analysisTransactionItem ->
-                                        AnalysisCategoryRow(
-                                            modifier = Modifier,
-                                            currency = currency,
-                                            analysisTransactionItem,
-                                        )
-
-                                        HorizontalDivider(
-                                            modifier = Modifier,
-                                            color = MaterialTheme.colorScheme.surfaceDim,
-                                            thickness = 1.dp,
-                                        )
-                                    }
-                                }
-                            } else {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.empty_analysis_data),
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
                             }
                         }
-
+                    } else {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.empty_analysis_data),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
 
-
             }
+
+
         }
+
 
     }
 }

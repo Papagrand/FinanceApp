@@ -11,11 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.point.account.R
 import ru.point.account.ui.mvi.accountEdit.AccountEditState
+import ru.point.ui.composables.NoInternetBanner
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 
 @Composable
 internal fun AccountEditScreenBody(
     state: AccountEditState,
+    isOnline: Boolean,
     onNameChange: (String) -> Unit,
     onBalanceChange: (String) -> Unit,
     onCurrencyChange: (String) -> Unit,
@@ -34,6 +36,15 @@ internal fun AccountEditScreenBody(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
     ) {
+        if (!isOnline){
+            NoInternetBanner()
+
+            HorizontalDivider(
+                modifier = Modifier,
+                color = MaterialTheme.colorScheme.surfaceDim,
+                thickness = 1.dp,
+            )
+        }
         AccountNameRow(
             value = state.name,
             onChange = onNameChange,

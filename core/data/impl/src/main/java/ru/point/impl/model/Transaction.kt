@@ -2,7 +2,6 @@ package ru.point.impl.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.point.api.model.TransactionDto
 
 @Serializable
 data class Transaction(
@@ -52,19 +51,3 @@ data class TransactionCategory(
     @SerialName("emoji") val emoji: String,
     @SerialName("isIncome") val isIncome: Boolean,
 )
-
-fun Transaction.toDomain(): TransactionDto =
-    TransactionDto(
-        id = id,
-        accountId = account.id,
-        accountName = account.name,
-        amount = amount,
-        currency = account.currency,
-        categoryId = category.id,
-        categoryName = category.name,
-        emoji = category.emoji,
-        isIncome = category.isIncome,
-        dateTime = transactionDate,
-        comment = comment,
-        totalAmount = account.balance,
-    )

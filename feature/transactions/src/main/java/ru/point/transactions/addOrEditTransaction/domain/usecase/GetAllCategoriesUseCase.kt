@@ -9,5 +9,5 @@ import javax.inject.Inject
 internal class GetAllCategoriesUseCase @Inject constructor(
     private val repo: CategoryRepository,
 ) {
-    operator fun invoke(isIncome: Boolean): Flow<Result<List<AllCategoriesDto>>> = repo.getAllCategories(isIncome)
+    operator fun invoke(isIncome: Boolean): Flow<Result<List<AllCategoriesDto>>> = repo.getAllCategoriesByType(isIncome)
 }

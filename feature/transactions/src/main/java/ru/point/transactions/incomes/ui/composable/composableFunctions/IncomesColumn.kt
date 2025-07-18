@@ -19,11 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.point.api.model.TransactionPlaceHolder
 import ru.point.transactions.incomes.ui.mvi.IncomesState
+import ru.point.ui.composables.NoInternetBanner
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber
 
 @Composable
 internal fun IncomesColumn(
+    isOnline: Boolean,
     innerPadding: PaddingValues,
     state: IncomesState,
     currency: String?,
@@ -35,6 +37,16 @@ internal fun IncomesColumn(
                 .fillMaxSize()
                 .padding(innerPadding),
     ) {
+        if (!isOnline){
+            NoInternetBanner()
+
+            HorizontalDivider(
+                modifier = Modifier,
+                color = MaterialTheme.colorScheme.surfaceDim,
+                thickness = 1.dp,
+            )
+        }
+
         if (currency == null) {
             Box(
                 Modifier
@@ -76,7 +88,7 @@ internal fun IncomesColumn(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
-                        text = "${state.error}",
+                        text = state.error,
                     )
                 }
             }

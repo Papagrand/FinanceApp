@@ -19,6 +19,9 @@ interface TransactionRepository {
         amount: String,
         transactionDate: String,
         comment: String?,
+        accountName: String,
+        categoryName: String,
+        emoji: String
     ): Flow<Result<CreateTransactionResponseDto>>
 
     fun deleteTransaction(transactionId: Int): Flow<Result<Unit>>
@@ -39,4 +42,6 @@ interface TransactionRepository {
         transactionDate: String,
         comment: String?,
     ): Flow<Result<TransactionDto>>
+
+//    suspend fun createLocal(dto: TransactionDto)
 }

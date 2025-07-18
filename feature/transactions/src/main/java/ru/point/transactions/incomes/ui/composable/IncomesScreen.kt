@@ -22,7 +22,6 @@ import ru.point.transactions.incomes.ui.mvi.IncomesViewModel
 import ru.point.ui.composables.ActionState
 import ru.point.ui.composables.BaseScaffold
 import ru.point.ui.composables.FabState
-import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
 import ru.point.ui.di.LocalInternetTracker
 
@@ -87,11 +86,8 @@ fun IncomeScreen(navigator: Navigator) {
         snackbarHostState = snackbarHostState,
     ) { innerPadding ->
 
-        if (!isOnline) {
-            NoInternetBanner()
-        }
-
         IncomesColumn(
+            isOnline = isOnline,
             innerPadding,
             state,
             currency,

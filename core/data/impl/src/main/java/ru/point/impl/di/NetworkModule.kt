@@ -1,8 +1,12 @@
 package ru.point.impl.di
 
+import android.content.Context
+import android.net.ConnectivityManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -12,8 +16,6 @@ import ru.point.impl.service.CategoryService
 import ru.point.impl.service.TransactionService
 import ru.point.utils.network.ApiKeyInterceptor
 import ru.point.utils.network.RetryInterceptor
-import javax.inject.Singleton
-import kotlinx.serialization.ExperimentalSerializationApi
 
 /**
  * NetworkModule
@@ -50,6 +52,10 @@ object NetworkModule {
             .client(okHttp)
             .build()
     }
+
+    @Provides @Singleton
+    fun provideConnectivityManager(ctx: Context): ConnectivityManager =
+        ctx.getSystemService(ConnectivityManager::class.java)
 
     @Provides
     @Singleton

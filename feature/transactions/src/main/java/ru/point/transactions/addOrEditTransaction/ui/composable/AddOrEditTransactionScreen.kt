@@ -49,6 +49,8 @@ fun AddOrEditTransactionScreen(
 
     val accountName by viewModel.accountName.collectAsStateWithLifecycle()
 
+    val lastUpdate by viewModel.lastUpdate.collectAsStateWithLifecycle()
+
     val isOnline by LocalInternetTracker.current.online.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -99,8 +101,10 @@ fun AddOrEditTransactionScreen(
             NoInternetBanner()
         }
         AddOrEditElementsColumn(
+            lastUpdate = lastUpdate ?: "",
             innerPadding = innerPadding,
             accountName = accountName,
+            isOnline = isOnline,
             onCommentChange = { viewModel.dispatch(AddOrEditTransactionIntent.CommentChanged(it)) },
             onDeleteClick = onDeleteClick,
             onIntent = viewModel::dispatch,

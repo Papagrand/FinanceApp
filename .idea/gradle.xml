@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/core/data" />
             <option value="$PROJECT_DIR$/core/data/api" />
             <option value="$PROJECT_DIR$/core/data/impl" />
+            <option value="$PROJECT_DIR$/core/data/local" />
             <option value="$PROJECT_DIR$/core/navigation" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/core/utils" />

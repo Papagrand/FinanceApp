@@ -33,15 +33,20 @@ android {
 
 dependencies {
     implementation(project(":core:data:api"))
+    implementation(project(":core:data:local"))
     implementation(project(":core:utils"))
 
     implementation(libs.bundles.dagger)
     ksp(libs.dagger.compiler)
     ksp(libs.dagger.android.processor)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
     implementation(libs.retrofit)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.retrofit.adapters.result)
     implementation(libs.kotlinx.serialization.json)
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("androidx.datastore:datastore-preferences:1.1.6")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

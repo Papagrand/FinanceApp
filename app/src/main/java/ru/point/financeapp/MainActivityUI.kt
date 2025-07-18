@@ -115,8 +115,12 @@ class NavigatorImpl(private val navController: NavHostController) : Navigator {
         navController.navigate(route.toNavRoute())
     }
 
-    override fun popBackStack() {
+    override fun popBack() {
         navController.popBackStack()
+    }
+
+    override fun popBackStack() {
+        navController.navigateUp()
     }
 }
 

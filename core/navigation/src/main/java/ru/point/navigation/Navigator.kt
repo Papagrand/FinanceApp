@@ -26,5 +26,7 @@ sealed interface Route {
 interface Navigator {
     fun navigate(route: Route)
 
+    fun popBack()
+
     fun popBackStack()
 }

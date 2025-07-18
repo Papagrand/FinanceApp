@@ -11,8 +11,6 @@ interface CategoryService {
         @Path("id") accountId: Int,
     ): MyCategories
 
-    @GET("categories/type/{isIncome}")
-    suspend fun getCategoriesByType(
-        @Path("isIncome") isIncome: Boolean,
-    ): List<AllCategories>
+    @GET("categories")
+    suspend fun getAllCategories(): List<AllCategories>
 }

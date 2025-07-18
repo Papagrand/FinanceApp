@@ -53,6 +53,9 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
     private val _accountName = MutableStateFlow<String?>(null)
     val accountName: StateFlow<String?> = _accountName
 
+    private val _lastUpdate = MutableStateFlow<String?>(null)
+    val lastUpdate: StateFlow<String?> = _lastUpdate
+
     init {
         viewModelScope.launch {
             val mode =
@@ -92,6 +95,14 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
                 .filterNotNull()
                 .collect { name ->
                     _accountName.value = name
+                }
+        }
+
+        viewModelScope.launch {
+            prefs.lastUpdateFlow
+                .filterNotNull()
+                .collect { lastUpdate ->
+                    _lastUpdate.value = lastUpdate
                 }
         }
 
@@ -326,6 +337,9 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
                 amount = st.amountInput,
                 transactionDate = st.datetime,
                 comment = st.comment,
+                accountName = st.accountName,
+                categoryName = st.pickedCategory.categoryName,
+                emoji = st.pickedCategory.emoji
             ).collect { result ->
                 when (result) {
                     is Result.Loading -> _state.update { it.copy(isLoading = true, error = null) }
