@@ -37,7 +37,7 @@ fun AddOrEditTransactionScreen(
             DaggerAddOrEditTransactionComponent
                 .builder()
                 .deps(transactionDeps = TransactionDepsStore.transactionDeps)
-                .transactionId(transactionId.takeIf { it >= 0 })
+                .transactionId(transactionId.takeIf { it >= 0 || it<-100 })
                 .isIncome(isIncome)
                 .build()
         }
@@ -46,6 +46,10 @@ fun AddOrEditTransactionScreen(
         viewModel<AddOrEditTransactionViewModel>(factory = addOrEditTransactionComponent.addOrEditTransactionViewModelFactory)
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val accountName by viewModel.accountName.collectAsStateWithLifecycle()
+
+    val lastUpdate by viewModel.lastUpdate.collectAsStateWithLifecycle()
 
     val isOnline by LocalInternetTracker.current.online.collectAsState()
 
@@ -97,7 +101,10 @@ fun AddOrEditTransactionScreen(
             NoInternetBanner()
         }
         AddOrEditElementsColumn(
+            lastUpdate = lastUpdate ?: "",
             innerPadding = innerPadding,
+            accountName = accountName,
+            isOnline = isOnline,
             onCommentChange = { viewModel.dispatch(AddOrEditTransactionIntent.CommentChanged(it)) },
             onDeleteClick = onDeleteClick,
             onIntent = viewModel::dispatch,

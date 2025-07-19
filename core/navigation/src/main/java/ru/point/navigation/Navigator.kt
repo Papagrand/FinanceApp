@@ -5,6 +5,8 @@ sealed interface Route {
 
     data class History(val isIncome: Boolean) : Route
 
+    data class AnalysisTransactions(val isIncome: Boolean) : Route
+
     data class AddOrEditTransaction(
         val transactionId: Int? = null,
         val isIncome: Boolean,
@@ -23,6 +25,8 @@ sealed interface Route {
 
 interface Navigator {
     fun navigate(route: Route)
+
+    fun popBack()
 
     fun popBackStack()
 }

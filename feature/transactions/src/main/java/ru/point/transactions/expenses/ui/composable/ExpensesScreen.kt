@@ -22,7 +22,6 @@ import ru.point.transactions.expenses.ui.mvi.ExpensesViewModel
 import ru.point.ui.composables.ActionState
 import ru.point.ui.composables.BaseScaffold
 import ru.point.ui.composables.FabState
-import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
 import ru.point.ui.di.LocalInternetTracker
 
@@ -89,11 +88,8 @@ fun ExpensesScreen(navigator: Navigator) {
         snackbarHostState = snackbarHostState,
     ) { innerPadding ->
 
-        if (!isOnline) {
-            NoInternetBanner()
-        }
-
         ExpensesColumn(
+            isOnline = isOnline,
             innerPadding,
             state,
             currency,

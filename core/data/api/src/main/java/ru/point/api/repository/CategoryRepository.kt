@@ -8,5 +8,9 @@ import ru.point.utils.common.Result
 interface CategoryRepository {
     fun observe(accountId: Int): Flow<Result<List<CategoryDto>>>
 
-    fun getAllCategories(isIncome: Boolean): Flow<Result<List<AllCategoriesDto>>>
+    fun getAllCategoriesByType(isIncome: Boolean): Flow<Result<List<AllCategoriesDto>>>
+
+    suspend fun refreshAllCategories()
+
+    suspend fun refreshMyCategories(accountId: Int)
 }

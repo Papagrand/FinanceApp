@@ -2,7 +2,7 @@ package ru.point.transactions.addOrEditTransaction.ui.mvi
 
 import ru.point.api.model.CategoryDto
 
-sealed interface AddOrEditTransactionIntent {
+internal sealed interface AddOrEditTransactionIntent {
     data object Load : AddOrEditTransactionIntent
 
     data object Retry : AddOrEditTransactionIntent
@@ -21,7 +21,7 @@ sealed interface AddOrEditTransactionIntent {
 
     data class TimeChanged(val time: String) : AddOrEditTransactionIntent
 
-    data class CommentChanged(val comment: String) : AddOrEditTransactionIntent
+    data class CommentChanged(val comment: String?) : AddOrEditTransactionIntent
 
     data class CategoryPicked(val category: CategoryDto) : AddOrEditTransactionIntent
 }

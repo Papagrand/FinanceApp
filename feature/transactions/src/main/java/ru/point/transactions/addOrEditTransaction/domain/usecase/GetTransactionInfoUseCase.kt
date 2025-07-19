@@ -6,7 +6,7 @@ import ru.point.api.repository.TransactionRepository
 import ru.point.utils.common.Result
 import javax.inject.Inject
 
-class GetTransactionInfoUseCase @Inject constructor(
+internal class GetTransactionInfoUseCase @Inject constructor(
     private val repo: TransactionRepository,
 ) {
     operator fun invoke(transactionId: Int): Flow<Result<TransactionDto>> {

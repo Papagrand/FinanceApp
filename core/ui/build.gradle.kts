@@ -33,6 +33,7 @@ android {
 dependencies {
 
     implementation(project(":core:utils"))
+    implementation(project(":core:data:impl"))
 
     implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation(libs.androidx.material3)

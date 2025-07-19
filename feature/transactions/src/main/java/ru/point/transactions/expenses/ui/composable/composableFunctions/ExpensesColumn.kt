@@ -22,9 +22,11 @@ import ru.point.transactions.expenses.ui.mvi.ExpensesState
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber
 import kotlin.collections.isNotEmpty
+import ru.point.ui.composables.NoInternetBanner
 
 @Composable
 internal fun ExpensesColumn(
+    isOnline: Boolean,
     innerPadding: PaddingValues,
     state: ExpensesState,
     currency: String?,
@@ -36,6 +38,16 @@ internal fun ExpensesColumn(
                 .fillMaxSize()
                 .padding(innerPadding),
     ) {
+        if (!isOnline) {
+            NoInternetBanner()
+
+            HorizontalDivider(
+                modifier = Modifier,
+                color = MaterialTheme.colorScheme.surfaceDim,
+                thickness = 1.dp,
+            )
+        }
+
         if (currency == null) {
             Box(
                 Modifier
@@ -57,7 +69,7 @@ internal fun ExpensesColumn(
                     contentAlignment = Alignment.TopCenter,
                 ) { CircularProgressIndicator() }
 
-            state.error != null -> {
+            state.error != null && isOnline -> {
                 Column(
                     modifier =
                         Modifier
@@ -77,7 +89,7 @@ internal fun ExpensesColumn(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
-                        text = "${state.error}",
+                        text = state.error,
                     )
                 }
             }
@@ -86,7 +98,9 @@ internal fun ExpensesColumn(
                 if (state.list.isNotEmpty()) {
                     TotalExpensesToday(
                         modifier = Modifier,
-                        total = "${state.total.toString().toPrettyNumber()} ${state.list[0].currency.toCurrencySymbol()}",
+                        total = "${
+                            state.total.toString().toPrettyNumber()
+                        } ${state.list[0].currency.toCurrencySymbol()}",
                     )
                 } else {
                     TotalExpensesToday(

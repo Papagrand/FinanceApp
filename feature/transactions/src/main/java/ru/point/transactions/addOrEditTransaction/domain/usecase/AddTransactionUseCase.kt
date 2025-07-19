@@ -6,7 +6,7 @@ import ru.point.api.repository.TransactionRepository
 import ru.point.utils.common.Result
 import javax.inject.Inject
 
-class AddTransactionUseCase @Inject constructor(
+internal class AddTransactionUseCase @Inject constructor(
     private val repo: TransactionRepository,
 ) {
     operator fun invoke(
@@ -15,6 +15,9 @@ class AddTransactionUseCase @Inject constructor(
         amount: String,
         transactionDate: String,
         comment: String?,
+        accountName: String,
+        categoryName: String,
+        emoji: String
     ): Flow<Result<CreateTransactionResponseDto>> =
         repo.createTransaction(
             accountId,
@@ -22,5 +25,8 @@ class AddTransactionUseCase @Inject constructor(
             amount,
             transactionDate,
             comment,
+            accountName,
+            categoryName,
+            emoji,
         )
 }

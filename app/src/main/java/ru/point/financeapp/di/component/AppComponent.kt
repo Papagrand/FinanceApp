@@ -11,6 +11,11 @@ import ru.point.impl.di.NetworkModule
 import ru.point.impl.di.RepositoryModule
 import ru.point.transactions.di.TransactionDeps
 import javax.inject.Singleton
+import ru.point.financeapp.MainActivity
+import ru.point.impl.di.DatabaseModule
+import ru.point.impl.di.WorkerModule
+import ru.point.impl.work.DaggerWorkerFactory
+import ru.point.utils.network.NetworkTracker
 
 /**
  * AppComponent — Корневой компонент Dagger, объединяющий все модули приложения:
@@ -26,12 +31,20 @@ import javax.inject.Singleton
 @Component(
     modules = [
         NetworkModule::class,
+        DatabaseModule::class,
         RepositoryModule::class,
+        WorkerModule::class,
         CoreModule::class,
     ],
 )
 interface AppComponent : AccountDeps, CategoriesDeps, TransactionDeps {
+    fun workerFactory(): DaggerWorkerFactory
+
     fun inject(app: App)
+
+    fun inject(activity: MainActivity)
+
+    fun networkTracker(): NetworkTracker
 
     @Component.Builder
     interface Builder {

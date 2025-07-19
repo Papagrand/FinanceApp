@@ -46,10 +46,11 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":core:navigation"))
     implementation(project(":core:data:api"))
+    implementation(project(":core:data:local"))
     implementation(project(":core:data:impl"))
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation(project(":core:ui"))
     implementation(project(":core:utils"))
-
     implementation(project(":feature:account"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:settings"))

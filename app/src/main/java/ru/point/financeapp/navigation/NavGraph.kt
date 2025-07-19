@@ -15,6 +15,7 @@ import ru.point.financeapp.NavigatorImpl
 import ru.point.navigation.NavRoute
 import ru.point.settings.presentation.SettingsScreen
 import ru.point.transactions.addOrEditTransaction.ui.composable.AddOrEditTransactionScreen
+import ru.point.transactions.analysis.ui.composable.AnalysisTransactionsScreen
 import ru.point.transactions.expenses.ui.composable.ExpensesScreen
 import ru.point.transactions.history.ui.composable.HistoryScreen
 import ru.point.transactions.incomes.ui.composable.IncomeScreen
@@ -51,6 +52,18 @@ fun NavGraph(navController: NavHostController) {
                 val isIncome = entry.arguments!!.getBoolean("isIncome")
 
                 HistoryScreen(navigator, isIncome)
+            }
+
+            composable(
+                NavRoute.AnalysisTransactions.route,
+                arguments =
+                    listOf(
+                        navArgument("isIncome") { type = NavType.BoolType },
+                    ),
+            ) { entry ->
+                val isIncome = entry.arguments!!.getBoolean("isIncome")
+
+                AnalysisTransactionsScreen(navigator, isIncome)
             }
 
             composable(
@@ -94,6 +107,18 @@ fun NavGraph(navController: NavHostController) {
             }
 
             composable(
+                NavRoute.AnalysisTransactions.route,
+                arguments =
+                    listOf(
+                        navArgument("isIncome") { type = NavType.BoolType },
+                    ),
+            ) { entry ->
+                val isIncome = entry.arguments!!.getBoolean("isIncome")
+
+                AnalysisTransactionsScreen(navigator, isIncome)
+            }
+
+            composable(
                 NavRoute.AddOrEditTransaction.route,
                 arguments =
                     listOf(
@@ -132,7 +157,7 @@ fun NavGraph(navController: NavHostController) {
         composable(
             NavRoute.Category.route,
         ) {
-            CategoryScreen(navigator = navigator)
+            CategoryScreen()
         }
 
         composable(

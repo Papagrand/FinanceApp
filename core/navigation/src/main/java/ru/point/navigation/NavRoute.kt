@@ -25,6 +25,12 @@ sealed class NavRoute(val route: String) {
         const val ARG_IS_INCOME = "isIncome"
     }
 
+    data object AnalysisTransactions : NavRoute("analysisTransactions/{isIncome}"){
+        fun create(isIncome: Boolean) = "analysisTransactions/$isIncome"
+
+        const val ARG_IS_INCOME = "isIncome"
+    }
+
     data object AddOrEditTransaction :
         NavRoute("addOrEditTransaction?transactionId={transactionId}&isIncome={isIncome}") {
         fun create(

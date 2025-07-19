@@ -51,8 +51,6 @@ import ru.point.ui.di.LocalInternetTracker
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
-    navigator: Navigator,
-    onAddClick: () -> Unit = {},
 ) {
     val categoriesComponent =
         remember {
@@ -89,16 +87,22 @@ fun CategoryScreen(
         fabState = FabState.Hidden,
     ) { innerPadding ->
 
-        if (!isOnline) {
-            NoInternetBanner()
-        }
-
         Column(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
+            if (!isOnline){
+                NoInternetBanner()
+
+                HorizontalDivider(
+                    modifier = Modifier,
+                    color = MaterialTheme.colorScheme.surfaceDim,
+                    thickness = 1.dp,
+                )
+            }
+
             CategorySearch(
                 modifier =
                     Modifier

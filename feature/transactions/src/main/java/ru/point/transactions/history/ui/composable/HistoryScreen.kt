@@ -66,7 +66,6 @@ import kotlin.collections.isNotEmpty
 fun HistoryScreen(
     navigator: Navigator,
     isIncome: Boolean,
-    onAddClick: () -> Unit = {},
 ) {
     val historyComponent =
         remember {
@@ -113,7 +112,9 @@ fun HistoryScreen(
             TopBarAction(
                 iconRes = R.drawable.analys,
                 contentDescription = "Анализ",
-                onClick = {},
+                onClick = {
+                    navigator.navigate(Route.AnalysisTransactions(isIncome = isIncome))
+                },
             ),
         actionState = ActionState.Shown,
         backState = BackState.Shown,
@@ -121,91 +122,99 @@ fun HistoryScreen(
         fabState = FabState.Hidden,
     ) { innerPadding ->
 
-        if (!isOnline) {
-            NoInternetBanner()
-        } else {
-            when {
-                state.isLoading ->
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                            .padding(top = 32.dp),
-                        contentAlignment = Alignment.TopCenter,
-                    ) { CircularProgressIndicator() }
+        when {
+            state.isLoading ->
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(top = 32.dp),
+                    contentAlignment = Alignment.TopCenter,
+                ) { CircularProgressIndicator() }
 
-                state.error != null -> {
-                    BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency, state.error)
-                }
+            state.error != null && isOnline -> {
+                BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency, state.error)
+            }
 
-                else -> {
-                    if (state.list.isNotEmpty()) {
-                        Column(
+            else -> {
+                if (state.list.isNotEmpty()) {
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                    ) {
+
+                        if (!isOnline){
+                            NoInternetBanner()
+
+                            HorizontalDivider(
+                                modifier = Modifier,
+                                color = MaterialTheme.colorScheme.surfaceDim,
+                                thickness = 1.dp,
+                            )
+                        }
+
+                        BaseHistoryTopElement(
+                            modifier = Modifier,
+                            contentText = "Начало",
+                            trailText = monthYear,
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+                        BaseHistoryTopElement(
+                            modifier = Modifier,
+                            contentText = "Конец",
+                            trailText = nowWithTime,
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+                        BaseHistoryTopElement(
+                            modifier = Modifier,
+                            contentText = "Сумма",
+                            trailText = "${
+                                state.total.toString().toPrettyNumber()
+                            } ${state.list[0].currency.toCurrencySymbol()}",
+                        )
+
+                        LazyColumn(
                             modifier =
                                 Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding),
+                                    .fillMaxSize(),
                         ) {
-                            BaseHistoryTopElement(
-                                modifier = Modifier,
-                                contentText = "Начало",
-                                trailText = monthYear,
-                            )
-                            HorizontalDivider(
-                                modifier = Modifier,
-                                color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp,
-                            )
-                            BaseHistoryTopElement(
-                                modifier = Modifier,
-                                contentText = "Конец",
-                                trailText = nowWithTime,
-                            )
-                            HorizontalDivider(
-                                modifier = Modifier,
-                                color = MaterialTheme.colorScheme.surfaceDim,
-                                thickness = 1.dp,
-                            )
-                            BaseHistoryTopElement(
-                                modifier = Modifier,
-                                contentText = "Сумма",
-                                trailText = "${
-                                    state.total.toString().toPrettyNumber()
-                                } ${state.list[0].currency.toCurrencySymbol()}",
-                            )
+                            items(state.list) { historyItem ->
+                                HistoryRow(
+                                    modifier =
+                                        Modifier.clickable {
+                                            navigator.navigate(
+                                                Route.AddOrEditTransaction(
+                                                    transactionId = historyItem.id,
+                                                    isIncome = isIncome,
+                                                ),
+                                            )
+                                        },
+                                    historyItem,
+                                )
 
-                            LazyColumn(
-                                modifier =
-                                    Modifier
-                                        .fillMaxSize(),
-                            ) {
-                                items(state.list) { historyItem ->
-                                    HistoryRow(
-                                        modifier =
-                                            Modifier.clickable {
-                                                navigator.navigate(
-                                                    Route.AddOrEditTransaction(
-                                                        transactionId = historyItem.id,
-                                                        isIncome = isIncome,
-                                                    ),
-                                                )
-                                            },
-                                        historyItem,
-                                    )
-
-                                    HorizontalDivider(
-                                        modifier = Modifier,
-                                        color = MaterialTheme.colorScheme.surfaceDim,
-                                        thickness = 1.dp,
-                                    )
-                                }
+                                HorizontalDivider(
+                                    modifier = Modifier,
+                                    color = MaterialTheme.colorScheme.surfaceDim,
+                                    thickness = 1.dp,
+                                )
                             }
                         }
-                    } else {
-                        BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency)
                     }
+                } else {
+                    BaseHistoryTopColumnPlaceholder(innerPadding, currency = currency)
                 }
             }
         }
+
     }
 }

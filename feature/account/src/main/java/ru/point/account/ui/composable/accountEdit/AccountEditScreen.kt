@@ -1,7 +1,10 @@
 package ru.point.account.ui.composable.accountEdit
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -9,8 +12,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.account.R
@@ -20,12 +25,12 @@ import ru.point.account.ui.mvi.accountEdit.AccountEditEffect
 import ru.point.account.ui.mvi.accountEdit.AccountEditIntent
 import ru.point.account.ui.mvi.accountEdit.AccountEditViewModel
 import ru.point.navigation.Navigator
+import ru.point.navigation.Route
 import ru.point.ui.composables.ActionState
 import ru.point.ui.composables.BackAction
 import ru.point.ui.composables.BackState
 import ru.point.ui.composables.BaseScaffold
 import ru.point.ui.composables.FabState
-import ru.point.ui.composables.NoInternetBanner
 import ru.point.ui.composables.TopBarAction
 import ru.point.ui.di.LocalInternetTracker
 
@@ -33,7 +38,6 @@ import ru.point.ui.di.LocalInternetTracker
 @Composable
 fun AccountEditScreen(
     navigator: Navigator,
-    onAddClick: () -> Unit = {},
 ) {
     val accountEditComponent =
         remember {
@@ -58,7 +62,7 @@ fun AccountEditScreen(
                 is AccountEditEffect.ShowSnackbar ->
                     snackbarHostState.showSnackbar(effect.message)
 
-                AccountEditEffect.Finish -> navigator.popBackStack()
+                AccountEditEffect.Finish -> navigator.navigate(Route.Account)
             }
         }
     }
@@ -83,27 +87,34 @@ fun AccountEditScreen(
             ),
         fabState = FabState.Hidden,
     ) { innerPadding ->
-
         when {
             state.isLoading -> {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(top = 32.dp),
+                    contentAlignment = Alignment.TopCenter,
+                ) {
+                    CircularProgressIndicator()
+                }
             }
 
-            state.error != null -> {
+            state.error != null && isOnline -> {
                 Log.e("logError", state.error.toString())
             }
 
             else -> {
                 AccountEditScreenBody(
                     state = state,
+                    isOnline = isOnline,
                     onNameChange = { viewModel.dispatch(AccountEditIntent.ChangeName(it)) },
                     onBalanceChange = { viewModel.dispatch(AccountEditIntent.ChangeBalance(it)) },
                     onCurrencyChange = { viewModel.dispatch(AccountEditIntent.ChangeCurrency(it)) },
                     modifier = Modifier.padding(innerPadding),
                 )
             }
-        }
-        if (!isOnline) {
-            NoInternetBanner()
         }
     }
 }

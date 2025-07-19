@@ -10,5 +10,9 @@
     <string name="my_incomes">Мои доходы</string>
     <string name="cancel">Отмена</string>
     <string name="ok">Ок</string>
+    <string name="analys">Анализ</string>
+    <string name="period_start">Период: начало</string>
+    <string name="period_end">Период: конец</string>
+    <string name="empty_analysis_data">Данные за текущий период отсутствуют</string>
 
 </resources>

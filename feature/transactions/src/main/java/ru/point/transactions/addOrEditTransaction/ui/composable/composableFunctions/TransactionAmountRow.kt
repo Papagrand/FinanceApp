@@ -14,7 +14,7 @@ import ru.point.ui.composables.SimpleListRow
 import ru.point.utils.extensionsAndParsers.formatForDisplay
 
 @Composable
-fun TransactionAmountRow(
+internal fun TransactionAmountRow(
     amountRaw: String,
     onEdit: () -> Unit,
 ) {
