@@ -157,7 +157,7 @@ fun NavGraph(navController: NavHostController) {
         composable(
             NavRoute.Category.route,
         ) {
-            CategoryScreen(navigator = navigator)
+            CategoryScreen()
         }
 
         composable(

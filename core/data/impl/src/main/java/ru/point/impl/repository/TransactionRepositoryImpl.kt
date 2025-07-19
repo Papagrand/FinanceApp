@@ -53,44 +53,6 @@ class TransactionRepositoryImpl @Inject constructor(
     private val prefs: AccountPreferencesRepo,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : TransactionRepository {
-//    override fun createTransaction(
-//        accountId: Int,
-//        categoryId: Int,
-//        amount: String,
-//        transactionDate: String,
-//        comment: String?,
-//    ): Flow<Result<CreateTransactionResponseDto>> =
-//        safeApiFlow {
-//            val requestBody =
-//                CreateTransactionRequest(
-//                    accountId = accountId,
-//                    categoryId = categoryId,
-//                    amount = amount,
-//                    transactionDate = transactionDate,
-//                    comment = comment,
-//                )
-//            api.createNewTransaction(requestBody)
-//        }
-//            .map { result ->
-//                when (result) {
-//                    is Loading -> Loading
-//                    is Error -> Error(result.cause)
-//                    is Success ->
-//                        Success(
-//                            data =
-//                                CreateTransactionResponseDto(
-//                                    id = result.data.id,
-//                                    accountId = result.data.accountId,
-//                                    categoryId = result.data.categoryId,
-//                                    amount = result.data.amount,
-//                                    transactionDate = result.data.transactionDate,
-//                                    comment = result.data.comment,
-//                                    createdAt = result.data.createdAt,
-//                                    updatedAt = result.data.updatedAt,
-//                                ),
-//                        )
-//                }
-//            }
 
     override fun createTransaction(
         accountId: Int,
@@ -142,9 +104,10 @@ class TransactionRepositoryImpl @Inject constructor(
                     }
                 }
         } else {
+            val fakeId = -(System.currentTimeMillis() % 100_000_000).toInt()
             val draft = TransactionEntity(
                 localId = 0L,
-                remoteId = null,
+                remoteId = fakeId,
                 accountId = accountId,
                 accountName = accountName,
                 amount = amount,
@@ -281,7 +244,11 @@ class TransactionRepositoryImpl @Inject constructor(
         }
             .filterIsInstance<Success<List<TransactionDto>>>()
             .firstOrNull()?.data?.map { it.toEntity(isSynced = true) }
-            ?.let { dao.upsert(it) }
+            ?.let {
+                dao.upsert(it)
+                prefs.updateLastSync(Instant.now().toString())
+            }
+
     }
 
     private suspend fun syncIfRemoteNewer(
@@ -301,7 +268,10 @@ class TransactionRepositoryImpl @Inject constructor(
             }
             ?.takeIf { it.isNotEmpty() }
             ?.map { it.toDto().toEntity(isSynced = true) }
-            ?.let { dao.upsert(it) }
+            ?.let {
+                dao.upsert(it)
+                prefs.updateLastSync(Instant.now().toString())
+            }
     }
 
     private fun String.parseIsoMillis(): Long =

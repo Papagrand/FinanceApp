@@ -10,7 +10,7 @@ data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     val localId: Long = 0L,
     val localUid: String = UUID.randomUUID().toString(),
-    val remoteId: Int? = null,
+    val remoteId: Int,
     val accountId: Int,
     val accountName: String,
     val amount: String,

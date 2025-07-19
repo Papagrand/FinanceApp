@@ -39,17 +39,17 @@ class PushPendingWorker(
 
         for (entity in pending) {
             if (entity.isDeleted) {
-                safeApiFlow { api.deleteTransaction(entity.remoteId!!) }
-                    .filter { it !is DomainResult.Loading }
-                    .first().let { res ->
-                        if (res is DomainResult.Error) {
-                            return WorkResult.retry()
+                if (entity.remoteId > 0) {
+                    safeApiFlow { api.deleteTransaction(entity.remoteId) }
+                        .filter { it !is DomainResult.Loading }
+                        .first().let { res ->
+                            if (res is DomainResult.Error) return Result.retry()
                         }
-                        dao.hardDeleteLocal(entity.localUid)
-                    }
+                }
+                dao.hardDeleteLocal(entity.localUid)
             }else{
                 val request = entity.toCreateRequest()
-                val idResultFlow: Flow<DomainResult<Int>> = if (entity.remoteId == null) {
+                val idResultFlow: Flow<DomainResult<Int>> = if (entity.remoteId < 0) {
                     safeApiFlow { api.createNewTransaction(request) }
                         .map { res ->
                             when (res) {
@@ -60,7 +60,7 @@ class PushPendingWorker(
                             }
                         }
                 } else {
-                    safeApiFlow { api.updateTransaction(entity.remoteId!!, request) }
+                    safeApiFlow { api.updateTransaction(entity.remoteId, request) }
                         .map { res ->
                             when (res) {
                                 is DomainResult.Loading -> DomainResult.Loading
@@ -84,6 +84,7 @@ class PushPendingWorker(
         }
 
         prefs.updateLastSync(Instant.now().toString())
+
         return Result.success()
     }
 }

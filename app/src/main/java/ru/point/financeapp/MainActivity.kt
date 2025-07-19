@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
             .enqueueUniquePeriodicWork(
                 "PushAccountPending",
                 ExistingPeriodicWorkPolicy.KEEP,
-                PeriodicWorkRequestBuilder<PushAccountPendingWorker>(15, TimeUnit.MINUTES)
+                PeriodicWorkRequestBuilder<PushAccountPendingWorker>(18, TimeUnit.MINUTES)
                     .setConstraints(
                         Constraints.Builder()
                             .setRequiredNetworkType(NetworkType.CONNECTED)

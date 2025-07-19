@@ -2,6 +2,9 @@ package ru.point.transactions.addOrEditTransaction.ui.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -29,6 +32,9 @@ import ru.point.utils.extensionsAndParsers.buildIsoInstantString
 import ru.point.utils.extensionsAndParsers.validateBalance
 import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 internal class AddOrEditTransactionViewModel @Inject constructor(
     private val transactionId: Int?,
@@ -53,13 +59,29 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
     private val _accountName = MutableStateFlow<String?>(null)
     val accountName: StateFlow<String?> = _accountName
 
-    private val _lastUpdate = MutableStateFlow<String?>(null)
-    val lastUpdate: StateFlow<String?> = _lastUpdate
+    private val _lastUpdate: StateFlow<String> =
+        prefs.lastUpdateFlow
+            .filterNotNull()
+            .map { iso ->
+                try {
+                    Instant.parse(iso)
+                        .atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("dd.MM.yyyy  HH:mm"))
+                } catch (e: Exception) {
+                    ""
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(1_000),
+                initialValue = ""
+            )
+    val lastUpdate: StateFlow<String> = _lastUpdate
 
     init {
         viewModelScope.launch {
             val mode =
-                if (transactionId == null || transactionId < 0) {
+                if (transactionId == null || (transactionId < 0 && transactionId>-100)) {
                     ScreenEnums.CREATE
                 } else {
                     ScreenEnums.EDIT
@@ -95,14 +117,6 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
                 .filterNotNull()
                 .collect { name ->
                     _accountName.value = name
-                }
-        }
-
-        viewModelScope.launch {
-            prefs.lastUpdateFlow
-                .filterNotNull()
-                .collect { lastUpdate ->
-                    _lastUpdate.value = lastUpdate
                 }
         }
 

@@ -263,11 +263,15 @@ internal fun AddOrEditElementsColumn(
             }
         }
 
-        Box(modifier = Modifier.fillMaxWidth().height(50.dp)){
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            contentAlignment = Alignment.Center
+        ) {
             Text(
-                modifier = Modifier.padding(vertical = 10.dp),
-                textAlign = TextAlign.Center,
-                text = lastUpdate
+                text = "Последняя синхронизация: $lastUpdate",
+                textAlign = TextAlign.Center
             )
         }
     }

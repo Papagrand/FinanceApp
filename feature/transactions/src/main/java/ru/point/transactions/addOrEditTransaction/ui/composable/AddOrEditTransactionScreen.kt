@@ -37,7 +37,7 @@ fun AddOrEditTransactionScreen(
             DaggerAddOrEditTransactionComponent
                 .builder()
                 .deps(transactionDeps = TransactionDepsStore.transactionDeps)
-                .transactionId(transactionId.takeIf { it >= 0 })
+                .transactionId(transactionId.takeIf { it >= 0 || it<-100 })
                 .isIncome(isIncome)
                 .build()
         }
