@@ -1,23 +1,10 @@
 package ru.point.impl.repository
 
 import java.time.Instant
-import kotlinx.coroutines.flow.Flow
-import ru.point.api.model.CreateTransactionResponseDto
-import ru.point.api.model.TransactionDto
-import ru.point.api.repository.TransactionRepository
-import ru.point.impl.flow.safeApiFlow
-import ru.point.impl.model.CreateTransactionRequest
-import ru.point.impl.model.Transaction
-import ru.point.impl.model.toDto
-import ru.point.impl.model.entityToDto
-import ru.point.impl.service.TransactionService
-import ru.point.utils.common.Result
-import ru.point.utils.common.Result.Error
-import ru.point.utils.common.Result.Loading
-import ru.point.utils.common.Result.Success
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.filterIsInstance
@@ -26,13 +13,26 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import ru.point.api.flow.AccountPreferencesRepo
+import ru.point.api.model.CreateTransactionResponseDto
+import ru.point.api.model.TransactionDto
+import ru.point.api.repository.TransactionRepository
+import ru.point.impl.flow.safeApiFlow
+import ru.point.impl.model.CreateTransactionRequest
+import ru.point.impl.model.Transaction
+import ru.point.impl.model.entityToDto
 import ru.point.impl.model.fromCreateTransactionToEntity
 import ru.point.impl.model.toCreateRequest
 import ru.point.impl.model.toCreateResponseDto
 import ru.point.impl.model.toCreateTransactionDto
+import ru.point.impl.model.toDto
 import ru.point.impl.model.toEntity
+import ru.point.impl.service.TransactionService
 import ru.point.local.dao.TransactionDao
 import ru.point.local.entities.TransactionEntity
+import ru.point.utils.common.Result
+import ru.point.utils.common.Result.Error
+import ru.point.utils.common.Result.Loading
+import ru.point.utils.common.Result.Success
 import ru.point.utils.model.toAppError
 import ru.point.utils.network.NetworkTracker
 
@@ -146,6 +146,7 @@ class TransactionRepositoryImpl @Inject constructor(
                     when (result) {
                         is Success ->
                             send(Success(Unit))
+
                         is Error -> send(Error(result.cause))
                         Loading -> {}
                     }
@@ -250,7 +251,6 @@ class TransactionRepositoryImpl @Inject constructor(
             }
 
     }
-
     private suspend fun syncIfRemoteNewer(
         accountId: Int,
         fromIso: String,
@@ -268,10 +268,7 @@ class TransactionRepositoryImpl @Inject constructor(
             }
             ?.takeIf { it.isNotEmpty() }
             ?.map { it.toDto().toEntity(isSynced = true) }
-            ?.let {
-                dao.upsert(it)
-                prefs.updateLastSync(Instant.now().toString())
-            }
+            ?.let { dao.upsert(it) }
     }
 
     private fun String.parseIsoMillis(): Long =
