@@ -162,7 +162,11 @@ class TransactionRepositoryImpl @Inject constructor(
         send(Loading)
         launch(dispatcher) {
             if (!dao.hasData(accountId, startDateIso, endDateIso)) {
-                fetchPeriodAndCache(accountId, startDateIso, endDateIso)
+                val hasAny = fetchPeriodAndCache(accountId, startDateIso, endDateIso)
+                if (!hasAny) {
+                    send(Success(emptyList()))
+                    return@launch
+                }
             } else {
                 syncIfRemoteNewer(accountId, startDateIso, endDateIso)
             }
@@ -238,19 +242,27 @@ class TransactionRepositoryImpl @Inject constructor(
         accountId: Int,
         fromIso: String,
         toIso: String
-    ) {
+    ): Boolean {
+
+        var hasRemoteData = false
+
         safeApiFlow {
             api.getByAccountForPeriod(accountId, fromIso, toIso)
                 .map { it.toDto() }
         }
             .filterIsInstance<Success<List<TransactionDto>>>()
-            .firstOrNull()?.data?.map { it.toEntity(isSynced = true) }
-            ?.let {
-                dao.upsert(it)
-                prefs.updateLastSync(Instant.now().toString())
+            .firstOrNull()?.data
+            ?.let { list ->
+                if (list.isNotEmpty()) {
+                    dao.upsert(list.map { it.toEntity(isSynced = true) })
+                    prefs.updateLastSync(Instant.now().toString())
+                    hasRemoteData = true
+                }
             }
 
+        return hasRemoteData
     }
+
     private suspend fun syncIfRemoteNewer(
         accountId: Int,
         fromIso: String,

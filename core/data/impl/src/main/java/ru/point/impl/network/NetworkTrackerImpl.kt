@@ -60,7 +60,7 @@ class NetworkTrackerImpl @Inject constructor(
 
         WorkManager.getInstance(appContext)
             .enqueueUniqueWork(
-                "push_transaction_once",
+                "PushPending",
                 ExistingWorkPolicy.KEEP,
                 OneTimeWorkRequestBuilder<PushPendingWorker>()
                     .setConstraints(conn)
@@ -70,7 +70,7 @@ class NetworkTrackerImpl @Inject constructor(
 
         WorkManager.getInstance(appContext)
             .enqueueUniqueWork(
-                "push_account_once",
+                "PushAccountPending",
                 ExistingWorkPolicy.KEEP,
                 OneTimeWorkRequestBuilder<PushAccountPendingWorker>()
                     .setConstraints(conn)
