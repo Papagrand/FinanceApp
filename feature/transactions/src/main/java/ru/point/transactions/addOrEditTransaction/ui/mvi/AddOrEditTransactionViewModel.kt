@@ -32,6 +32,7 @@ import ru.point.utils.extensionsAndParsers.buildIsoInstantString
 import ru.point.utils.extensionsAndParsers.validateBalance
 import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -361,11 +362,13 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
                         val msg = result.cause.toUserMessage()
                         _state.update { it.copy(isLoading = false, error = msg) }
                         _effect.emit(ShowSnackbar("Ошибка: $msg"))
+                        cancel()
                     }
 
                     is Result.Success -> {
                         _state.update { it.copy(isLoading = false) }
                         _effect.emit(Finish)
+                        cancel()
                     }
                 }
             }
@@ -389,11 +392,13 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
                         val msg = result.cause.toUserMessage()
                         _state.update { it.copy(isLoading = false, error = msg) }
                         _effect.emit(ShowSnackbar("Ошибка: $msg"))
+                        cancel()
                     }
 
                     is Result.Success -> {
                         _state.update { it.copy(isLoading = false) }
                         _effect.emit(Finish)
+                        cancel()
                     }
                 }
             }

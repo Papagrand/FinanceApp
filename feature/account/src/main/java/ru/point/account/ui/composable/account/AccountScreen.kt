@@ -30,6 +30,7 @@ import ru.point.account.ui.mvi.account.AccountEffect
 import ru.point.account.ui.mvi.account.AccountIntent
 import ru.point.account.ui.mvi.account.AccountViewModel
 import ru.point.api.model.AccountDto
+import ru.point.chart.ui.ChartBarGraph
 import ru.point.navigation.Navigator
 import ru.point.navigation.Route
 import ru.point.ui.composables.ActionState
@@ -72,6 +73,7 @@ fun AccountScreen(
 
     LaunchedEffect(Unit) {
         viewModel.dispatch(AccountIntent.Load)
+        viewModel.dispatch(AccountIntent.RefreshChart)
         viewModel.effect.collect { effect ->
             when (effect) {
                 is AccountEffect.ShowSnackbar ->
@@ -186,6 +188,23 @@ fun AccountScreen(
                                     .fillMaxWidth()
                                     .height(56.dp),
                             currency = "$",
+                        )
+                    }
+
+                    if (isOnline){
+                        HorizontalDivider(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surfaceDim,
+                            thickness = 1.dp,
+                        )
+
+
+                        ChartBarGraph(
+                            entries = state.chart,
+                            modifier = Modifier
+                                .padding(top = 56.dp, end = 10.dp)
+                                .fillMaxWidth()
+                                .height(220.dp)
                         )
                     }
                 }

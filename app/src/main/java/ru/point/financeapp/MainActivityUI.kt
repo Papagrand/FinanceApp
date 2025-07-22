@@ -119,7 +119,7 @@ class NavigatorImpl(private val navController: NavHostController) : Navigator {
         navController.popBackStack()
     }
 
-    override fun popBackStack() {
+    override fun navigateUp() {
         navController.navigateUp()
     }
 }

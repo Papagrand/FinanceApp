@@ -28,5 +28,5 @@ interface Navigator {
 
     fun popBack()
 
-    fun popBackStack()
+    fun navigateUp()
 }

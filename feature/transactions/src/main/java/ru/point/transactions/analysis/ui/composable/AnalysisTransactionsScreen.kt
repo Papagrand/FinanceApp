@@ -76,7 +76,7 @@ fun AnalysisTransactionsScreen(
                 is AnalysisTransactionsEffect.ShowSnackbar ->
                     snackbarHostState.showSnackbar(eff.message)
 
-                AnalysisTransactionsEffect.Finish -> navigator.popBackStack()
+                AnalysisTransactionsEffect.Finish -> navigator.navigateUp()
             }
         }
     }
@@ -86,7 +86,7 @@ fun AnalysisTransactionsScreen(
         actionState = ActionState.Shown,
         topAppBarColor = MaterialTheme.colorScheme.background,
         backState = BackState.Shown,
-        backAction = BackAction(onClick = navigator::popBackStack),
+        backAction = BackAction(onClick = navigator::navigateUp),
         fabState = FabState.Hidden,
         snackbarHostState = snackbarHostState
     ) { innerPadding ->

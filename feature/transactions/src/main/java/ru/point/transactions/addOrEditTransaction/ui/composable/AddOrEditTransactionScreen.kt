@@ -1,5 +1,6 @@
 package ru.point.transactions.addOrEditTransaction.ui.composable
 
+import android.util.Log
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,7 +63,10 @@ fun AddOrEditTransactionScreen(
                 is AddOrEditTransactionEffect.ShowSnackbar ->
                     snackbarHostState.showSnackbar(eff.message)
 
-                AddOrEditTransactionEffect.Finish -> navigator.popBackStack()
+                AddOrEditTransactionEffect.Finish -> {
+                    Log.d("NavDebug", "Effect = $eff")
+                    navigator.navigateUp()
+                }
             }
         }
     }
@@ -92,7 +96,7 @@ fun AddOrEditTransactionScreen(
             BackAction(
                 iconRes = R.drawable.disline_edit,
                 contentDescription = "Закрыть без сохранения",
-                onClick = { navigator.popBackStack() },
+                onClick = { navigator.navigateUp() },
             ),
         fabState = FabState.Hidden,
         snackbarHostState = snackbarHostState,
@@ -101,7 +105,7 @@ fun AddOrEditTransactionScreen(
             NoInternetBanner()
         }
         AddOrEditElementsColumn(
-            lastUpdate = lastUpdate ?: "",
+            lastUpdate = lastUpdate,
             innerPadding = innerPadding,
             accountName = accountName,
             isOnline = isOnline,

@@ -45,6 +45,7 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:chart"))
     implementation(project(":core:data:api"))
     implementation(project(":core:data:local"))
     implementation(project(":core:data:impl"))
