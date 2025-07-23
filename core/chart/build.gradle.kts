@@ -33,6 +33,7 @@ android {
 dependencies {
 
     implementation(project(":core:data:api"))
+    implementation(project(":core:utils"))
 
     implementation(libs.androidx.material3)
     implementation("androidx.compose.foundation:foundation")

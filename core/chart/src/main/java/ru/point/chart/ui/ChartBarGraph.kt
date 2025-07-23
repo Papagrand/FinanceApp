@@ -20,6 +20,7 @@ import java.math.RoundingMode
 import java.time.format.DateTimeFormatter
 import kotlin.math.ceil
 import ru.point.api.model.ChartEntry
+import ru.point.utils.extensionsAndParsers.formatAxisValue
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
@@ -64,7 +65,7 @@ fun ChartBarGraph(
                 pathEffect = dashEffect
             )
             drawText(
-                tm, v.setScale(0, RoundingMode.HALF_UP).toPlainString(),
+                tm, formatAxisValue(v),
                 topLeft = Offset(with(dens) { 4.dp.toPx() }, y - 6.sp.toPx())
             )
         }
