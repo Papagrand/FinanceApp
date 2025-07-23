@@ -35,7 +35,7 @@ class DaggerWorkerFactory @Inject constructor(
             PushAccountPendingWorker(appContext, workerParameters, accountDao, accountApi, networkTracker)
 
         PullAccountRemoteWorker::class.java.name ->
-            PullAccountRemoteWorker(appContext, workerParameters, accountDao, accountApi, networkTracker)
+            PullAccountRemoteWorker(appContext, workerParameters, accountDao, accountApi, networkTracker, prefs)
 
         else -> null
     }

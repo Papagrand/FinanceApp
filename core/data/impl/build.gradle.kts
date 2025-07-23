@@ -43,6 +43,8 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.retrofit)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.retrofit.adapters.result)
     implementation(libs.kotlinx.serialization.json)

@@ -11,16 +11,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.compose.HomeWork1Theme
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import ru.point.impl.work.PushAccountPendingWorker
-import ru.point.impl.work.PushPendingWorker
 import ru.point.ui.di.LocalInternetTracker
 import ru.point.utils.network.NetworkTracker
 
@@ -64,34 +56,5 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        scheduleSync()
-    }
-
-    private fun scheduleSync() {
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork(
-                "PushPending",
-                ExistingPeriodicWorkPolicy.KEEP,
-                PeriodicWorkRequestBuilder<PushPendingWorker>(15, TimeUnit.MINUTES)
-                    .setConstraints(
-                        Constraints.Builder()
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build()
-                    )
-                    .build()
-            )
-
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork(
-                "PushAccountPending",
-                ExistingPeriodicWorkPolicy.KEEP,
-                PeriodicWorkRequestBuilder<PushAccountPendingWorker>(18, TimeUnit.MINUTES)
-                    .setConstraints(
-                        Constraints.Builder()
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build()
-                    )
-                    .build()
-            )
     }
 }

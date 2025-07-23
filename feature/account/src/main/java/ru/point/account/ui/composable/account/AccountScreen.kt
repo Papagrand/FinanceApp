@@ -190,23 +190,20 @@ fun AccountScreen(
                             currency = "$",
                         )
                     }
+                    
+                    HorizontalDivider(
+                        modifier = Modifier,
+                        color = MaterialTheme.colorScheme.surfaceDim,
+                        thickness = 1.dp,
+                    )
+                    ChartBarGraph(
+                        entries = state.chart,
+                        modifier = Modifier
+                            .padding(top = 56.dp, end = 10.dp)
+                            .fillMaxWidth()
+                            .height(220.dp)
+                    )
 
-                    if (isOnline){
-                        HorizontalDivider(
-                            modifier = Modifier,
-                            color = MaterialTheme.colorScheme.surfaceDim,
-                            thickness = 1.dp,
-                        )
-
-
-                        ChartBarGraph(
-                            entries = state.chart,
-                            modifier = Modifier
-                                .padding(top = 56.dp, end = 10.dp)
-                                .fillMaxWidth()
-                                .height(220.dp)
-                        )
-                    }
                 }
             }
         }

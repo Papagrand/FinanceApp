@@ -9,8 +9,6 @@ import ru.point.impl.repository.AccountRepositoryImpl
 import ru.point.impl.repository.CategoryRepositoryImpl
 import ru.point.impl.repository.TransactionRepositoryImpl
 import javax.inject.Singleton
-import ru.point.api.repository.ChartRepository
-import ru.point.impl.repository.ChartRepositoryImpl
 
 /**
  * RepositoryModule
@@ -36,8 +34,4 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun bindTransactionRepository(impl: TransactionRepositoryImpl): TransactionRepository
-
-    @Binds
-    @Singleton
-    fun bindChartRepository(impl: ChartRepositoryImpl): ChartRepository
 }
