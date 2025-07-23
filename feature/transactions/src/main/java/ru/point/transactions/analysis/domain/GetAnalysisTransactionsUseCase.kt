@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 import ru.point.api.model.TransactionDto
 import ru.point.api.repository.TransactionRepository
 import ru.point.transactions.analysis.domain.model.AnalysisTransactions
-import ru.point.transactions.analysis.domain.model.CategorySummary
+import ru.point.api.model.CategorySummary
 import ru.point.utils.common.Result
 
 internal class GetAnalysisTransactionsUseCase @Inject constructor(

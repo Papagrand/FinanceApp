@@ -1,4 +1,4 @@
-package ru.point.transactions.analysis.domain.model
+package ru.point.api.model
 
 import java.math.BigDecimal
 
