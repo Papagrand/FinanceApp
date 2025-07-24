@@ -30,8 +30,6 @@ fun ChartBarGraph(
 ) {
     if (entries.isEmpty()) return
 
-
-
     val maxAbs = entries.maxOf { it.totalAmount.abs() }
     val halfMax = maxAbs.divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP)
 
@@ -45,12 +43,16 @@ fun ChartBarGraph(
 
     val midLine = MaterialTheme.colorScheme.primary
     val positive = Color(0xFF2AE881)
-    val neutral = Color(0xFF8B7DA1)
-    val negative = Color(0xFFFF5722)
+    val neutral = MaterialTheme.colorScheme.tertiaryContainer
+    val negative = MaterialTheme.colorScheme.error
 
     val dashEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 8f), 0f)
     val tm = rememberTextMeasurer()
     val df = DateTimeFormatter.ofPattern("MM.dd")
+
+    val linesColor = MaterialTheme.colorScheme.onSurfaceVariant
+
+    val labelColor = MaterialTheme.colorScheme.primary
 
     Canvas(modifier = modifier) {
 
@@ -61,7 +63,7 @@ fun ChartBarGraph(
             val y = graphH - i * stepY
             drawLine(
                 color = if (i == 1) midLine
-                else Color.LightGray,
+                else linesColor,
                 start = Offset(leftPad, y),
                 end = Offset(size.width, y),
                 strokeWidth = 1.dp.toPx(),
@@ -69,7 +71,11 @@ fun ChartBarGraph(
             )
             drawText(
                 tm, formatAxisValue(v),
-                topLeft = Offset(with(dens) { 4.dp.toPx() }, y - 6.sp.toPx())
+                topLeft = Offset(with(dens) { 4.dp.toPx() }, y - 6.sp.toPx()),
+                style = androidx.compose.ui.text.TextStyle(
+                    color = labelColor,
+                    fontSize = 8.sp
+                )
             )
         }
 
@@ -83,7 +89,7 @@ fun ChartBarGraph(
             val h = graphH * frac
             val xC = leftPad + i * (barW + space) + barW / 2f
             drawRoundRect(
-                color = when(e.whatsMore){
+                color = when (e.whatsMore) {
                     0 -> neutral
                     1 -> positive
                     2 -> negative
@@ -108,7 +114,13 @@ fun ChartBarGraph(
             val xC = leftPad + i * (barW + space) + barW / 2f
             val xFix = (xC - textW / 2)
                 .coerceIn(leftPad, size.width - textW)
-            drawText(tm, label, topLeft = Offset(xFix, graphH + datePad))
+            drawText(
+                tm, label, topLeft = Offset(xFix, graphH + datePad),
+                style = androidx.compose.ui.text.TextStyle(
+                    color = labelColor,
+                    fontSize = 8.sp
+                )
+            )
         }
     }
 }

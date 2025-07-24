@@ -44,6 +44,8 @@ sealed class NavRoute(val route: String) {
 
     data object AccountEdit : NavRoute("accountEdit")
 
+    data object MainColor : NavRoute("mainColor")
+
     companion object {
         val bottomDestinations =
             listOf(

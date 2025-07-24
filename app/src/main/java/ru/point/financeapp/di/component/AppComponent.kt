@@ -36,6 +36,7 @@ import ru.point.utils.network.NetworkTracker
         RepositoryModule::class,
         WorkerModule::class,
         CoreModule::class,
+        ViewModelModule::class
     ],
 )
 interface AppComponent : AccountDeps, CategoriesDeps, TransactionDeps, SettingsDeps {

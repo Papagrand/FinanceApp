@@ -8,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.point.navigation.Navigator
+import ru.point.navigation.Route
 import ru.point.settings.R
 import ru.point.settings.di.SettingsDepsStore
 import ru.point.settings.settingsScreen.di.DaggerSettingsComponent
@@ -43,7 +44,8 @@ fun SettingsScreen(navigator: Navigator) {
         SettingsColumn(
             state = state,
             innerPadding = innerPadding,
-            onToggleTheme = { viewModel.dispatch(SettingsIntent.ToggleDarkTheme) }
+            onToggleTheme = { viewModel.dispatch(SettingsIntent.ToggleDarkTheme) },
+            onClickNavigate = { navigator.navigate(Route.MainColor) }
         )
     }
 }

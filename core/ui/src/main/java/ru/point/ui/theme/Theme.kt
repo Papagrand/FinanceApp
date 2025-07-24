@@ -1,19 +1,15 @@
 package ru.point.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
@@ -269,30 +265,27 @@ val unspecified_scheme =
 
 @Composable
 fun FinanceAppTheme(
+    theme: String,
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val ctx = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(ctx)
-            else dynamicLightColorScheme(ctx)
-        }
 
-        darkTheme -> darkScheme
-        else -> lightScheme
+    val colors = when (theme) {
+        "purple" -> if (darkTheme) AppColorSchemes.PurpleDark else AppColorSchemes.PurpleLight
+        "blue" -> if (darkTheme) AppColorSchemes.BlueDark else AppColorSchemes.BlueLight
+        "orange" -> if (darkTheme) AppColorSchemes.OrangeDark else AppColorSchemes.OrangeLight
+        else -> if (darkTheme) AppColorSchemes.GreenDark else AppColorSchemes.GreenLight
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = colors,
         typography = AppTypography
     ) {
 
         val view = LocalView.current
         val window = (view.context as Activity).window
         SideEffect {
-            window.statusBarColor = colorScheme.primaryContainer.toArgb()
+            window.statusBarColor = colors.primaryContainer.toArgb()
             WindowCompat.getInsetsController(window, view)
                 .isAppearanceLightStatusBars = !darkTheme
         }

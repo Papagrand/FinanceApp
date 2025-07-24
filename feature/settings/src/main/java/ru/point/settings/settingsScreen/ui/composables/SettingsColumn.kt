@@ -18,7 +18,8 @@ import ru.point.settings.settingsScreen.ui.mvi.SettingsState
 internal fun SettingsColumn(
     state: SettingsState,
     innerPadding: PaddingValues,
-    onToggleTheme: () -> Unit
+    onToggleTheme: () -> Unit,
+    onClickNavigate: () -> Unit
 ) {
 
     Column(
@@ -51,7 +52,8 @@ internal fun SettingsColumn(
                     .fillMaxWidth()
                     .height(56.dp),
             placeHolderResId = R.string.main_color,
-            isTheme = false
+            isTheme = false,
+            onClick = onClickNavigate
         )
 
         HorizontalDivider(

@@ -43,11 +43,4 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     fun dispatch(intent: SettingsIntent) = intents.tryEmit(intent)
-
-    fun toggleDarkTheme() {
-        val new = !_state.value.isDarkTheme
-        viewModelScope.launch {
-            themeRepo.saveDarkTheme(new)
-        }
-    }
 }

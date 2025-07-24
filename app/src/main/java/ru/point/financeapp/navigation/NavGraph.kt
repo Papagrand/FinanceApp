@@ -13,6 +13,7 @@ import ru.point.account.ui.composable.accountEdit.AccountEditScreen
 import ru.point.categories.presentation.ui.CategoryScreen
 import ru.point.financeapp.NavigatorImpl
 import ru.point.navigation.NavRoute
+import ru.point.settings.mainColorScreen.composables.MainColorScreen
 import ru.point.settings.settingsScreen.ui.composables.SettingsScreen
 import ru.point.transactions.addOrEditTransaction.ui.composable.AddOrEditTransactionScreen
 import ru.point.transactions.analysis.ui.composable.AnalysisTransactionsScreen
@@ -160,10 +161,25 @@ fun NavGraph(navController: NavHostController) {
             CategoryScreen()
         }
 
-        composable(
-            NavRoute.Settings.route,
+        navigation(
+            startDestination = NavRoute.Settings.route,
+            route = "settings_graph",
         ) {
-            SettingsScreen(navigator = navigator)
+
+            composable(
+                NavRoute.Settings.route,
+            ) {
+                SettingsScreen(navigator = navigator)
+            }
+
+            composable(
+                NavRoute.MainColor.route,
+            ) {
+                MainColorScreen(navigator = navigator)
+            }
+
         }
+
+
     }
 }

@@ -128,6 +128,7 @@ fun Route.toNavRoute(): String =
     when (this) {
         Route.Account -> NavRoute.Account.route
         Route.AccountEdit -> NavRoute.AccountEdit.route
+        Route.MainColor -> NavRoute.MainColor.route
         Route.Category -> NavRoute.Category.route
         Route.Expenses -> NavRoute.Expenses.route
         Route.Income -> NavRoute.Income.route
