@@ -299,7 +299,8 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
 
     private fun deleteTransaction() {
         viewModelScope.launch {
-            deleteTransactionUseCase(_state.value.transactionId!!).collect { result ->
+            val st = _state.value
+            deleteTransactionUseCase(_state.value.transactionId!!, st.isIncome).collect { result ->
                 when (result) {
                     is Result.Loading -> _state.update { it.copy(isLoading = true, error = null) }
                     is Result.Error -> {
@@ -384,6 +385,7 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
                 amount = st.amountInput,
                 transactionDate = st.datetime,
                 comment = st.comment,
+                isIncome = st.isIncome,
                 transactionId = st.transactionId!!,
             ).collect { result ->
                 when (result) {

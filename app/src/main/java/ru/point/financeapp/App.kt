@@ -4,22 +4,28 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.work.Configuration
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import ru.point.account.di.deps.AccountDepsStore
 import ru.point.api.flow.AccountPreferencesRepo
 import ru.point.api.repository.AccountRepository
 import ru.point.api.repository.CategoryRepository
+import ru.point.api.repository.TransactionRepository
 import ru.point.categories.di.deps.CategoriesDepsStore
 import ru.point.financeapp.di.component.AppComponent
 import ru.point.financeapp.di.component.DaggerAppComponent
 import ru.point.impl.work.DaggerWorkerFactory
+import ru.point.settings.di.SettingsDepsStore
 import ru.point.transactions.di.TransactionDepsStore
 import ru.point.utils.common.Result
 import ru.point.utils.events.SnackbarEvents
@@ -31,7 +37,7 @@ class App : Application(), Configuration.Provider {
 
     lateinit var appComponent: AppComponent
 
-    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO+ CoroutineExceptionHandler { _, t ->
+    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO + CoroutineExceptionHandler { _, t ->
         Log.e("AppScope", "Unhandled exception", t)
     })
 
@@ -43,6 +49,9 @@ class App : Application(), Configuration.Provider {
 
     @Inject
     lateinit var categoryRepo: CategoryRepository
+
+    @Inject
+    lateinit var transactionRepo: TransactionRepository
 
 
     override fun onCreate() {
@@ -93,6 +102,32 @@ class App : Application(), Configuration.Provider {
                 }
             }
 
+            val accountId = accountPrefs.accountIdFlow
+                .filterNotNull()
+                .first()
+
+
+            val today: LocalDate = LocalDate.now()
+            val thirtyDaysAgo: LocalDate = today.minusDays(30)
+            val formatter = DateTimeFormatter.ISO_DATE
+            val startIso = thirtyDaysAgo.format(formatter)
+            val endIso = today.format(formatter)
+
+
+            launch {
+                transactionRepo.observePeriod(accountId, startIso, endIso).collectLatest { result ->
+                    when (result) {
+                        is Result.Success -> {
+                        }
+
+                        is Result.Error -> SnackbarEvents.post(
+                            "Не удалось загрузить транзакции: ${result.cause.toUserMessage()}"
+                        )
+
+                        else -> {} // Loading
+                    }
+                }
+            }
 
             categoryRepo.refreshAllCategories()
 
@@ -106,6 +141,8 @@ class App : Application(), Configuration.Provider {
         CategoriesDepsStore.categoriesDeps = appComponent
 
         TransactionDepsStore.transactionDeps = appComponent
+
+        SettingsDepsStore.settingsDeps = appComponent
     }
 
 }

@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.compose.HomeWork1Theme
+import ru.point.ui.theme.FinanceAppTheme
 import javax.inject.Inject
+import ru.point.api.flow.ThemePreferencesRepo
 import ru.point.ui.di.LocalInternetTracker
 import ru.point.utils.network.NetworkTracker
 
@@ -31,6 +33,8 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var networkTracker: NetworkTracker
 
+    @Inject lateinit var themeRepo: ThemePreferencesRepo
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -45,7 +49,8 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalInternetTracker provides networkTracker,
             ) {
-                HomeWork1Theme {
+                val isDark = themeRepo.isDarkThemeFlow.collectAsState(initial = false)
+                FinanceAppTheme(darkTheme = isDark.value) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background,

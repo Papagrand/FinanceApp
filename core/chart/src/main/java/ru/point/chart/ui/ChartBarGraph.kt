@@ -30,7 +30,9 @@ fun ChartBarGraph(
 ) {
     if (entries.isEmpty()) return
 
-    val maxAbs = entries.maxOf { it.diff.abs() }
+
+
+    val maxAbs = entries.maxOf { it.totalAmount.abs() }
     val halfMax = maxAbs.divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP)
 
     val labelsY = listOf(BigDecimal.ZERO, halfMax, maxAbs)
@@ -43,6 +45,7 @@ fun ChartBarGraph(
 
     val midLine = MaterialTheme.colorScheme.primary
     val positive = Color(0xFF2AE881)
+    val neutral = Color(0xFF8B7DA1)
     val negative = Color(0xFFFF5722)
 
     val dashEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 8f), 0f)
@@ -74,12 +77,18 @@ fun ChartBarGraph(
         val gaps = entries.size - 1
         val space = if (gaps > 0) ((availableW - barW * entries.size) / gaps).coerceAtLeast(0f) else 0f
 
+
         entries.forEachIndexed { i, e ->
-            val frac = e.diff.abs().divide(maxAbs, 4, RoundingMode.HALF_UP).toFloat()
+            val frac = e.totalAmount.abs().divide(maxAbs, 4, RoundingMode.HALF_UP).toFloat()
             val h = graphH * frac
             val xC = leftPad + i * (barW + space) + barW / 2f
             drawRoundRect(
-                color = if (e.isPositive) positive else negative,
+                color = when(e.whatsMore){
+                    0 -> neutral
+                    1 -> positive
+                    2 -> negative
+                    else -> neutral
+                },
                 topLeft = Offset(xC - barW / 2, graphH - h),
                 size = Size(barW, h),
                 cornerRadius = radius

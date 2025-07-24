@@ -45,6 +45,7 @@ fun TransactionDto.toEntity(isSynced: Boolean): TransactionEntity =
 fun CreateTransactionResponse.fromCreateTransactionToEntity(
     accountName: String,
     currency: String,
+    totalAmount: String,
     categoryName: String,
     emoji: String,
     isIncome: Boolean
@@ -65,7 +66,7 @@ fun CreateTransactionResponse.fromCreateTransactionToEntity(
         isIncome = isIncome,
         dateTime = this.transactionDate,
         comment = this.comment,
-        totalAmount = "",
+        totalAmount = totalAmount,
         updatedAt = parsedUpdatedAt,
         isSynced = true,
         isDeleted = false

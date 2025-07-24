@@ -1,5 +1,6 @@
 package ru.point.impl.repository
 
+import java.math.BigDecimal
 import java.time.Instant
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,6 +23,8 @@ import ru.point.impl.model.toAccountDto
 import ru.point.impl.model.toAccountEntity
 import ru.point.impl.service.AccountService
 import ru.point.local.dao.AccountDao
+import ru.point.local.dao.TransactionDao
+import ru.point.local.entities.TransactionEntity
 import ru.point.utils.common.Result
 import ru.point.utils.common.Result.Error
 import ru.point.utils.common.Result.Loading
@@ -42,6 +45,7 @@ class AccountRepositoryImpl @Inject constructor(
     private val api: AccountService,
     private val dao: AccountDao,
     private val networkTracker: NetworkTracker,
+    private val transactionDao: TransactionDao,
     private val prefs: AccountPreferencesRepo,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AccountRepository {
@@ -56,6 +60,7 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }.catch { e -> emit(Error(e.toAppError())) }
         .flowOn(dispatcher)
+
 
     override fun updateAccount(
         id: Int,
@@ -77,6 +82,11 @@ class AccountRepositoryImpl @Inject constructor(
             isSynced = false
         )
         dao.upsert(updated)
+
+        launch(dispatcher) {
+            recalculateTransactionTotals(id, balance)
+        }
+
         send(Success(updated.toAccountDto()))
 
         if (networkTracker.online.first()) {
@@ -107,5 +117,32 @@ class AccountRepositoryImpl @Inject constructor(
                 val entity = list.first().accountToAccountDto().toAccountEntity(isSynced = true)
                 dao.upsert(entity)
             }
+    }
+
+    private suspend fun recalculateTransactionTotals(
+        accountId: Int,
+        balanceStr: String
+    ) {
+        var currentBalance = balanceStr.toBigDecimalOrNull() ?: BigDecimal.ZERO
+
+        val txs = transactionDao.getAllByAccountDesc(accountId)
+
+        val updated = mutableListOf<TransactionEntity>()
+        for (tx in txs) {
+            val newTotal = currentBalance
+
+            updated += tx.copy(totalAmount = newTotal.toPlainString())
+
+            val amt = tx.amount.toBigDecimalOrNull() ?: BigDecimal.ZERO
+            currentBalance = if (tx.isIncome) {
+                currentBalance - amt
+            } else {
+                currentBalance + amt
+            }
+        }
+
+        if (updated.isNotEmpty()) {
+            transactionDao.upsert(updated)
+        }
     }
 }

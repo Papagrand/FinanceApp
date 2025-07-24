@@ -2,5 +2,7 @@
 <resources>
 
     <string name="settings">Настройки</string>
+    <string name="theme">Темная тема</string>
+    <string name="main_color">Основной цвет</string>
 
 </resources>

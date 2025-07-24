@@ -1,6 +1,9 @@
 package ru.point.account.domain.usecase
 
+import java.math.BigDecimal
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -26,39 +29,61 @@ internal class GetChartsUseCase @Inject constructor(
                 is Result.Loading -> Result.Loading
                 is Result.Error -> result
                 is Result.Success -> Result.Success(
-                    result.data.toChartEntries(start, end)
+                    result.data.toChartEntries()
                 )
             }
         }
     }
 }
 
-private fun List<TransactionDto>.toChartEntries(
-    start: LocalDate,
-    end: LocalDate
-): List<ChartEntry> {
+fun List<TransactionDto>.toChartEntries(): List<ChartEntry> {
+    val endDate = LocalDate.now()
+    val startDate = endDate.minusDays(29)
+    val zone = ZoneId.systemDefault()
 
-    val perDay: Map<LocalDate, List<TransactionDto>> = groupBy { dto ->
-        LocalDate.parse(dto.dateTime.take(10))
-    }
+    val fullDates = (0L..29L).map { startDate.plusDays(it) }
 
-    // Формируем полный список дней периода (включая start и end)
-    val allDays: List<LocalDate> = generateSequence(start) { prev ->
-        val next = prev.plusDays(1)
-        if (next <= end) next else null
-    }.toList()
+    val byDate: Map<LocalDate, List<TransactionDto>> = this
+        .mapNotNull { dto ->
+            val txDate = Instant.parse(dto.dateTime)
+                .atZone(zone)
+                .toLocalDate()
+            if (txDate in startDate..endDate) dto to txDate else null
+        }
+        .groupBy({ it.second }, { it.first })
 
-    return allDays.map { day ->
-        val dayTransactions = perDay[day].orEmpty()
+    var nextDayBalance: BigDecimal = byDate[endDate]
+        ?.maxByOrNull { it.dateTime }
+        ?.totalAmount
+        ?.toBigDecimal()
+        ?: BigDecimal.ZERO
 
-        val incomes = dayTransactions
-            .filter { it.isIncome }
+    val reversedResult = mutableListOf<ChartEntry>()
+
+    for (date in fullDates.asReversed()) {
+        val dayTx = byDate[date].orEmpty()
+
+        val entryBalance = nextDayBalance
+
+        val sumIn = dayTx.filter { it.isIncome }
+            .sumOf { it.amount.toBigDecimal() }
+        val sumOut = dayTx.filter { !it.isIncome }
             .sumOf { it.amount.toBigDecimal() }
 
-        val expenses = dayTransactions
-            .filter { !it.isIncome }
-            .sumOf { it.amount.toBigDecimal() }
+        val whatsMore = when {
+            sumIn > sumOut -> 1
+            sumOut > sumIn -> 2
+            else -> 0
+        }
 
-        ChartEntry(date = day, diff = incomes - expenses)
+        reversedResult += ChartEntry(
+            date = date,
+            totalAmount = entryBalance,
+            whatsMore = whatsMore
+        )
+
+        nextDayBalance = entryBalance - sumIn + sumOut
     }
+
+    return reversedResult.asReversed()
 }
