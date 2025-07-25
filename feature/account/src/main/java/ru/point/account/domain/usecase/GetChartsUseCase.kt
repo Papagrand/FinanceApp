@@ -5,38 +5,44 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import ru.point.api.model.ChartEntry
 import ru.point.api.model.TransactionDto
+import ru.point.api.repository.AccountRepository
 import ru.point.api.repository.TransactionRepository
 import ru.point.utils.common.Result
 
 internal class GetChartsUseCase @Inject constructor(
-    private val repo: TransactionRepository
+    private val repo: TransactionRepository,
+    private val accountRepo: AccountRepository
 ) {
 
     operator fun invoke(accountId: Int): Flow<Result<List<ChartEntry>>> {
         val end = LocalDate.now()
         val start = end.minusDays(29)
 
-        return repo.observePeriod(
-            accountId = accountId,
-            startDateIso = start.toString(),
-            endDateIso = end.toString(),
-        ).map { result ->
-            when (result) {
-                is Result.Loading -> Result.Loading
-                is Result.Error -> result
-                is Result.Success -> Result.Success(
-                    result.data.toChartEntries()
-                )
+        val periodFlow = repo.observePeriod(accountId, start.toString(), end.toString())
+        val balanceFlow = accountRepo.getBalance()
+
+        return balanceFlow
+            .combine(periodFlow) { balanceStr, periodResult ->
+                when (periodResult) {
+                    is Result.Loading -> Result.Loading
+                    is Result.Error -> periodResult
+                    is Result.Success ->
+                        Result.Success(
+                            periodResult.data.toChartEntries(balanceStr)
+                        )
+                }
             }
-        }
+            .flowOn(Dispatchers.IO)
     }
 }
 
-fun List<TransactionDto>.toChartEntries(): List<ChartEntry> {
+fun List<TransactionDto>.toChartEntries(lastBalance: String): List<ChartEntry> {
     val endDate = LocalDate.now()
     val startDate = endDate.minusDays(29)
     val zone = ZoneId.systemDefault()
@@ -56,7 +62,7 @@ fun List<TransactionDto>.toChartEntries(): List<ChartEntry> {
         ?.maxByOrNull { it.dateTime }
         ?.totalAmount
         ?.toBigDecimal()
-        ?: BigDecimal.ZERO
+        ?: lastBalance.toBigDecimal()
 
     val reversedResult = mutableListOf<ChartEntry>()
 

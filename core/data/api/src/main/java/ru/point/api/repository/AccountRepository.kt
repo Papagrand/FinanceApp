@@ -14,5 +14,7 @@ interface AccountRepository {
         currency: String,
     ): Flow<Result<AccountDto>>
 
+    fun getBalance(): Flow<String>
+
     suspend fun refreshFromRemote()
 }

@@ -21,4 +21,7 @@ interface CategoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(list: List<AllCategoryEntity>)
+
+    @Query("SELECT categoryName FROM all_categories WHERE categoryId = :categoryId")
+    suspend fun getCategoryNameById(categoryId: Int): String
 }

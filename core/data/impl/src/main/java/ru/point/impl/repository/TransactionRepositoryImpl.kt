@@ -3,7 +3,6 @@ package ru.point.impl.repository
 import java.math.BigDecimal
 import java.time.Instant
 import javax.inject.Inject
-import kotlin.plus
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +29,7 @@ import ru.point.impl.model.toDto
 import ru.point.impl.model.toEntity
 import ru.point.impl.service.TransactionService
 import ru.point.local.dao.AccountDao
+import ru.point.local.dao.CategoryDao
 import ru.point.local.dao.TransactionDao
 import ru.point.local.entities.TransactionEntity
 import ru.point.utils.common.Result
@@ -39,20 +39,12 @@ import ru.point.utils.common.Result.Success
 import ru.point.utils.model.toAppError
 import ru.point.utils.network.NetworkTracker
 
-/**
- * TransactionRepositoryImpl
- *
- * Ответственность:
- * - запрашивать транзакции из API через Retrofit;
- * - преобразовывать DTO в доменную модель Transaction;
- * - оборачивать результаты в Flow<Result<List<Transaction>>>.
- *
- */
 
 class TransactionRepositoryImpl @Inject constructor(
     private val api: TransactionService,
     private val dao: TransactionDao,
     private val accountDao: AccountDao,
+    private val categoryDao: CategoryDao,
     private val networkTracker: NetworkTracker,
     private val prefs: AccountPreferencesRepo,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -81,11 +73,11 @@ class TransactionRepositoryImpl @Inject constructor(
         )
         val delta: BigDecimal = amount.toBigDecimal()
 
-        val account = accountDao.observe().firstOrNull()
-        val currentBal = account?.balance?.toBigDecimalOrNull() ?: BigDecimal.ZERO
-        val newBalance = if (isIncome) currentBal + delta else currentBal - delta
         val accountEntity = accountDao.observe().firstOrNull()
             ?: throw IllegalStateException("Account with id=$accountId not found")
+        val currentBal = accountEntity.balance.toBigDecimalOrNull() ?: BigDecimal.ZERO
+        val newBalance = if (isIncome) currentBal + delta else currentBal - delta
+
 
         val updatedAccount = accountEntity.copy(
             balance = newBalance.toPlainString(),
@@ -119,6 +111,7 @@ class TransactionRepositoryImpl @Inject constructor(
                             dao.upsert(entity)
                             accountDao.upsert(updatedAccount)
                             prefs.updateLastSync(Instant.now().toString())
+                            recalculateTransactionTotals(accountEntity.userId, newBalance.toPlainString())
                             send(Success(dto.toCreateTransactionDto()))
                         }
                     }
@@ -146,6 +139,9 @@ class TransactionRepositoryImpl @Inject constructor(
                 isDeleted = false
             )
             dao.upsert(draft)
+
+            recalculateTransactionTotals(accountEntity.userId, newBalance.toPlainString())
+
             send(Success(draft.toCreateResponseDto()))
         }
     }.flowOn(dispatcher)
@@ -157,11 +153,11 @@ class TransactionRepositoryImpl @Inject constructor(
 
         val delta: BigDecimal = entity?.amount?.toBigDecimal() ?: BigDecimal.ZERO
 
-        val account = accountDao.observe().firstOrNull()
-        val currentBal = account?.balance?.toBigDecimalOrNull() ?: BigDecimal.ZERO
-        val newBalance = if (isIncome) currentBal - delta else currentBal + delta
         val accountEntity = accountDao.observe().firstOrNull()
             ?: throw IllegalStateException("")
+        val currentBal = accountEntity.balance.toBigDecimalOrNull() ?: BigDecimal.ZERO
+        val newBalance = if (isIncome) currentBal - delta else currentBal + delta
+
 
         val updatedAccount = accountEntity.copy(
             balance = newBalance.toPlainString(),
@@ -190,9 +186,11 @@ class TransactionRepositoryImpl @Inject constructor(
                         Loading -> {}
                     }
                 }
-        }else{
-            send(Success(Unit))
         }
+
+        recalculateTransactionTotals(accountEntity.userId, newBalance.toPlainString())
+
+        send(Success(Unit))
     }.flowOn(dispatcher)
 
     override fun observePeriod(
@@ -245,57 +243,61 @@ class TransactionRepositoryImpl @Inject constructor(
     ): Flow<Result<TransactionDto>> = channelFlow {
         send(Loading)
 
-        val local = dao.requireByRemoteId(transactionId)
-        val nowMillis = System.currentTimeMillis()
-        val prevAmount = local.amount
-        val delta: BigDecimal = amount.toBigDecimal() - prevAmount.toBigDecimal()
+        try {
+            val local = dao.requireByRemoteId(transactionId)
 
-        val account = accountDao.observe().firstOrNull()
-        val currentBal = account?.balance?.toBigDecimalOrNull() ?: BigDecimal.ZERO
-        val newBalance = if (isIncome) currentBal + delta else currentBal - delta
-        val accountEntity = accountDao.observe().firstOrNull()
-            ?: throw IllegalStateException("Account with id=$accountId not found")
+            val prevAmount = local.amount.toBigDecimal()
+            val delta = amount.toBigDecimal() - prevAmount
 
-        val updatedAccount = accountEntity.copy(
-            balance = newBalance.toPlainString(),
-            updatedAtMillis = System.currentTimeMillis(),
-            updatedAt = Instant.ofEpochMilli(System.currentTimeMillis()).toString(),
-            isSynced = false
-        )
+            val categoryName = categoryDao.getCategoryNameById(categoryId)
 
-        accountDao.upsert(updatedAccount)
+            val account = accountDao.observe().first()
+                ?: throw IllegalStateException("Account with id=$accountId not found")
+            val currentBal = account.balance.toBigDecimalOrNull() ?: BigDecimal.ZERO
+            val newBalance = if (isIncome) currentBal + delta else currentBal - delta
 
-        val updated = local.copy(
-            accountId = accountId,
-            categoryId = categoryId,
-            amount = amount,
-            dateTime = transactionDate,
-            comment = comment,
-            updatedAt = nowMillis,
-            isSynced = false
-        )
-        dao.upsert(updated)
-        send(Success(updated.entityToDto()))
+            val updatedAccount = account.copy(
+                balance = newBalance.toPlainString(),
+                updatedAtMillis = System.currentTimeMillis(),
+                updatedAt = Instant.ofEpochMilli(System.currentTimeMillis()).toString(),
+                isSynced = false
+            )
+            accountDao.upsert(updatedAccount)
 
-        if (networkTracker.online.first()) {
-            send(Loading)
-            safeApiFlow {
-                api.updateTransaction(transactionId, updated.toCreateRequest())
-            }.collect { apiResult ->
-                when (apiResult) {
-                    is Loading -> {
-                    }
+            val nowMillis = System.currentTimeMillis()
+            val updated = local.copy(
+                accountId = accountId,
+                categoryId = categoryId,
+                categoryName = categoryName,
+                amount = amount,
+                dateTime = transactionDate,
+                comment = comment,
+                updatedAt = nowMillis,
+                isSynced = false
+            )
+            dao.upsert(updated)
 
-                    is Error -> {
-                        send(Error(apiResult.cause))
-                    }
-
-                    is Success -> {
-                        dao.markSynced(updated.localUid, transactionId)
-                        send(Success(apiResult.data.toDto()))
+            if (networkTracker.online.first()) {
+                send(Loading)
+                safeApiFlow {
+                    api.updateTransaction(transactionId, updated.toCreateRequest())
+                }.collect { apiResult ->
+                    when (apiResult) {
+                        is Loading -> {}
+                        is Error -> send(Error(apiResult.cause))
+                        is Success -> {
+                            dao.markSynced(updated.localUid, transactionId)
+                            send(Success(apiResult.data.toDto()))
+                        }
                     }
                 }
             }
+            recalculateTransactionTotals(accountId, newBalance.toPlainString())
+
+            send(Success(updated.entityToDto()))
+
+        } catch (e: Throwable) {
+            send(Error(e.toAppError()))
         }
     }.flowOn(dispatcher)
 
@@ -344,9 +346,19 @@ class TransactionRepositoryImpl @Inject constructor(
             ?.let { dao.upsert(it) }
     }
 
-    suspend fun getCurrentBalance(): String? {
-        val accountEntity = accountDao.observe().firstOrNull()
-        return accountEntity?.balance
+    private suspend fun recalculateTransactionTotals(
+        accountId: Int,
+        balanceStr: String
+    ) {
+        val txs = dao.getAllByAccountDesc(accountId)
+
+        val updated = txs.map { tx ->
+            tx.copy(totalAmount = balanceStr)
+        }
+
+        if (updated.isNotEmpty()) {
+            dao.upsert(updated)
+        }
     }
 
     private fun String.parseIsoMillis(): Long =

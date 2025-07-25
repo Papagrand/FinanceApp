@@ -93,4 +93,5 @@ interface TransactionDao {
        ORDER BY dateTime DESC
     """)
     suspend fun getAllByAccountDesc(acc: Int): List<TransactionEntity>
+
 }

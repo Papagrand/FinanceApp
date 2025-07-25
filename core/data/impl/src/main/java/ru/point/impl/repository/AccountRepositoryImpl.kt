@@ -1,6 +1,5 @@
 package ru.point.impl.repository
 
-import java.math.BigDecimal
 import java.time.Instant
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,7 +23,6 @@ import ru.point.impl.model.toAccountEntity
 import ru.point.impl.service.AccountService
 import ru.point.local.dao.AccountDao
 import ru.point.local.dao.TransactionDao
-import ru.point.local.entities.TransactionEntity
 import ru.point.utils.common.Result
 import ru.point.utils.common.Result.Error
 import ru.point.utils.common.Result.Loading
@@ -46,7 +44,6 @@ class AccountRepositoryImpl @Inject constructor(
     private val dao: AccountDao,
     private val networkTracker: NetworkTracker,
     private val transactionDao: TransactionDao,
-    private val prefs: AccountPreferencesRepo,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AccountRepository {
 
@@ -109,6 +106,12 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }.flowOn(dispatcher)
 
+    override fun getBalance(): Flow<String> = channelFlow {
+        val entity = dao.observe().firstOrNull()
+            ?: error("Account not cached")
+        send(entity.balance)
+    }.flowOn(dispatcher)
+
     override suspend fun refreshFromRemote() {
         safeApiFlow { api.getAccounts() }
             .firstOrNull { it is Success<*> }
@@ -123,22 +126,10 @@ class AccountRepositoryImpl @Inject constructor(
         accountId: Int,
         balanceStr: String
     ) {
-        var currentBalance = balanceStr.toBigDecimalOrNull() ?: BigDecimal.ZERO
-
         val txs = transactionDao.getAllByAccountDesc(accountId)
 
-        val updated = mutableListOf<TransactionEntity>()
-        for (tx in txs) {
-            val newTotal = currentBalance
-
-            updated += tx.copy(totalAmount = newTotal.toPlainString())
-
-            val amt = tx.amount.toBigDecimalOrNull() ?: BigDecimal.ZERO
-            currentBalance = if (tx.isIncome) {
-                currentBalance - amt
-            } else {
-                currentBalance + amt
-            }
+        val updated = txs.map { tx ->
+            tx.copy(totalAmount = balanceStr)
         }
 
         if (updated.isNotEmpty()) {
