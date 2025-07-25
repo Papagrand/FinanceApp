@@ -16,6 +16,7 @@ internal class UpdateTransactionUseCase @Inject constructor(
         amount: String,
         transactionDate: String,
         comment: String?,
+        isIncome: Boolean
     ): Flow<Result<TransactionDto>> {
         return repo.updateTransaction(
             transactionId,
@@ -24,6 +25,7 @@ internal class UpdateTransactionUseCase @Inject constructor(
             amount,
             transactionDate,
             comment,
+            isIncome
         )
     }
 }

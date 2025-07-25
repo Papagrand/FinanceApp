@@ -3,7 +3,7 @@ package ru.point.transactions.analysis.ui.mvi
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import ru.point.transactions.analysis.domain.model.CategorySummary
+import ru.point.api.model.CategorySummary
 
 
 internal data class AnalysisTransactionsState(

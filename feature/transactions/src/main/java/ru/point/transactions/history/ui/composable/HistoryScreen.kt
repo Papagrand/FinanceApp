@@ -118,7 +118,7 @@ fun HistoryScreen(
             ),
         actionState = ActionState.Shown,
         backState = BackState.Shown,
-        backAction = BackAction(onClick = navigator::popBackStack),
+        backAction = BackAction(onClick = navigator::navigateUp),
         fabState = FabState.Hidden,
     ) { innerPadding ->
 

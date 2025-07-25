@@ -32,6 +32,7 @@ import ru.point.utils.extensionsAndParsers.buildIsoInstantString
 import ru.point.utils.extensionsAndParsers.validateBalance
 import ru.point.utils.model.toUserMessage
 import javax.inject.Inject
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -298,7 +299,8 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
 
     private fun deleteTransaction() {
         viewModelScope.launch {
-            deleteTransactionUseCase(_state.value.transactionId!!).collect { result ->
+            val st = _state.value
+            deleteTransactionUseCase(_state.value.transactionId!!, st.isIncome).collect { result ->
                 when (result) {
                     is Result.Loading -> _state.update { it.copy(isLoading = true, error = null) }
                     is Result.Error -> {
@@ -361,11 +363,13 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
                         val msg = result.cause.toUserMessage()
                         _state.update { it.copy(isLoading = false, error = msg) }
                         _effect.emit(ShowSnackbar("Ошибка: $msg"))
+                        cancel()
                     }
 
                     is Result.Success -> {
                         _state.update { it.copy(isLoading = false) }
                         _effect.emit(Finish)
+                        cancel()
                     }
                 }
             }
@@ -381,6 +385,7 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
                 amount = st.amountInput,
                 transactionDate = st.datetime,
                 comment = st.comment,
+                isIncome = st.isIncome,
                 transactionId = st.transactionId!!,
             ).collect { result ->
                 when (result) {
@@ -389,11 +394,13 @@ internal class AddOrEditTransactionViewModel @Inject constructor(
                         val msg = result.cause.toUserMessage()
                         _state.update { it.copy(isLoading = false, error = msg) }
                         _effect.emit(ShowSnackbar("Ошибка: $msg"))
+                        cancel()
                     }
 
                     is Result.Success -> {
                         _state.update { it.copy(isLoading = false) }
                         _effect.emit(Finish)
+                        cancel()
                     }
                 }
             }

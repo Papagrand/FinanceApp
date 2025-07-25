@@ -119,7 +119,7 @@ class NavigatorImpl(private val navController: NavHostController) : Navigator {
         navController.popBackStack()
     }
 
-    override fun popBackStack() {
+    override fun navigateUp() {
         navController.navigateUp()
     }
 }
@@ -132,6 +132,8 @@ fun Route.toNavRoute(): String =
         Route.Expenses -> NavRoute.Expenses.route
         Route.Income -> NavRoute.Income.route
         Route.Settings -> NavRoute.Settings.route
+        Route.MainColor -> NavRoute.MainColor.route
+        Route.AppInfo -> NavRoute.AppInfo.route
         is Route.History -> NavRoute.History.create(isIncome)
         is Route.AnalysisTransactions -> NavRoute.AnalysisTransactions.create(isIncome)
         is Route.AddOrEditTransaction ->

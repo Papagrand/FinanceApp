@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import ru.point.transactions.R
-import ru.point.transactions.analysis.domain.model.CategorySummary
+import ru.point.api.model.CategorySummary
 import ru.point.ui.composables.BaseListItem
 import ru.point.utils.extensionsAndParsers.toCurrencySymbol
 import ru.point.utils.extensionsAndParsers.toPrettyNumber

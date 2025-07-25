@@ -83,7 +83,7 @@ fun AccountEditScreen(
             BackAction(
                 iconRes = R.drawable.disline_edit,
                 contentDescription = "Закрыть без сохранения",
-                onClick = { navigator.popBackStack() },
+                onClick = { navigator.navigateUp() },
             ),
         fabState = FabState.Hidden,
     ) { innerPadding ->

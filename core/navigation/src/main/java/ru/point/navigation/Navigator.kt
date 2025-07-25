@@ -21,6 +21,10 @@ sealed interface Route {
     data object Category : Route
 
     data object Settings : Route
+
+    data object MainColor : Route
+
+    data object AppInfo : Route
 }
 
 interface Navigator {
@@ -28,5 +32,5 @@ interface Navigator {
 
     fun popBack()
 
-    fun popBackStack()
+    fun navigateUp()
 }

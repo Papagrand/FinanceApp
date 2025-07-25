@@ -8,5 +8,6 @@ import javax.inject.Inject
 internal class DeleteTransactionUseCase @Inject constructor(
     private val repo: TransactionRepository,
 ) {
-    operator fun invoke(transactionId: Int): Flow<Result<Unit>> = repo.deleteTransaction(transactionId)
+    operator fun invoke(transactionId: Int, isIncome: Boolean): Flow<Result<Unit>> =
+        repo.deleteTransaction(transactionId, isIncome)
 }

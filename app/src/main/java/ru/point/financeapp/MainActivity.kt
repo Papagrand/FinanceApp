@@ -9,18 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import com.example.compose.HomeWork1Theme
-import java.util.concurrent.TimeUnit
+import ru.point.ui.theme.FinanceAppTheme
 import javax.inject.Inject
-import ru.point.impl.work.PushAccountPendingWorker
-import ru.point.impl.work.PushPendingWorker
+import ru.point.api.flow.ThemePreferencesRepo
+import ru.point.financeapp.di.utils.ViewModelFactory
 import ru.point.ui.di.LocalInternetTracker
 import ru.point.utils.network.NetworkTracker
 
@@ -35,14 +31,23 @@ import ru.point.utils.network.NetworkTracker
  */
 
 class MainActivity : ComponentActivity() {
-    private val viewModel by viewModels<MainActivityViewModel>()
 
-    @Inject lateinit var networkTracker: NetworkTracker
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<MainActivityViewModel> { viewModelFactory }
+
+    @Inject
+    lateinit var networkTracker: NetworkTracker
+
+    @Inject
+    lateinit var themeRepo: ThemePreferencesRepo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         (application as App).appComponent.inject(this)
+
 
         installSplashScreen().setKeepOnScreenCondition {
             !viewModel.dataCollected.value
@@ -53,7 +58,9 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalInternetTracker provides networkTracker,
             ) {
-                HomeWork1Theme {
+                val isDark by themeRepo.isDarkThemeFlow.collectAsState(initial = false)
+                val themeName by themeRepo.primaryColorNameFlow.collectAsState(initial = "green")
+                FinanceAppTheme(darkTheme = isDark, theme = themeName) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background,
@@ -64,34 +71,5 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        scheduleSync()
-    }
-
-    private fun scheduleSync() {
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork(
-                "PushPending",
-                ExistingPeriodicWorkPolicy.KEEP,
-                PeriodicWorkRequestBuilder<PushPendingWorker>(15, TimeUnit.MINUTES)
-                    .setConstraints(
-                        Constraints.Builder()
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build()
-                    )
-                    .build()
-            )
-
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork(
-                "PushAccountPending",
-                ExistingPeriodicWorkPolicy.KEEP,
-                PeriodicWorkRequestBuilder<PushAccountPendingWorker>(18, TimeUnit.MINUTES)
-                    .setConstraints(
-                        Constraints.Builder()
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build()
-                    )
-                    .build()
-            )
     }
 }

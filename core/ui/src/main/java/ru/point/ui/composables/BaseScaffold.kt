@@ -93,7 +93,7 @@ fun BaseScaffold(
                 FloatingActionButton(
                     onClick = onFabClick,
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                     elevation = FloatingActionButtonDefaults.elevation(0.dp),
                     shape = CircleShape,
                 ) { Icon(Icons.Default.Add, contentDescription = null) }

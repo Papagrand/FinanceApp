@@ -38,6 +38,7 @@ dependencies {
 
     implementation(project(":core:data:api"))
     implementation(project(":core:utils"))
+    implementation(project(":core:chart"))
     implementation(project(":core:navigation"))
     implementation(project(":core:ui"))
 

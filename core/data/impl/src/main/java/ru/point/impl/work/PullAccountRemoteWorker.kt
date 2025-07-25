@@ -5,6 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import java.time.Instant
 import kotlinx.coroutines.flow.first
+import ru.point.api.flow.AccountPreferencesRepo
 import ru.point.impl.model.accountToAccountDto
 import ru.point.impl.model.toAccountEntity
 import ru.point.impl.service.AccountService
@@ -17,6 +18,7 @@ class PullAccountRemoteWorker(
     private val dao: AccountDao,
     private val api: AccountService,
     private val network: NetworkTracker,
+    private val prefs: AccountPreferencesRepo,
 ) : CoroutineWorker(ctx, params) {
 
     override suspend fun doWork(): Result {
@@ -30,6 +32,7 @@ class PullAccountRemoteWorker(
         ) {
             dao.upsert(remote.accountToAccountDto().toAccountEntity(isSynced = true))
         }
+        prefs.updateLastSync(Instant.now().toString())
         return Result.success()
     }
 }

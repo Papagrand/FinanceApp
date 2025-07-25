@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -18,6 +20,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "APP_VERSION_NAME", "\"$versionName\"")
     }
 
     buildTypes {
@@ -45,6 +52,7 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:chart"))
     implementation(project(":core:data:api"))
     implementation(project(":core:data:local"))
     implementation(project(":core:data:impl"))
@@ -69,6 +77,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)

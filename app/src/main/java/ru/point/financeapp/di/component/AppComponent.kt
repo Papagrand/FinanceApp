@@ -15,6 +15,7 @@ import ru.point.financeapp.MainActivity
 import ru.point.impl.di.DatabaseModule
 import ru.point.impl.di.WorkerModule
 import ru.point.impl.work.DaggerWorkerFactory
+import ru.point.settings.di.SettingsDeps
 import ru.point.utils.network.NetworkTracker
 
 /**
@@ -35,9 +36,10 @@ import ru.point.utils.network.NetworkTracker
         RepositoryModule::class,
         WorkerModule::class,
         CoreModule::class,
+        ViewModelModule::class
     ],
 )
-interface AppComponent : AccountDeps, CategoriesDeps, TransactionDeps {
+interface AppComponent : AccountDeps, CategoriesDeps, TransactionDeps, SettingsDeps {
     fun workerFactory(): DaggerWorkerFactory
 
     fun inject(app: App)

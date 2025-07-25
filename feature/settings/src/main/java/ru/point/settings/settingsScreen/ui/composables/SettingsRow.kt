@@ -1,41 +1,39 @@
-package ru.point.settings.presentation
+package ru.point.settings.settingsScreen.ui.composables
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import ru.point.settings.R
 import ru.point.ui.composables.BaseListItem
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsRow(
-    title: String,
+internal fun SettingsRow(
+    @StringRes placeHolderResId: Int,
     isTheme: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
+    checked: Boolean = false,
+    onCheckedChange: (Boolean) -> Unit = {},
+    modifier: Modifier,
+    onClick: () -> Unit = {}
 ) {
-    var checked by remember { mutableStateOf(false) }
 
     BaseListItem(
-        rowHeight = 56.dp,
         onClick = if (isTheme) null else onClick,
         modifier =
             modifier
-                .fillMaxWidth()
                 .then(
                     if (!isTheme) {
                         Modifier.clickable(onClick = onClick)
@@ -46,7 +44,7 @@ fun SettingsRow(
                 .padding(horizontal = 16.dp),
         content = {
             Text(
-                text = title,
+                text = stringResource(placeHolderResId),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -56,7 +54,7 @@ fun SettingsRow(
                 Switch(
                     modifier = Modifier.size(52.dp, 32.dp),
                     checked = checked,
-                    onCheckedChange = { checked = it },
+                    onCheckedChange = onCheckedChange,
                     colors =
                         SwitchDefaults.colors(
                             checkedThumbColor = MaterialTheme.colorScheme.primary,

@@ -2,8 +2,10 @@ package ru.point.local.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
+import ru.point.local.entities.AccountEntity
 import ru.point.local.entities.TransactionEntity
 
 @Dao
@@ -32,6 +34,26 @@ interface TransactionDao {
 
     @Upsert
     suspend fun upsert(list: List<TransactionEntity>)
+
+    @Upsert
+    abstract suspend fun upsertAccount(account: AccountEntity)
+
+    @Transaction
+    open suspend fun updateTransactionsAndRecalcTotals(
+        updatedAccount: AccountEntity,
+        updatedTransactions: TransactionEntity,
+        accountId: Int,
+        balanceStr: String
+    ) {
+        upsertAccount(updatedAccount)
+        upsert(updatedTransactions)
+        val txs = getAllByAccountDesc(accountId)
+        val updatedList = txs.map { it.copy(totalAmount = balanceStr) }
+        if (updatedList.isNotEmpty()) {
+            upsert(updatedList)
+        }
+    }
+
 
     @Query("""
       UPDATE transactions 
@@ -85,4 +107,13 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions WHERE accountId = :acc AND date(dateTime) BETWEEN :from AND :to")
     suspend fun rawPeriod(acc: Int, from: String, to: String): List<TransactionEntity>
+
+    @Query("""
+      SELECT * FROM transactions
+       WHERE accountId = :acc
+         AND isDeleted = 0
+       ORDER BY dateTime DESC
+    """)
+    suspend fun getAllByAccountDesc(acc: Int): List<TransactionEntity>
+
 }

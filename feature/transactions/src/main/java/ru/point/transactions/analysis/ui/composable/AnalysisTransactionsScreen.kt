@@ -24,13 +24,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.point.chart.ui.AnalysisDonutChart
 import ru.point.navigation.Navigator
 import ru.point.transactions.R
 import ru.point.transactions.analysis.di.DaggerAnalysisTransactionsComponent
 import ru.point.transactions.analysis.ui.composable.composableFunctions.AmountCard
 import ru.point.transactions.analysis.ui.composable.composableFunctions.AnalysisCategoryRow
 import ru.point.transactions.analysis.ui.composable.composableFunctions.AnalysisDatePicker
-import ru.point.transactions.analysis.ui.composable.composableFunctions.AnalysisDonutChart
 import ru.point.transactions.analysis.ui.mvi.AnalysisTransactionsEffect
 import ru.point.transactions.analysis.ui.mvi.AnalysisTransactionsIntent
 import ru.point.transactions.analysis.ui.mvi.AnalysisTransactionsViewModel
@@ -76,7 +76,7 @@ fun AnalysisTransactionsScreen(
                 is AnalysisTransactionsEffect.ShowSnackbar ->
                     snackbarHostState.showSnackbar(eff.message)
 
-                AnalysisTransactionsEffect.Finish -> navigator.popBackStack()
+                AnalysisTransactionsEffect.Finish -> navigator.navigateUp()
             }
         }
     }
@@ -86,7 +86,7 @@ fun AnalysisTransactionsScreen(
         actionState = ActionState.Shown,
         topAppBarColor = MaterialTheme.colorScheme.background,
         backState = BackState.Shown,
-        backAction = BackAction(onClick = navigator::popBackStack),
+        backAction = BackAction(onClick = navigator::navigateUp),
         fabState = FabState.Hidden,
         snackbarHostState = snackbarHostState
     ) { innerPadding ->

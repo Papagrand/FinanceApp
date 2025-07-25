@@ -4,39 +4,61 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import java.time.Instant
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import ru.point.impl.flow.safeApiFlow
 import ru.point.impl.model.AccountUpdateRequest
 import ru.point.impl.service.AccountService
 import ru.point.local.dao.AccountDao
 import ru.point.utils.network.NetworkTracker
+import androidx.work.ListenableWorker.Result as WorkResult
+import ru.point.utils.common.Result as DomainResult
 
 class PushAccountPendingWorker(
     ctx: Context,
     params: WorkerParameters,
     private val dao: AccountDao,
     private val api: AccountService,
-    private val network: NetworkTracker,
+    private val networkTracker: NetworkTracker,
 ) : CoroutineWorker(ctx, params) {
 
-    override suspend fun doWork(): Result {
-        if (!network.online.first()) return Result.retry()
+    override suspend fun doWork(): WorkResult {
+        val onlineNow = networkTracker.online.first()
+        if (!onlineNow) return WorkResult.retry()
 
-        dao.pending().forEach { entity ->
-            val res = runCatching {
+        val pending = dao.pending()
+        if (pending.isEmpty()) return WorkResult.success()
+
+        for (entity in pending) {
+            val syncFlow = safeApiFlow {
                 api.updateAccount(
                     entity.id,
-                    AccountUpdateRequest(entity.name, entity.balance, entity.currency)
+                    AccountUpdateRequest(
+                        name = entity.name,
+                        balance = entity.balance,
+                        currency = entity.currency
+                    )
                 )
             }
-            if (res.isFailure) return Result.retry()
+            val final = syncFlow
+                .filter { it !is DomainResult.Loading }
+                .first()
 
-            val dto = res.getOrThrow()
-            dao.markSynced(
-                id = dto.id,
-                updatedAt = dto.updatedAt,
-                updatedAtMillis = Instant.parse(dto.updatedAt).toEpochMilli()
-            )
+            when (final) {
+                is DomainResult.Error   -> return WorkResult.retry()
+                is DomainResult.Success -> {
+                    val dto = final.data
+                    dao.markSynced(
+                        id              = dto.id,
+                        updatedAt       = dto.updatedAt,
+                        updatedAtMillis = Instant.parse(dto.updatedAt).toEpochMilli()
+                    )
+                }
+                else -> {
+                }
+            }
         }
-        return Result.success()
+
+        return WorkResult.success()
     }
 }
