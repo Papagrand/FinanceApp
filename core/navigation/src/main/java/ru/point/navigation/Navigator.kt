@@ -23,6 +23,8 @@ sealed interface Route {
     data object Settings : Route
 
     data object MainColor : Route
+
+    data object AppInfo : Route
 }
 
 interface Navigator {

@@ -2,7 +2,7 @@ package ru.point.settings.mainColorScreen.di
 
 import dagger.Component
 import ru.point.settings.di.SettingsDeps
-import ru.point.settings.mainColorScreen.mvi.MainColorViewModelFactory
+import ru.point.settings.mainColorScreen.ui.mvi.MainColorViewModelFactory
 
 @Component(dependencies = [SettingsDeps::class])
 internal interface MainColorComponent {

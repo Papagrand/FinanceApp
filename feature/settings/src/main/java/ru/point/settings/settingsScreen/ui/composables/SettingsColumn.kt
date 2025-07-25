@@ -19,7 +19,8 @@ internal fun SettingsColumn(
     state: SettingsState,
     innerPadding: PaddingValues,
     onToggleTheme: () -> Unit,
-    onClickNavigate: () -> Unit
+    onClickNavigateToMainColor: () -> Unit,
+    onClickNavigateToAppInfo: () -> Unit
 ) {
 
     Column(
@@ -53,7 +54,23 @@ internal fun SettingsColumn(
                     .height(56.dp),
             placeHolderResId = R.string.main_color,
             isTheme = false,
-            onClick = onClickNavigate
+            onClick = onClickNavigateToMainColor
+        )
+
+        HorizontalDivider(
+            modifier = Modifier,
+            color = MaterialTheme.colorScheme.surfaceDim,
+            thickness = 1.dp,
+        )
+
+        SettingsRow(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+            placeHolderResId = R.string.about_app,
+            isTheme = false,
+            onClick = onClickNavigateToAppInfo
         )
 
         HorizontalDivider(

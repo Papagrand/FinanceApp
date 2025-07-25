@@ -1,4 +1,4 @@
-package ru.point.settings.mainColorScreen.composables
+package ru.point.settings.mainColorScreen.ui.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -45,7 +45,8 @@ fun SettingsScreen(navigator: Navigator) {
             state = state,
             innerPadding = innerPadding,
             onToggleTheme = { viewModel.dispatch(SettingsIntent.ToggleDarkTheme) },
-            onClickNavigate = { navigator.navigate(Route.MainColor) }
+            onClickNavigateToMainColor = { navigator.navigate(Route.MainColor) },
+            onClickNavigateToAppInfo = { navigator.navigate(Route.AppInfo) }
         )
     }
 }

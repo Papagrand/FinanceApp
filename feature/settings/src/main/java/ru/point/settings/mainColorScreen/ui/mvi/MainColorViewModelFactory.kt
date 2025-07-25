@@ -1,4 +1,4 @@
-package ru.point.settings.mainColorScreen.mvi
+package ru.point.settings.mainColorScreen.ui.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
