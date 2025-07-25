@@ -242,59 +242,51 @@ class TransactionRepositoryImpl @Inject constructor(
         isIncome: Boolean
     ): Flow<Result<TransactionDto>> = channelFlow {
         send(Loading)
-
         try {
             val local = dao.requireByRemoteId(transactionId)
-
-            val prevAmount = local.amount.toBigDecimal()
-            val delta = amount.toBigDecimal() - prevAmount
-
+            val delta = amount.toBigDecimal() - local.amount.toBigDecimal()
             val categoryName = categoryDao.getCategoryNameById(categoryId)
-
-            val account = accountDao.observe().first()
-                ?: throw IllegalStateException("Account with id=$accountId not found")
+            val account = accountDao.observe().first() ?: throw IllegalStateException()
             val currentBal = account.balance.toBigDecimalOrNull() ?: BigDecimal.ZERO
             val newBalance = if (isIncome) currentBal + delta else currentBal - delta
 
             val updatedAccount = account.copy(
                 balance = newBalance.toPlainString(),
+                isSynced = false,
                 updatedAtMillis = System.currentTimeMillis(),
-                updatedAt = Instant.ofEpochMilli(System.currentTimeMillis()).toString(),
-                isSynced = false
+                updatedAt = Instant.now().toString()
             )
-            accountDao.upsert(updatedAccount)
-
-            val nowMillis = System.currentTimeMillis()
-            val updated = local.copy(
+            val updatedTransaction = local.copy(
                 accountId = accountId,
                 categoryId = categoryId,
                 categoryName = categoryName,
                 amount = amount,
                 dateTime = transactionDate,
                 comment = comment,
-                updatedAt = nowMillis,
+                updatedAt = System.currentTimeMillis(),
                 isSynced = false
             )
-            dao.upsert(updated)
+
+            dao.updateTransactionsAndRecalcTotals(
+                updatedAccount, updatedTransaction, accountId, newBalance.toPlainString()
+            )
 
             if (networkTracker.online.first()) {
                 send(Loading)
-                safeApiFlow {
-                    api.updateTransaction(transactionId, updated.toCreateRequest())
-                }.collect { apiResult ->
-                    when (apiResult) {
-                        is Loading -> {}
-                        is Error -> send(Error(apiResult.cause))
-                        is Success -> {
-                            dao.markSynced(updated.localUid, transactionId)
-                            send(Success(apiResult.data.toDto()))
+                safeApiFlow { api.updateTransaction(transactionId, updatedTransaction.toCreateRequest()) }
+                    .collect { result ->
+                        when (result) {
+                            is Loading -> {}
+                            is Error -> send(Error(result.cause))
+                            is Success -> {
+                                dao.markSynced(updatedTransaction.localUid, transactionId)
+                                send(Success(result.data.toDto()))
+                            }
                         }
                     }
-                }
+            } else {
+                send(Success(updatedTransaction.entityToDto()))
             }
-            recalculateTransactionTotals(accountId, newBalance.toPlainString())
-
-            send(Success(updated.entityToDto()))
 
         } catch (e: Throwable) {
             send(Error(e.toAppError()))
